@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
+import { base44 } from '@/api/base44Client';
 import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -9,6 +10,7 @@ export default function Layout({ children, currentPageName }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -19,6 +21,18 @@ export default function Layout({ children, currentPageName }) {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const user = await base44.auth.me();
+        setIsAdmin(user?.role === 'admin');
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
   }, []);
 
   useEffect(() => {
@@ -41,7 +55,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Customize', page: 'CustomFood' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
-    { name: 'Dashboard', page: 'Admin' },
+    ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),
   ];
 
   const formatDate = (date) => {

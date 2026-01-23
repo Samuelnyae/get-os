@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 import SectionHeader from '@/components/common/SectionHeader';
 import MenuItemsManager from '@/components/admin/MenuItemsManager';
 import CustomRequestsManager from '@/components/admin/CustomRequestsManager';
@@ -13,9 +15,53 @@ import OrdersManager from '@/components/admin/OrdersManager';
 import FeedbackViewer from '@/components/admin/FeedbackViewer';
 import DashboardStats from '@/components/admin/DashboardStats';
 import AIInsights from '@/components/admin/AIInsights';
+import LuxuryButton from '@/components/common/LuxuryButton';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAdmin();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+        <div className="max-w-md text-center">
+          <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <h2 className="font-playfair text-3xl text-white mb-4">Access Denied</h2>
+          <p className="font-inter text-white/60 mb-8">
+            You don't have permission to access the admin dashboard. This area is restricted to administrators only.
+          </p>
+          <Link to={createPageUrl('Home')}>
+            <LuxuryButton>Return to Home</LuxuryButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
