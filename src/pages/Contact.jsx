@@ -30,25 +30,31 @@ export default function Contact() {
 
     setIsSubmitting(true);
     
-    await base44.integrations.Core.SendEmail({
-      to: 'contact@hermanasbites.com',
-      subject: `Contact Form: ${formData.subject || 'New Inquiry'}`,
-      body: `
+    try {
+      await base44.integrations.Core.SendEmail({
+        to: 'contact@hermanasbites.com',
+        subject: `Contact Form: ${formData.subject || 'New Inquiry'}`,
+        body: `
 Name: ${formData.name}
 Email: ${formData.email}
 Phone: ${formData.phone}
 
 Message:
 ${formData.message}
-      `
-    });
+        `
+      });
 
-    toast.success('Message sent successfully!', {
-      description: 'We will get back to you within 24 hours.'
-    });
-    
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    setIsSubmitting(false);
+      toast.success('Message sent successfully!', {
+        description: 'We will get back to you within 24 hours.'
+      });
+      
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Email error:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
