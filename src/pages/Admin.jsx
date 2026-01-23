@@ -16,6 +16,7 @@ import FeedbackViewer from '@/components/admin/FeedbackViewer';
 import DashboardStats from '@/components/admin/DashboardStats';
 import AIInsights from '@/components/admin/AIInsights';
 import StaffManager from '@/components/admin/StaffManager';
+import LowStockAlerts from '@/components/admin/LowStockAlerts';
 import LuxuryButton from '@/components/common/LuxuryButton';
 
 export default function Admin() {
@@ -69,6 +70,7 @@ export default function Admin() {
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'staff', label: 'Staff', icon: User },
+    { id: 'stock', label: 'Stock Alerts', icon: Package },
     { id: 'menu', label: 'Menu Items', icon: Utensils },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
