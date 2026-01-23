@@ -119,7 +119,7 @@ Hermanas Bites - Seven Star Dining
 
   const paymentMethods = [
     { id: 'card', label: 'Credit/Debit Card', icon: CreditCard },
-    { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone },
+    { id: 'mobile_money', label: 'M-Pesa', icon: Smartphone },
     { id: 'paypal', label: 'PayPal', icon: Receipt },
   ];
 
