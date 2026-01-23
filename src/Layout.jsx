@@ -52,6 +52,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', page: 'Home' },
     { name: 'Menu', page: 'Menu' },
     { name: 'Drinks', page: 'Drinks' },
+    { name: 'Table Dining', page: 'TableDining' },
     { name: 'Customize', page: 'CustomFood' },
     { name: 'Track Order', page: 'OrderTracking' },
     { name: 'About', page: 'About' },
