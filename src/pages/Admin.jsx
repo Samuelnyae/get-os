@@ -6,12 +6,12 @@ import {
   LayoutDashboard, Utensils, ShoppingBag, 
   Sparkles, MessageSquare, BarChart3, Shield
 } from 'lucide-react';
-import SectionHeader from '../components/common/SectionHeader';
-import MenuItemsManager from '../components/admin/MenuItemsManager';
-import CustomRequestsManager from '../components/admin/CustomRequestsManager';
-import OrdersManager from '../components/admin/OrdersManager';
-import FeedbackViewer from '../components/admin/FeedbackViewer';
-import DashboardStats from '../components/admin/DashboardStats';
+import SectionHeader from '@/components/common/SectionHeader';
+import MenuItemsManager from '@/components/admin/MenuItemsManager';
+import CustomRequestsManager from '@/components/admin/CustomRequestsManager';
+import OrdersManager from '@/components/admin/OrdersManager';
+import FeedbackViewer from '@/components/admin/FeedbackViewer';
+import DashboardStats from '@/components/admin/DashboardStats';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
