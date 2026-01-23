@@ -12,12 +12,14 @@ import CustomRequestsManager from '@/components/admin/CustomRequestsManager';
 import OrdersManager from '@/components/admin/OrdersManager';
 import FeedbackViewer from '@/components/admin/FeedbackViewer';
 import DashboardStats from '@/components/admin/DashboardStats';
+import AIInsights from '@/components/admin/AIInsights';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'menu', label: 'Menu Items', icon: Utensils },
     { id: 'orders', label: 'Orders', icon: ShoppingBag },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
@@ -68,6 +70,7 @@ export default function Admin() {
           transition={{ duration: 0.3 }}
         >
           {activeTab === 'dashboard' && <DashboardStats />}
+          {activeTab === 'insights' && <AIInsights />}
           {activeTab === 'menu' && <MenuItemsManager />}
           {activeTab === 'orders' && <OrdersManager />}
           {activeTab === 'custom' && <CustomRequestsManager />}

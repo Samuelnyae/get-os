@@ -8,6 +8,7 @@ import { ArrowRight, Star, ChefHat, Utensils, Sparkles } from 'lucide-react';
 import MenuCard from '../components/menu/MenuCard';
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
+import AIRecommendations from '../components/recommendations/AIRecommendations';
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -132,6 +133,13 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AI Recommendations */}
+      <section className="py-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          <AIRecommendations />
         </div>
       </section>
 
