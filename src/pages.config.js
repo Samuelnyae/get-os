@@ -6,6 +6,7 @@ import CustomFood from './pages/CustomFood';
 import Order from './pages/Order';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Admin from './pages/Admin';
 import __Layout from './Layout.jsx';
 
 
@@ -18,6 +19,7 @@ export const PAGES = {
     "Order": Order,
     "About": About,
     "Contact": Contact,
+    "Admin": Admin,
 }
 
 export const pagesConfig = {
