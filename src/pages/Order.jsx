@@ -59,7 +59,7 @@ export default function Order() {
     mutationFn: async (orderData) => {
       const order = await base44.entities.Order.create(orderData);
       
-      // Send email notification
+      // Send email notification with tracking info
       await base44.integrations.Core.SendEmail({
         to: orderData.customer_email,
         subject: `Hermanas Bites - Order Confirmation #${orderData.order_reference}`,
@@ -68,11 +68,16 @@ Dear ${orderData.customer_name},
 
 Thank you for your order at Hermanas Bites!
 
-Order Reference: ${orderData.order_reference}
-Total Amount: KES ${orderData.total_amount.toLocaleString()}
+📋 Order Reference: ${orderData.order_reference}
+💰 Total Amount: KES ${orderData.total_amount.toLocaleString()}
 
-Order Details:
+🍽️ Order Details:
 ${orderData.items.map(item => `- ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`).join('\n')}
+
+📱 Track Your Order:
+You can track your order status in real-time by visiting our Track Order page and entering:
+- Order Reference: ${orderData.order_reference}
+- Email: ${orderData.customer_email}
 
 We will prepare your order with love and care.
 
@@ -166,15 +171,27 @@ Hermanas Bites - Seven Star Dining
               <Mail className="w-5 h-5" />
               <span className="font-inter text-sm">Confirmation sent to {customerInfo.email}</span>
             </div>
-            <p className="font-inter text-white/50 text-sm">
-              You will receive an SMS notification when your order is ready.
+            <p className="font-inter text-white/50 text-sm mb-4">
+              Your order reference and tracking instructions have been sent to your email. You will receive real-time updates when your order status changes.
             </p>
+            <div className="p-3 rounded-lg bg-[#c9a962]/10 border border-[#c9a962]/20">
+              <p className="font-inter text-xs text-white/70 mb-1">Track your order using:</p>
+              <p className="font-inter text-sm text-white">Reference: <span className="text-[#c9a962] font-mono">{orderReference}</span></p>
+              <p className="font-inter text-sm text-white">Email: <span className="text-[#c9a962]">{customerInfo.email}</span></p>
+            </div>
           </div>
-          <Link to={createPageUrl('Menu')}>
-            <LuxuryButton variant="secondary">
-              Continue Shopping
-            </LuxuryButton>
-          </Link>
+          <div className="flex gap-3">
+            <Link to={createPageUrl('OrderTracking')} className="flex-1">
+              <LuxuryButton className="w-full">
+                Track Order
+              </LuxuryButton>
+            </Link>
+            <Link to={createPageUrl('Menu')} className="flex-1">
+              <LuxuryButton variant="secondary" className="w-full">
+                Continue Shopping
+              </LuxuryButton>
+            </Link>
+          </div>
         </div>
       </div>
     );
