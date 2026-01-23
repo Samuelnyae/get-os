@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import LuxuryButton from '../common/LuxuryButton';
 import { toast } from 'sonner';
+import { useNotifications } from '@/components/notifications/NotificationManager';
 
 export default function MenuItemsManager() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -38,11 +39,28 @@ export default function MenuItemsManager() {
   const [isUploading, setIsUploading] = useState(false);
 
   const queryClient = useQueryClient();
+  const { sendNotification } = useNotifications();
 
   const { data: menuItems = [], isLoading } = useQuery({
     queryKey: ['admin-menu-items'],
     queryFn: () => base44.entities.MenuItem.list('-created_date'),
   });
+
+  // Monitor low stock (based on likes/popularity as proxy)
+  useEffect(() => {
+    if (menuItems.length > 0) {
+      const popularItems = menuItems.filter(item => item.likes_count > 50);
+      if (popularItems.length > 0) {
+        popularItems.forEach(item => {
+          sendNotification('⚠️ Popular Item Alert', {
+            body: `${item.name} is very popular! Consider preparing more.`,
+            tag: `popular-${item.id}`,
+            toastOptions: { duration: 5000 },
+          });
+        });
+      }
+    }
+  }, [menuItems.length]);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MenuItem.create(data),
