@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
