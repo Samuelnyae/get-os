@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -121,6 +121,7 @@ export default function Admin() {
           {activeTab === 'insights' && <AIInsights />}
           {activeTab === 'orders' && <OrdersManager />}
           {activeTab === 'staff' && <StaffManager />}
+          {activeTab === 'stock' && <LowStockAlerts />}
           {activeTab === 'menu' && <MenuItemsManager />}
           {activeTab === 'custom' && <CustomRequestsManager />}
           {activeTab === 'feedback' && <FeedbackViewer />}

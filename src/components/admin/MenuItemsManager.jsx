@@ -30,7 +30,9 @@ export default function MenuItemsManager() {
     spices: [],
     companions: [],
     dietary_tags: [],
-    is_featured: false
+    is_featured: false,
+    stock_count: 100,
+    low_stock_threshold: 10
   });
 
   const [ingredientInput, setIngredientInput] = useState('');
@@ -127,7 +129,9 @@ export default function MenuItemsManager() {
       spices: item.spices || [],
       companions: item.companions || [],
       dietary_tags: item.dietary_tags || [],
-      is_featured: item.is_featured || false
+      is_featured: item.is_featured || false,
+      stock_count: item.stock_count || 100,
+      low_stock_threshold: item.low_stock_threshold || 10
     });
     setIsFormOpen(true);
   };
@@ -151,7 +155,9 @@ export default function MenuItemsManager() {
       spices: [],
       companions: [],
       dietary_tags: [],
-      is_featured: false
+      is_featured: false,
+      stock_count: 100,
+      low_stock_threshold: 10
     });
     setEditingItem(null);
     setIsFormOpen(false);
@@ -511,6 +517,32 @@ export default function MenuItemsManager() {
                         {tag}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* Stock Management */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                      Stock Count
+                    </label>
+                    <Input
+                      type="number"
+                      value={formData.stock_count}
+                      onChange={(e) => setFormData({ ...formData, stock_count: parseInt(e.target.value) || 0 })}
+                      className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                      Low Stock Threshold
+                    </label>
+                    <Input
+                      type="number"
+                      value={formData.low_stock_threshold}
+                      onChange={(e) => setFormData({ ...formData, low_stock_threshold: parseInt(e.target.value) || 10 })}
+                      className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                    />
                   </div>
                 </div>
 
