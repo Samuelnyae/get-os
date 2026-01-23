@@ -57,13 +57,16 @@ export default function Order() {
 
   const orderMutation = useMutation({
     mutationFn: async (orderData) => {
-      const order = await base44.entities.Order.create(orderData);
-      
-      // Send email notification with tracking info
-      await base44.integrations.Core.SendEmail({
-        to: orderData.customer_email,
-        subject: `Hermanas Bites - Order Confirmation #${orderData.order_reference}`,
-        body: `
+      try {
+        // Create the order first
+        const order = await base44.entities.Order.create(orderData);
+        
+        // Send email notification with tracking info
+        try {
+          await base44.integrations.Core.SendEmail({
+            to: orderData.customer_email,
+            subject: `Hermanas Bites - Order Confirmation #${orderData.order_reference}`,
+            body: `
 Dear ${orderData.customer_name},
 
 Thank you for your order at Hermanas Bites!
@@ -83,19 +86,29 @@ We will prepare your order with love and care.
 
 Best regards,
 Hermanas Bites - Seven Star Dining
-        `
-      });
+            `
+          });
+          toast.success('Order confirmation email sent!');
+        } catch (emailError) {
+          console.error('Email error:', emailError);
+          toast.warning('Order placed but email failed to send. Your order reference is: ' + orderData.order_reference);
+        }
 
-      return order;
+        return order;
+      } catch (error) {
+        console.error('Order creation error:', error);
+        throw error;
+      }
     },
     onSuccess: (order) => {
-      setOrderReference(order.order_reference || `HB-${Date.now()}`);
+      setOrderReference(order.order_reference);
       setStep('confirmation');
       localStorage.removeItem('hermanas_cart');
       setCart([]);
       window.dispatchEvent(new Event('cartUpdated'));
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Order mutation error:', error);
       toast.error('Failed to place order. Please try again.');
     },
   });
@@ -116,7 +129,7 @@ Hermanas Bites - Seven Star Dining
       total_amount: total,
       payment_method: paymentMethod,
       payment_status: 'paid',
-      status: 'confirmed',
+      status: 'pending',
       order_reference: reference,
       special_instructions: customerInfo.special_instructions
     });
