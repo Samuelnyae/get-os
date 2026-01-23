@@ -1,25 +1,27 @@
-import Home from './pages/Home';
-import Menu from './pages/Menu';
+import About from './pages/About';
+import Admin from './pages/Admin';
+import Contact from './pages/Contact';
+import CustomFood from './pages/CustomFood';
 import Drinks from './pages/Drinks';
 import FoodDetails from './pages/FoodDetails';
-import CustomFood from './pages/CustomFood';
+import Home from './pages/Home';
+import Menu from './pages/Menu';
 import Order from './pages/Order';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Admin from './pages/Admin';
+import OrderTracking from './pages/OrderTracking';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Menu": Menu,
+    "About": About,
+    "Admin": Admin,
+    "Contact": Contact,
+    "CustomFood": CustomFood,
     "Drinks": Drinks,
     "FoodDetails": FoodDetails,
-    "CustomFood": CustomFood,
+    "Home": Home,
+    "Menu": Menu,
     "Order": Order,
-    "About": About,
-    "Contact": Contact,
-    "Admin": Admin,
+    "OrderTracking": OrderTracking,
 }
 
 export const pagesConfig = {

@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ShoppingCart, User, Mail, Phone, MapPin, Clock, DollarSign, Package } from 'lucide-react';
+import { 
+  ShoppingCart, User, Mail, Phone, Clock, Package, 
+  UserCheck, Play, Pause, CheckCircle 
+} from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import LuxuryButton from '../common/LuxuryButton';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -12,6 +16,9 @@ import { toast } from 'sonner';
 export default function OrdersManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [queueView, setQueueView] = useState('active'); // active, completed
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: orders = [], isLoading } = useQuery({
@@ -19,14 +26,76 @@ export default function OrdersManager() {
     queryFn: () => base44.entities.Order.list('-created_date', 200),
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.Order.update(id, { status }),
+  const { data: staff = [] } = useQuery({
+    queryKey: ['staff-list'],
+    queryFn: () => base44.entities.Staff.list(),
+    initialData: [],
+  });
+
+  // Real-time order updates
+  useEffect(() => {
+    const unsubscribe = base44.entities.Order.subscribe((event) => {
+      queryClient.invalidateQueries(['admin-orders-list']);
+    });
+    return unsubscribe;
+  }, [queryClient]);
+
+  const updateOrderMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Order.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['admin-orders-list']);
-      queryClient.invalidateQueries(['admin-orders']);
-      toast.success('Order status updated');
+      toast.success('Order updated');
     },
   });
+
+  const assignStaffMutation = useMutation({
+    mutationFn: async ({ orderId, staffId }) => {
+      const selectedStaff = staff.find(s => s.id === staffId);
+      const estimatedTime = new Date();
+      estimatedTime.setMinutes(estimatedTime.getMinutes() + 30); // 30 min default
+
+      return base44.entities.Order.update(orderId, {
+        assigned_staff_id: staffId,
+        assigned_staff_name: selectedStaff?.name,
+        estimated_completion: estimatedTime.toISOString(),
+        status: 'confirmed',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-orders-list']);
+      setAssignDialogOpen(false);
+      toast.success('Staff assigned successfully');
+    },
+  });
+
+  // Workflow automation - auto-progress orders
+  const autoProgressOrder = (order) => {
+    const workflows = {
+      'pending': 'confirmed',
+      'confirmed': 'preparing',
+      'preparing': 'ready',
+      'ready': 'out_for_delivery',
+      'out_for_delivery': 'delivered',
+    };
+
+    const nextStatus = workflows[order.status];
+    if (nextStatus) {
+      updateOrderMutation.mutate({
+        id: order.id,
+        data: { 
+          status: nextStatus,
+          status_history: [
+            ...(order.status_history || []),
+            {
+              status: nextStatus,
+              timestamp: new Date().toISOString(),
+              note: 'Auto-progressed by system'
+            }
+          ]
+        }
+      });
+    }
+  };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
@@ -36,169 +105,276 @@ export default function OrdersManager() {
     
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    const matchesQueue = 
+      (queueView === 'active' && !['delivered', 'cancelled'].includes(order.status)) ||
+      (queueView === 'completed' && ['delivered', 'cancelled'].includes(order.status));
+    
+    return matchesSearch && matchesStatus && matchesQueue;
   });
+
+  // Group by status for queue view
+  const ordersByStatus = {
+    pending: filteredOrders.filter(o => o.status === 'pending'),
+    confirmed: filteredOrders.filter(o => o.status === 'confirmed'),
+    preparing: filteredOrders.filter(o => o.status === 'preparing'),
+    ready: filteredOrders.filter(o => o.status === 'ready'),
+    out_for_delivery: filteredOrders.filter(o => o.status === 'out_for_delivery'),
+  };
 
   const statusColors = {
     pending: 'bg-gray-900/30 text-gray-400 border-gray-700',
     confirmed: 'bg-green-900/30 text-green-400 border-green-700',
     preparing: 'bg-yellow-900/30 text-yellow-400 border-yellow-700',
     ready: 'bg-blue-900/30 text-blue-400 border-blue-700',
-    delivered: 'bg-purple-900/30 text-purple-400 border-purple-700',
+    out_for_delivery: 'bg-purple-900/30 text-purple-400 border-purple-700',
+    delivered: 'bg-emerald-900/30 text-emerald-400 border-emerald-700',
     cancelled: 'bg-red-900/30 text-red-400 border-red-700',
   };
 
-  const statusOptions = ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled'];
+  const statusOptions = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled'];
+
+  const availableStaff = staff.filter(s => s.status === 'available');
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      {/* Controls */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex gap-2">
+          <LuxuryButton
+            variant={queueView === 'active' ? 'primary' : 'secondary'}
+            onClick={() => setQueueView('active')}
+            size="sm"
+          >
+            Active Queue
+          </LuxuryButton>
+          <LuxuryButton
+            variant={queueView === 'completed' ? 'primary' : 'secondary'}
+            onClick={() => setQueueView('completed')}
+            size="sm"
+          >
+            Completed
+          </LuxuryButton>
+        </div>
+
         <Input
           placeholder="Search orders..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="flex-1 bg-[#1a1a1a] border-[#c9a962]/20 text-white"
         />
+        
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-48 bg-[#1a1a1a] border-[#c9a962]/20 text-white">
+          <SelectTrigger className="w-full lg:w-48 bg-[#1a1a1a] border-[#c9a962]/20 text-white">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-[#1a1a1a] border-[#c9a962]/20">
             <SelectItem value="all">All Status</SelectItem>
             {statusOptions.map(status => (
               <SelectItem key={status} value={status}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Orders List */}
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
-        </div>
-      ) : filteredOrders.length === 0 ? (
-        <div className="text-center py-12">
-          <ShoppingCart className="w-12 h-12 text-[#c9a962]/30 mx-auto mb-4" />
-          <p className="font-inter text-white/50">No orders found</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredOrders.map((order, index) => (
-            <motion.div
-              key={order.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left: Customer Info */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-playfair text-xl text-white mb-1">
-                      {order.customer_name}
-                    </h3>
-                    <p className="font-inter text-xs text-[#c9a962] font-mono">
-                      {order.order_reference}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-white/60">
-                      <Mail className="w-4 h-4 text-[#c9a962]" />
-                      <span className="font-inter">{order.customer_email}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white/60">
-                      <Phone className="w-4 h-4 text-[#c9a962]" />
-                      <span className="font-inter">{order.customer_phone}</span>
-                    </div>
-                    {order.address && (
-                      <div className="flex items-center gap-2 text-white/60">
-                        <MapPin className="w-4 h-4 text-[#c9a962]" />
-                        <span className="font-inter">{order.address}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2 text-white/60">
-                      <Clock className="w-4 h-4 text-[#c9a962]" />
-                      <span className="font-inter">
-                        {order.created_date && format(new Date(order.created_date), 'MMM d, yyyy h:mm a')}
-                      </span>
-                    </div>
-                  </div>
+      {/* Queue View */}
+      {queueView === 'active' && statusFilter === 'all' ? (
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          {Object.entries(ordersByStatus).map(([status, orders]) => (
+            <div key={status} className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-inter text-sm text-[#c9a962] uppercase tracking-wider">
+                  {status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                </h3>
+                <span className="font-inter text-xs text-white/50">
+                  {orders.length} orders
+                </span>
+              </div>
 
-                  {order.special_instructions && (
-                    <div className="p-3 rounded-lg bg-[#0a0a0a] border border-[#c9a962]/10">
-                      <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
-                        Special Instructions
-                      </p>
-                      <p className="font-inter text-sm text-white/70">
-                        {order.special_instructions}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Middle: Order Items */}
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Package className="w-4 h-4 text-[#c9a962]" />
-                    <h4 className="font-inter text-xs text-[#c9a962] uppercase tracking-wider">
-                      Order Items
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    {order.items?.map((item, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-[#0a0a0a]">
-                        <div className="flex-1">
-                          <p className="font-inter text-sm text-white">{item.name}</p>
-                          <p className="font-inter text-xs text-white/50">Qty: {item.quantity}</p>
-                        </div>
-                        <p className="font-inter text-sm text-[#c9a962]">
-                          KES {(item.price * item.quantity).toLocaleString()}
+              <div className="space-y-2">
+                {orders.map((order) => (
+                  <motion.div
+                    key={order.id}
+                    layout
+                    className="bg-[#1a1a1a] rounded-xl p-4 border border-[#c9a962]/10 hover:border-[#c9a962]/30 transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-inter text-sm text-white font-medium">
+                          {order.customer_name}
+                        </p>
+                        <p className="font-inter text-xs text-[#c9a962] font-mono">
+                          {order.order_reference}
                         </p>
                       </div>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-4 pt-4 border-t border-[#c9a962]/10">
-                    <div className="flex items-center justify-between">
-                      <span className="font-playfair text-lg text-white">Total</span>
-                      <span className="font-playfair text-2xl text-[#c9a962]">
-                        KES {order.total_amount?.toLocaleString()}
-                      </span>
+                      <p className="font-inter text-xs text-white/50">
+                        {format(new Date(order.created_date), 'h:mm a')}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="font-inter text-xs text-white/50">Payment Method</span>
-                      <span className="font-inter text-xs text-white/70">
-                        {order.payment_method?.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="font-inter text-xs text-white/50">Payment Status</span>
-                      <span className={`font-inter text-xs px-2 py-0.5 rounded-full ${
-                        order.payment_status === 'paid' ? 'bg-green-900/30 text-green-400' :
-                        order.payment_status === 'failed' ? 'bg-red-900/30 text-red-400' :
-                        'bg-gray-900/30 text-gray-400'
-                      }`}>
-                        {order.payment_status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Right: Status Control */}
-                <div className="flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-xs text-white/60 mb-3">
+                      <span>{order.items?.length || 0} items</span>
+                      <span className="text-[#c9a962]">KES {order.total_amount?.toLocaleString()}</span>
+                    </div>
+
+                    {order.assigned_staff_name && (
+                      <div className="flex items-center gap-2 mb-3 p-2 rounded bg-[#0a0a0a]">
+                        <UserCheck className="w-3 h-3 text-[#c9a962]" />
+                        <span className="font-inter text-xs text-white/70">
+                          {order.assigned_staff_name}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      {!order.assigned_staff_id && status === 'pending' && (
+                        <LuxuryButton
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            setSelectedOrder(order);
+                            setAssignDialogOpen(true);
+                          }}
+                          className="flex-1 text-xs"
+                        >
+                          <UserCheck className="w-3 h-3 mr-1" />
+                          Assign
+                        </LuxuryButton>
+                      )}
+                      
+                      <LuxuryButton
+                        size="sm"
+                        onClick={() => autoProgressOrder(order)}
+                        className="flex-1 text-xs"
+                        disabled={status === 'out_for_delivery'}
+                      >
+                        <Play className="w-3 h-3 mr-1" />
+                        Next
+                      </LuxuryButton>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {orders.length === 0 && (
+                  <div className="text-center py-8 text-white/30 text-xs">
+                    No orders
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        // Detailed List View
+        isLoading ? (
+          <div className="flex justify-center py-12">
+            <div className="w-8 h-8 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="text-center py-12">
+            <ShoppingCart className="w-12 h-12 text-[#c9a962]/30 mx-auto mb-4" />
+            <p className="font-inter text-white/50">No orders found</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredOrders.map((order, index) => (
+              <motion.div
+                key={order.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Customer Info */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-playfair text-xl text-white mb-1">
+                        {order.customer_name}
+                      </h3>
+                      <p className="font-inter text-xs text-[#c9a962] font-mono">
+                        {order.order_reference}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-white/60">
+                        <Mail className="w-4 h-4 text-[#c9a962]" />
+                        <span className="font-inter">{order.customer_email}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/60">
+                        <Phone className="w-4 h-4 text-[#c9a962]" />
+                        <span className="font-inter">{order.customer_phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/60">
+                        <Clock className="w-4 h-4 text-[#c9a962]" />
+                        <span className="font-inter">
+                          {format(new Date(order.created_date), 'MMM d, yyyy h:mm a')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {order.assigned_staff_name && (
+                      <div className="p-3 rounded-lg bg-[#0a0a0a] border border-[#c9a962]/10">
+                        <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
+                          Assigned To
+                        </p>
+                        <p className="font-inter text-sm text-white/70">
+                          {order.assigned_staff_name}
+                        </p>
+                      </div>
+                    )}
+
+                    {order.special_instructions && (
+                      <div className="p-3 rounded-lg bg-[#0a0a0a] border border-[#c9a962]/10">
+                        <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
+                          Special Instructions
+                        </p>
+                        <p className="font-inter text-sm text-white/70">
+                          {order.special_instructions}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Order Items */}
                   <div>
-                    <h4 className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">
-                      Order Status
-                    </h4>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Package className="w-4 h-4 text-[#c9a962]" />
+                      <h4 className="font-inter text-xs text-[#c9a962] uppercase tracking-wider">
+                        Order Items
+                      </h4>
+                    </div>
+                    <div className="space-y-2">
+                      {order.items?.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-[#0a0a0a]">
+                          <div className="flex-1">
+                            <p className="font-inter text-sm text-white">{item.name}</p>
+                            <p className="font-inter text-xs text-white/50">Qty: {item.quantity}</p>
+                          </div>
+                          <p className="font-inter text-sm text-[#c9a962]">
+                            KES {(item.price * item.quantity).toLocaleString()}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-4 pt-4 border-t border-[#c9a962]/10">
+                      <div className="flex items-center justify-between">
+                        <span className="font-playfair text-lg text-white">Total</span>
+                        <span className="font-playfair text-2xl text-[#c9a962]">
+                          KES {order.total_amount?.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-3">
                     <Select
                       value={order.status}
-                      onValueChange={(status) => updateStatusMutation.mutate({ id: order.id, status })}
+                      onValueChange={(status) => updateOrderMutation.mutate({ id: order.id, data: { status } })}
                     >
                       <SelectTrigger className="w-full bg-[#0a0a0a] border-[#c9a962]/20 text-white">
                         <SelectValue />
@@ -206,27 +382,81 @@ export default function OrdersManager() {
                       <SelectContent className="bg-[#1a1a1a] border-[#c9a962]/20">
                         {statusOptions.map(status => (
                           <SelectItem key={status} value={status}>
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                            {status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
 
-                  <div className={`mt-4 px-4 py-3 rounded-xl text-center border ${statusColors[order.status] || statusColors.pending}`}>
-                    <p className="font-inter text-xs uppercase tracking-wider">
-                      Current Status
-                    </p>
-                    <p className="font-playfair text-lg mt-1">
-                      {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
-                    </p>
+                    {!order.assigned_staff_id && (
+                      <LuxuryButton
+                        variant="secondary"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setAssignDialogOpen(true);
+                        }}
+                      >
+                        <UserCheck className="w-4 h-4 mr-2" />
+                        Assign Staff
+                      </LuxuryButton>
+                    )}
+
+                    <LuxuryButton onClick={() => autoProgressOrder(order)}>
+                      <Play className="w-4 h-4 mr-2" />
+                      Auto Progress
+                    </LuxuryButton>
+
+                    <div className={`px-4 py-3 rounded-xl text-center border ${statusColors[order.status]}`}>
+                      <p className="font-inter text-xs uppercase tracking-wider">
+                        {order.status?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )
       )}
+
+      {/* Assign Staff Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent className="bg-[#1a1a1a] border-[#c9a962]/20 text-white">
+          <DialogHeader>
+            <DialogTitle className="font-playfair text-2xl">Assign Staff Member</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <p className="font-inter text-sm text-white/70">
+              Select a staff member to handle this order
+            </p>
+
+            {availableStaff.length === 0 ? (
+              <p className="text-center py-4 text-white/50 text-sm">
+                No available staff members
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {availableStaff.map((member) => (
+                  <button
+                    key={member.id}
+                    onClick={() => assignStaffMutation.mutate({
+                      orderId: selectedOrder?.id,
+                      staffId: member.id
+                    })}
+                    className="w-full p-4 rounded-xl bg-[#0a0a0a] border border-[#c9a962]/10 hover:border-[#c9a962]/30 transition-all text-left"
+                  >
+                    <p className="font-inter text-white font-medium">{member.name}</p>
+                    <p className="font-inter text-xs text-[#c9a962]">
+                      {member.role?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

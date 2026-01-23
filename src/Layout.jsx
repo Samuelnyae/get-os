@@ -53,6 +53,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Menu', page: 'Menu' },
     { name: 'Drinks', page: 'Drinks' },
     { name: 'Customize', page: 'CustomFood' },
+    { name: 'Track Order', page: 'OrderTracking' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
     ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),

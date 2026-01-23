@@ -15,6 +15,7 @@ import OrdersManager from '@/components/admin/OrdersManager';
 import FeedbackViewer from '@/components/admin/FeedbackViewer';
 import DashboardStats from '@/components/admin/DashboardStats';
 import AIInsights from '@/components/admin/AIInsights';
+import StaffManager from '@/components/admin/StaffManager';
 import LuxuryButton from '@/components/common/LuxuryButton';
 
 export default function Admin() {
@@ -66,8 +67,9 @@ export default function Admin() {
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
+    { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
+    { id: 'staff', label: 'Staff', icon: User },
     { id: 'menu', label: 'Menu Items', icon: Utensils },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
   ];
@@ -117,8 +119,9 @@ export default function Admin() {
         >
           {activeTab === 'dashboard' && <DashboardStats />}
           {activeTab === 'insights' && <AIInsights />}
-          {activeTab === 'menu' && <MenuItemsManager />}
           {activeTab === 'orders' && <OrdersManager />}
+          {activeTab === 'staff' && <StaffManager />}
+          {activeTab === 'menu' && <MenuItemsManager />}
           {activeTab === 'custom' && <CustomRequestsManager />}
           {activeTab === 'feedback' && <FeedbackViewer />}
         </motion.div>
