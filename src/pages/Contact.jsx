@@ -31,27 +31,31 @@ export default function Contact() {
     setIsSubmitting(true);
     
     try {
+      // Send confirmation email to customer
       await base44.integrations.Core.SendEmail({
-        to: 'contact@hermanasbites.com',
-        subject: `Contact Form: ${formData.subject || 'New Inquiry'}`,
+        to: formData.email,
+        subject: `Hermanas Bites - We Received Your Message`,
         body: `
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
+Dear ${formData.name},
 
-Message:
+Thank you for contacting Hermanas Bites! We have received your message and will get back to you within 24 hours.
+
+Your Message:
 ${formData.message}
+
+Best regards,
+Hermanas Bites - Seven Star Dining
         `
       });
 
-      toast.success('Message sent successfully!', {
-        description: 'We will get back to you within 24 hours.'
+      toast.success('Message received!', {
+        description: 'Check your email for confirmation. We will respond within 24 hours.'
       });
       
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error) {
       console.error('Email error:', error);
-      toast.error('Failed to send message. Please try again.');
+      toast.error('Failed to send message. Please check your email address and try again.');
     } finally {
       setIsSubmitting(false);
     }
