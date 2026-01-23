@@ -4,18 +4,21 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Package, Clock, CheckCircle, Truck, Home, User, 
-  Mail, Phone, MapPin, ChefHat, Search 
+  Mail, Phone, MapPin, ChefHat, Search, Bell 
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import LuxuryButton from '@/components/common/LuxuryButton';
 import SectionHeader from '@/components/common/SectionHeader';
 import { format } from 'date-fns';
+import { useNotifications, requestNotificationPermission } from '@/components/notifications/NotificationManager';
+import { toast } from 'sonner';
 
 export default function OrderTracking() {
   const [orderRef, setOrderRef] = useState('');
   const [email, setEmail] = useState('');
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const { sendNotification, permission } = useNotifications();
 
   const { data: orders = [] } = useQuery({
     queryKey: ['all-orders'],
@@ -27,14 +30,62 @@ export default function OrderTracking() {
   useEffect(() => {
     if (!trackedOrder) return;
 
+    const previousStatus = trackedOrder.status;
+
     const unsubscribe = base44.entities.Order.subscribe((event) => {
-      if (event.id === trackedOrder.id) {
-        setTrackedOrder(event.data);
+      if (event.id === trackedOrder.id && event.type === 'update') {
+        const newOrder = event.data;
+        
+        // Check if status changed
+        if (newOrder.status !== previousStatus) {
+          const statusMessages = {
+            confirmed: {
+              title: '✅ Order Confirmed!',
+              body: 'Your order has been confirmed and is being prepared.',
+              icon: '✅',
+            },
+            preparing: {
+              title: '👨‍🍳 Order Being Prepared',
+              body: 'Our chefs are preparing your delicious meal!',
+              icon: '👨‍🍳',
+            },
+            ready: {
+              title: '✨ Order Ready!',
+              body: 'Your order is ready for pickup/delivery.',
+              icon: '✨',
+            },
+            out_for_delivery: {
+              title: '🚚 Out for Delivery',
+              body: 'Your order is on its way to you!',
+              icon: '🚚',
+            },
+            delivered: {
+              title: '🎉 Order Delivered!',
+              body: 'Enjoy your meal from Hermanas Bites!',
+              icon: '🎉',
+            },
+          };
+
+          const notification = statusMessages[newOrder.status];
+          if (notification) {
+            sendNotification(notification.title, {
+              body: notification.body,
+              tag: `order-${newOrder.id}`,
+              requireInteraction: newOrder.status === 'delivered',
+              toastOptions: {
+                icon: notification.icon,
+                duration: 6000,
+              },
+            });
+          }
+        }
+        
+        setTrackedOrder(newOrder);
       }
     });
 
     return unsubscribe;
-  }, [trackedOrder?.id]);
+  }, [trackedOrder?.id, trackedOrder?.status, sendNotification]);
 
   const handleTrackOrder = async () => {
     if (!orderRef || !email) return;
@@ -49,8 +100,15 @@ export default function OrderTracking() {
       
       if (found) {
         setTrackedOrder(found);
+        
+        // Request notification permission when tracking starts
+        if (permission !== 'granted') {
+          requestNotificationPermission();
+        }
+        
+        toast.success('Order found! You will receive real-time updates.');
       } else {
-        alert('Order not found. Please check your order reference and email.');
+        toast.error('Order not found. Please check your order reference and email.');
       }
     } catch (error) {
       alert('Error tracking order. Please try again.');
@@ -146,13 +204,25 @@ export default function OrderTracking() {
                     {trackedOrder.order_reference}
                   </p>
                 </div>
-                <LuxuryButton
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setTrackedOrder(null)}
-                >
-                  Track Another Order
-                </LuxuryButton>
+<div className="flex gap-2">
+                  {permission !== 'granted' && (
+                    <LuxuryButton
+                      variant="ghost"
+                      size="sm"
+                      onClick={requestNotificationPermission}
+                    >
+                      <Bell className="w-4 h-4 mr-2" />
+                      Enable Alerts
+                    </LuxuryButton>
+                  )}
+                  <LuxuryButton
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setTrackedOrder(null)}
+                  >
+                    Track Another Order
+                  </LuxuryButton>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">

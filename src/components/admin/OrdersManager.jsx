@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   ShoppingCart, User, Mail, Phone, Clock, Package, 
-  UserCheck, Play, Pause, CheckCircle 
+  UserCheck, Play, Pause, CheckCircle, Bell 
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import LuxuryButton from '../common/LuxuryButton';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { useNotifications, requestNotificationPermission } from '@/components/notifications/NotificationManager';
 
 export default function OrdersManager() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,7 +20,9 @@ export default function OrdersManager() {
   const [queueView, setQueueView] = useState('active'); // active, completed
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [previousOrderCount, setPreviousOrderCount] = useState(0);
   const queryClient = useQueryClient();
+  const { sendNotification, permission } = useNotifications();
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['admin-orders-list'],
@@ -32,13 +35,33 @@ export default function OrdersManager() {
     initialData: [],
   });
 
-  // Real-time order updates
+  // Real-time order updates with notifications
   useEffect(() => {
     const unsubscribe = base44.entities.Order.subscribe((event) => {
+      if (event.type === 'create') {
+        // New order notification
+        const order = event.data;
+        sendNotification('🔔 New Order Received!', {
+          body: `Order ${order.order_reference} from ${order.customer_name} - KES ${order.total_amount?.toLocaleString()}`,
+          tag: `new-order-${order.id}`,
+          requireInteraction: true,
+          toastOptions: {
+            duration: 8000,
+            action: {
+              label: 'View',
+              onClick: () => {
+                setQueueView('active');
+                setStatusFilter('pending');
+              },
+            },
+          },
+        });
+      }
+      
       queryClient.invalidateQueries(['admin-orders-list']);
     });
     return unsubscribe;
-  }, [queryClient]);
+  }, [queryClient, sendNotification]);
 
   const updateOrderMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Order.update(id, data),
@@ -61,9 +84,18 @@ export default function OrdersManager() {
         status: 'confirmed',
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['admin-orders-list']);
       setAssignDialogOpen(false);
+      
+      // Notify about staff assignment
+      const order = selectedOrder;
+      sendNotification('👨‍🍳 Staff Assigned', {
+        body: `${data.assigned_staff_name} assigned to order ${order?.order_reference}`,
+        tag: `staff-assigned-${order?.id}`,
+        toastOptions: { duration: 4000 },
+      });
+      
       toast.success('Staff assigned successfully');
     },
   });
@@ -154,6 +186,16 @@ export default function OrdersManager() {
           >
             Completed
           </LuxuryButton>
+          {permission !== 'granted' && (
+            <LuxuryButton
+              variant="ghost"
+              onClick={requestNotificationPermission}
+              size="sm"
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Enable Alerts
+            </LuxuryButton>
+          )}
         </div>
 
         <Input
