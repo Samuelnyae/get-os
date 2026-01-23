@@ -69,10 +69,10 @@ Dear ${orderData.customer_name},
 Thank you for your order at Hermanas Bites!
 
 Order Reference: ${orderData.order_reference}
-Total Amount: $${orderData.total_amount.toFixed(2)}
+Total Amount: KES ${orderData.total_amount.toLocaleString()}
 
 Order Details:
-${orderData.items.map(item => `- ${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}
+${orderData.items.map(item => `- ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`).join('\n')}
 
 We will prepare your order with love and care.
 
@@ -212,7 +212,7 @@ Hermanas Bites - Seven Star Dining
                       />
                       <div className="flex-1">
                         <h3 className="font-playfair text-lg text-white mb-1">{item.name}</h3>
-                        <p className="font-inter text-[#c9a962]">${item.price?.toFixed(2)}</p>
+                        <p className="font-inter text-[#c9a962]">KES {item.price?.toLocaleString()}</p>
                         <div className="flex items-center gap-4 mt-3">
                           <div className="flex items-center gap-2 bg-[#0a0a0a] rounded-full p-1 border border-[#c9a962]/20">
                             <button
@@ -364,7 +364,7 @@ Hermanas Bites - Seven Star Dining
                 {cart.map((item, index) => (
                   <div key={index} className="flex justify-between text-sm">
                     <span className="font-inter text-white/70">{item.name} x{item.quantity}</span>
-                    <span className="font-inter text-white">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-inter text-white">KES {(item.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
