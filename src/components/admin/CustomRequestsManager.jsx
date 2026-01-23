@@ -281,7 +281,7 @@ Hermanas Bites - Seven Star Dining
                 <div className="mb-4 p-3 rounded-lg bg-[#c9a962]/10 border border-[#c9a962]/30">
                   <p className="font-inter text-xs text-[#c9a962] mb-1">Proposed Price</p>
                   <p className="font-playfair text-2xl text-[#c9a962]">
-                    ${request.proposed_price.toFixed(2)}
+                    KES {request.proposed_price.toLocaleString()}
                   </p>
                 </div>
               )}
@@ -362,14 +362,14 @@ Hermanas Bites - Seven Star Dining
 
               <div className="mb-6">
                 <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                  Proposed Price (USD)
+                  Proposed Price (KES)
                 </label>
                 <Input
                   type="number"
-                  step="0.01"
+                  step="1"
                   value={proposedPrice}
                   onChange={(e) => setProposedPrice(e.target.value)}
-                  placeholder="0.00"
+                  placeholder="0"
                   className="bg-[#0a0a0a] border-[#c9a962]/20 text-white text-2xl font-playfair"
                 />
               </div>

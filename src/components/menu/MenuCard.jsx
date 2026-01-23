@@ -81,7 +81,7 @@ export default function MenuCard({ item, onAddToCart }) {
                 {item.name}
               </h3>
               <span className="font-inter text-lg text-[#c9a962] font-semibold">
-                ${item.price?.toFixed(2)}
+                KES {item.price?.toLocaleString()}
               </span>
             </div>
             <p className="font-inter text-sm text-white/50 line-clamp-2 leading-relaxed">

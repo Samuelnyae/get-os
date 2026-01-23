@@ -158,7 +158,7 @@ export default function OrdersManager() {
                           <p className="font-inter text-xs text-white/50">Qty: {item.quantity}</p>
                         </div>
                         <p className="font-inter text-sm text-[#c9a962]">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          KES {(item.price * item.quantity).toLocaleString()}
                         </p>
                       </div>
                     ))}
@@ -168,7 +168,7 @@ export default function OrdersManager() {
                     <div className="flex items-center justify-between">
                       <span className="font-playfair text-lg text-white">Total</span>
                       <span className="font-playfair text-2xl text-[#c9a962]">
-                        ${order.total_amount?.toFixed(2)}
+                        KES {order.total_amount?.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between mt-1">

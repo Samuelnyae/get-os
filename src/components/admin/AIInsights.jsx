@@ -82,7 +82,7 @@ export default function AIInsights() {
     const prompt = `You are a restaurant business analyst AI for Hermanas Bites, a seven-star luxury dining establishment.
 
 Based on the following data:
-- Total Revenue: $${totalRevenue.toFixed(2)}
+- Total Revenue: KES ${totalRevenue.toLocaleString()}
 - Total Orders: ${orders.length}
 - Top Selling Items: ${topSellingItems.join(', ')}
 - Average Customer Rating: ${averageRating}/5

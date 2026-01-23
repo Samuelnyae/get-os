@@ -210,7 +210,7 @@ export default function FoodDetails() {
             {/* Name & Price */}
             <div>
               <h1 className="font-playfair text-4xl md:text-5xl text-white mb-2">{item.name}</h1>
-              <p className="font-playfair text-3xl text-[#c9a962]">${item.price?.toFixed(2)}</p>
+              <p className="font-playfair text-3xl text-[#c9a962]">KES {item.price?.toLocaleString()}</p>
             </div>
 
             {/* Description */}
@@ -303,7 +303,7 @@ export default function FoodDetails() {
               
               <LuxuryButton onClick={addToCart} className="flex-1 sm:flex-none">
                 <ShoppingCart className="inline w-4 h-4 mr-2" />
-                Add to Order • ${(item.price * quantity).toFixed(2)}
+                Add to Order • KES {(item.price * quantity).toLocaleString()}
               </LuxuryButton>
             </div>
           </div>

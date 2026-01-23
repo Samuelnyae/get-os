@@ -239,7 +239,7 @@ Hermanas Bites - Seven Star Dining
                       </div>
                       <div className="text-right">
                         <p className="font-playfair text-xl text-white">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          KES {(item.price * item.quantity).toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -372,15 +372,15 @@ Hermanas Bites - Seven Star Dining
               <div className="border-t border-[#c9a962]/20 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-inter text-white/50">Subtotal</span>
-                  <span className="font-inter text-white">${subtotal.toFixed(2)}</span>
+                  <span className="font-inter text-white">KES {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="font-inter text-white/50">Tax (10%)</span>
-                  <span className="font-inter text-white">${tax.toFixed(2)}</span>
+                  <span className="font-inter text-white">KES {tax.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between pt-3 border-t border-[#c9a962]/20">
                   <span className="font-playfair text-lg text-white">Total</span>
-                  <span className="font-playfair text-2xl text-[#c9a962]">${total.toFixed(2)}</span>
+                  <span className="font-playfair text-2xl text-[#c9a962]">KES {total.toLocaleString()}</span>
                 </div>
               </div>
 

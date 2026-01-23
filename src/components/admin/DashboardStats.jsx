@@ -45,7 +45,7 @@ export default function DashboardStats() {
     { 
       icon: DollarSign, 
       label: 'Total Revenue', 
-      value: `$${totalRevenue.toFixed(2)}`,
+      value: `KES ${totalRevenue.toLocaleString()}`,
       change: '+12.5%',
       color: 'text-green-400'
     },
@@ -151,7 +151,7 @@ export default function DashboardStats() {
                   {order.status}
                 </span>
                 <p className="font-playfair text-lg text-[#c9a962]">
-                  ${order.total_amount?.toFixed(2)}
+                  KES {order.total_amount?.toLocaleString()}
                 </p>
               </div>
             </motion.div>
