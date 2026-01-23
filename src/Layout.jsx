@@ -41,6 +41,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Customize', page: 'CustomFood' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
+    { name: 'Dashboard', page: 'Admin' },
   ];
 
   const formatDate = (date) => {
