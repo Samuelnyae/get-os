@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
-import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Layout({ children, currentPageName }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,17 +54,20 @@ export default function Layout({ children, currentPageName }) {
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
 
-  const navLinks = [
+  const mainNavLinks = [
     { name: 'Home', page: 'Home' },
     { name: 'Menu', page: 'Menu' },
     { name: 'Drinks', page: 'Drinks' },
-    { name: 'Table Dining', page: 'TableDining' },
-    { name: 'Reservations', page: 'Reservations' },
-    { name: 'Customize', page: 'CustomFood' },
     { name: 'Track Order', page: 'OrderTracking' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
     ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),
+  ];
+
+  const servicesLinks = [
+    { name: 'Table Dining', page: 'TableDining' },
+    { name: 'Reservations', page: 'Reservations' },
+    { name: 'Customize Order', page: 'CustomFood' },
   ];
 
   const formatDate = (date) => {
@@ -131,7 +140,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-8">
-              {navLinks.map((link) => (
+              {mainNavLinks.map((link) => (
                 <Link
                   key={link.page}
                   to={createPageUrl(link.page)}
@@ -142,6 +151,28 @@ export default function Layout({ children, currentPageName }) {
                   {link.name}
                 </Link>
               ))}
+
+              {/* Services Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
+                  ['TableDining', 'Reservations', 'CustomFood'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
+                }`}>
+                  Services
+                  <ChevronDown className="w-3 h-3" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#1a1a1a] border-[#c9a962]/20">
+                  {servicesLinks.map((link) => (
+                    <DropdownMenuItem key={link.page} asChild>
+                      <Link
+                        to={createPageUrl(link.page)}
+                        className="font-inter text-sm text-white/80 hover:text-[#c9a962] cursor-pointer"
+                      >
+                        {link.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Right Section */}
@@ -186,7 +217,7 @@ export default function Layout({ children, currentPageName }) {
               className="lg:hidden glass-effect border-t border-[#c9a962]/20"
             >
               <div className="px-4 py-6 space-y-4">
-                {navLinks.map((link) => (
+                {mainNavLinks.map((link) => (
                   <Link
                     key={link.page}
                     to={createPageUrl(link.page)}
@@ -198,6 +229,25 @@ export default function Layout({ children, currentPageName }) {
                     {link.name}
                   </Link>
                 ))}
+
+                <div className="pt-2 pb-2">
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">Services</p>
+                  <div className="space-y-3 pl-3">
+                    {servicesLinks.map((link) => (
+                      <Link
+                        key={link.page}
+                        to={createPageUrl(link.page)}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`block font-inter text-base transition-all ${
+                          currentPageName === link.page ? 'text-[#c9a962]' : 'text-white/70'
+                        }`}
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="pt-4 border-t border-[#c9a962]/20">
                   <p className="text-xs text-[#c9a962]/70">{formatDate(currentTime)}</p>
                   <p className="text-sm text-white/90">{formatTime(currentTime)}</p>
@@ -230,7 +280,16 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Quick Links</h3>
               <div className="space-y-3">
-                {navLinks.map((link) => (
+                {mainNavLinks.map((link) => (
+                  <Link
+                    key={link.page}
+                    to={createPageUrl(link.page)}
+                    className="block font-inter text-sm text-white/60 hover:text-[#c9a962] transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                {servicesLinks.map((link) => (
                   <Link
                     key={link.page}
                     to={createPageUrl(link.page)}
