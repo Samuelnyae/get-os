@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -12,6 +12,7 @@ import SectionHeader from '@/components/common/SectionHeader';
 import MenuItemsManager from '@/components/admin/MenuItemsManager';
 import CustomRequestsManager from '@/components/admin/CustomRequestsManager';
 import OrdersManager from '@/components/admin/OrdersManager';
+import ReservationsManager from '@/components/admin/ReservationsManager';
 import FeedbackViewer from '@/components/admin/FeedbackViewer';
 import DashboardStats from '@/components/admin/DashboardStats';
 import AIInsights from '@/components/admin/AIInsights';
@@ -69,6 +70,7 @@ export default function Admin() {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
+    { id: 'reservations', label: 'Reservations', icon: Calendar },
     { id: 'staff', label: 'Staff', icon: User },
     { id: 'stock', label: 'Stock Alerts', icon: Package },
     { id: 'menu', label: 'Menu Items', icon: Utensils },
@@ -122,6 +124,7 @@ export default function Admin() {
           {activeTab === 'dashboard' && <DashboardStats />}
           {activeTab === 'insights' && <AIInsights />}
           {activeTab === 'orders' && <OrdersManager />}
+          {activeTab === 'reservations' && <ReservationsManager />}
           {activeTab === 'staff' && <StaffManager />}
           {activeTab === 'stock' && <LowStockAlerts />}
           {activeTab === 'menu' && <MenuItemsManager />}
