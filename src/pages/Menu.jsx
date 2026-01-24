@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import MenuCard from '../components/menu/MenuCard';
-import AIMenuSuggestions from '../components/menu/AIMenuSuggestions';
+import PersonalizedRecommendations from '../components/menu/PersonalizedRecommendations';
+import DailySpecials from '../components/menu/DailySpecials';
 import SectionHeader from '../components/common/SectionHeader';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
@@ -102,10 +103,17 @@ export default function Menu() {
           </div>
         )}
 
-        {/* AI Suggestions */}
+        {/* Daily Specials */}
         {!isLoading && !searchQuery && activeCategory === 'all' && (
           <div className="mb-12">
-            <AIMenuSuggestions cartItems={cartItems} />
+            <DailySpecials />
+          </div>
+        )}
+
+        {/* Personalized Recommendations */}
+        {!isLoading && !searchQuery && activeCategory === 'all' && (
+          <div className="mb-12">
+            <PersonalizedRecommendations cartItems={cartItems} />
           </div>
         )}
 
