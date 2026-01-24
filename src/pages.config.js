@@ -8,8 +8,8 @@ import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Order from './pages/Order';
 import OrderTracking from './pages/OrderTracking';
-import TableDining from './pages/TableDining';
 import Reservations from './pages/Reservations';
+import TableDining from './pages/TableDining';
 import __Layout from './Layout.jsx';
 
 
@@ -24,8 +24,8 @@ export const PAGES = {
     "Menu": Menu,
     "Order": Order,
     "OrderTracking": OrderTracking,
-    "TableDining": TableDining,
     "Reservations": Reservations,
+    "TableDining": TableDining,
 }
 
 export const pagesConfig = {
