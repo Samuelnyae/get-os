@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -19,6 +19,7 @@ import AIInsights from '@/components/admin/AIInsights';
 import AIMarketingCampaigns from '@/components/admin/AIMarketingCampaigns';
 import AIOrderFulfillment from '@/components/admin/AIOrderFulfillment';
 import AIInventoryManagement from '@/components/admin/AIInventoryManagement';
+import AIFeedbackAnalysis from '@/components/admin/AIFeedbackAnalysis';
 import StaffManager from '@/components/admin/StaffManager';
 import LowStockAlerts from '@/components/admin/LowStockAlerts';
 import LuxuryButton from '@/components/common/LuxuryButton';
@@ -74,6 +75,7 @@ export default function Admin() {
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
     { id: 'inventory', label: 'AI Inventory', icon: TrendingUp },
+    { id: 'feedbackai', label: 'AI Feedback', icon: Brain },
     { id: 'marketing', label: 'AI Marketing', icon: Mail },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
@@ -131,6 +133,7 @@ export default function Admin() {
           {activeTab === 'insights' && <AIInsights />}
           {activeTab === 'fulfillment' && <AIOrderFulfillment />}
           {activeTab === 'inventory' && <AIInventoryManagement />}
+          {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
           {activeTab === 'marketing' && <AIMarketingCampaigns />}
           {activeTab === 'orders' && <OrdersManager />}
           {activeTab === 'reservations' && <ReservationsManager />}
