@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -18,6 +18,7 @@ import DashboardStats from '@/components/admin/DashboardStats';
 import AIInsights from '@/components/admin/AIInsights';
 import AIMarketingCampaigns from '@/components/admin/AIMarketingCampaigns';
 import AIOrderFulfillment from '@/components/admin/AIOrderFulfillment';
+import AIInventoryManagement from '@/components/admin/AIInventoryManagement';
 import StaffManager from '@/components/admin/StaffManager';
 import LowStockAlerts from '@/components/admin/LowStockAlerts';
 import LuxuryButton from '@/components/common/LuxuryButton';
@@ -72,6 +73,7 @@ export default function Admin() {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
+    { id: 'inventory', label: 'AI Inventory', icon: TrendingUp },
     { id: 'marketing', label: 'AI Marketing', icon: Mail },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
@@ -128,6 +130,7 @@ export default function Admin() {
           {activeTab === 'dashboard' && <DashboardStats />}
           {activeTab === 'insights' && <AIInsights />}
           {activeTab === 'fulfillment' && <AIOrderFulfillment />}
+          {activeTab === 'inventory' && <AIInventoryManagement />}
           {activeTab === 'marketing' && <AIMarketingCampaigns />}
           {activeTab === 'orders' && <OrdersManager />}
           {activeTab === 'reservations' && <ReservationsManager />}
