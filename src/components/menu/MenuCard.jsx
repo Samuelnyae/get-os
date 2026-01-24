@@ -27,6 +27,13 @@ export default function MenuCard({ item, onAddToCart }) {
     localStorage.setItem('hermanas_cart', JSON.stringify(cart));
     window.dispatchEvent(new Event('cartUpdated'));
     
+    // Track viewed items for browsing behavior
+    const viewed = JSON.parse(localStorage.getItem('hermanas_viewed_items') || '[]');
+    if (!viewed.includes(item.name)) {
+      viewed.unshift(item.name);
+      localStorage.setItem('hermanas_viewed_items', JSON.stringify(viewed.slice(0, 20)));
+    }
+    
     if (onAddToCart) onAddToCart(item);
   };
 
