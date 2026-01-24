@@ -88,14 +88,17 @@ export default function OrderTracking() {
   }, [trackedOrder?.id, trackedOrder?.status, sendNotification]);
 
   const handleTrackOrder = async () => {
-    if (!orderRef || !email) return;
+    if (!orderRef || !email) {
+      toast.error('Please enter both order reference and email');
+      return;
+    }
     
     setIsSearching(true);
     try {
       const allOrders = await base44.entities.Order.list('-created_date', 500);
       const found = allOrders.find(
-        order => order.order_reference?.toLowerCase() === orderRef.toLowerCase() && 
-                 order.customer_email?.toLowerCase() === email.toLowerCase()
+        order => order.order_reference?.toLowerCase() === orderRef.trim().toLowerCase() && 
+                 order.customer_email?.toLowerCase() === email.trim().toLowerCase()
       );
       
       if (found) {
@@ -109,9 +112,12 @@ export default function OrderTracking() {
         toast.success('Order found! You will receive real-time updates.');
       } else {
         toast.error('Order not found. Please check your order reference and email.');
+        setTrackedOrder(null);
       }
     } catch (error) {
-      alert('Error tracking order. Please try again.');
+      console.error('Error tracking order:', error);
+      toast.error('Error tracking order. Please try again.');
+      setTrackedOrder(null);
     } finally {
       setIsSearching(false);
     }
