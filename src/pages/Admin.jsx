@@ -20,6 +20,7 @@ import AIMarketingCampaigns from '@/components/admin/AIMarketingCampaigns';
 import AIOrderFulfillment from '@/components/admin/AIOrderFulfillment';
 import AIInventoryManagement from '@/components/admin/AIInventoryManagement';
 import AIFeedbackAnalysis from '@/components/admin/AIFeedbackAnalysis';
+import AITableManagement from '@/components/admin/AITableManagement';
 import StaffManager from '@/components/admin/StaffManager';
 import LowStockAlerts from '@/components/admin/LowStockAlerts';
 import LuxuryButton from '@/components/common/LuxuryButton';
@@ -76,6 +77,7 @@ export default function Admin() {
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
     { id: 'inventory', label: 'AI Inventory', icon: TrendingUp },
     { id: 'feedbackai', label: 'AI Feedback', icon: Brain },
+    { id: 'tables', label: 'AI Table Mgmt', icon: Calendar },
     { id: 'marketing', label: 'AI Marketing', icon: Mail },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
@@ -134,6 +136,7 @@ export default function Admin() {
           {activeTab === 'fulfillment' && <AIOrderFulfillment />}
           {activeTab === 'inventory' && <AIInventoryManagement />}
           {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
+          {activeTab === 'tables' && <AITableManagement />}
           {activeTab === 'marketing' && <AIMarketingCampaigns />}
           {activeTab === 'orders' && <OrdersManager />}
           {activeTab === 'reservations' && <ReservationsManager />}

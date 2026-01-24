@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
+import AIRecommendedSlots from '../components/reservations/AIRecommendedSlots';
 import { toast } from 'sonner';
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
 
@@ -287,11 +288,22 @@ Hermanas Bites - Seven Star Dining
                   </div>
                 </div>
 
+                {/* AI Recommended Slots */}
+                {selectedDate && (
+                  <div className="mb-4">
+                    <AIRecommendedSlots 
+                      selectedDate={selectedDate}
+                      partySize={partySize}
+                      onSelectTime={setSelectedTime}
+                    />
+                  </div>
+                )}
+
                 {/* Time Slots */}
                 <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10">
                   <h3 className="font-playfair text-xl text-white mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-[#c9a962]" />
-                    Select Time
+                    All Available Times
                   </h3>
                   {!selectedDate ? (
                     <p className="font-inter text-sm text-white/50 text-center py-8">
