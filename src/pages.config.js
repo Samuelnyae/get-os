@@ -9,6 +9,7 @@ import Menu from './pages/Menu';
 import Order from './pages/Order';
 import OrderTracking from './pages/OrderTracking';
 import TableDining from './pages/TableDining';
+import Reservations from './pages/Reservations';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "Order": Order,
     "OrderTracking": OrderTracking,
     "TableDining": TableDining,
+    "Reservations": Reservations,
 }
 
 export const pagesConfig = {
