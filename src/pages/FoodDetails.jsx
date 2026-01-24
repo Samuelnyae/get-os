@@ -8,6 +8,8 @@ import {
   Star, Send, User
 } from 'lucide-react';
 import LuxuryButton from '../components/common/LuxuryButton';
+import AIMenuSuggestions from '../components/menu/AIMenuSuggestions';
+import EnhancedDescription from '../components/menu/EnhancedDescription';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
@@ -22,6 +24,7 @@ export default function FoodDetails() {
   const [newComment, setNewComment] = useState({ user_name: '', content: '', rating: 5 });
   const [hasLiked, setHasLiked] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [cartItems, setCartItems] = useState([]);
   
   const queryClient = useQueryClient();
 
@@ -33,6 +36,17 @@ export default function FoodDetails() {
   useEffect(() => {
     const likedItems = JSON.parse(localStorage.getItem('hermanas_likes') || '[]');
     setHasLiked(likedItems.includes(itemId));
+    
+    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    setCartItems(cart);
+    
+    const handleCartUpdate = () => {
+      const updatedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+      setCartItems(updatedCart);
+    };
+    
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, [itemId]);
 
   const { data: item, isLoading } = useQuery({
@@ -217,6 +231,12 @@ export default function FoodDetails() {
             <p className="font-cormorant text-xl text-white/70 leading-relaxed">
               {item.full_description || item.description}
             </p>
+
+            {/* AI Description Enhancement */}
+            <EnhancedDescription 
+              item={item} 
+              onUpdate={() => queryClient.invalidateQueries(['menu-item', itemId])}
+            />
 
             {/* Like Button */}
             <button
@@ -413,6 +433,11 @@ export default function FoodDetails() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* AI Recommendations */}
+        <div className="mt-20">
+          <AIMenuSuggestions currentItemId={itemId} cartItems={cartItems} />
         </div>
       </div>
     </div>

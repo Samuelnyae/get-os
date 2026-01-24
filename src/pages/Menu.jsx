@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import MenuCard from '../components/menu/MenuCard';
+import AIMenuSuggestions from '../components/menu/AIMenuSuggestions';
 import SectionHeader from '../components/common/SectionHeader';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 export default function Menu() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartItems, setCartItems] = useState([]);
 
   const { data: menuItems = [], isLoading } = useQuery({
     queryKey: ['menu-items'],
@@ -31,6 +33,19 @@ export default function Menu() {
                          item.description?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  useEffect(() => {
+    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    setCartItems(cart);
+    
+    const handleCartUpdate = () => {
+      const updatedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+      setCartItems(updatedCart);
+    };
+    
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
+  }, []);
 
   const handleAddToCart = (item) => {
     toast.success(`${item.name} added to cart`, {
@@ -84,6 +99,13 @@ export default function Menu() {
         {isLoading && (
           <div className="flex justify-center items-center py-20">
             <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* AI Suggestions */}
+        {!isLoading && !searchQuery && activeCategory === 'all' && (
+          <div className="mb-12">
+            <AIMenuSuggestions cartItems={cartItems} />
           </div>
         )}
 
