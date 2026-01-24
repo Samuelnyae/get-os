@@ -39,6 +39,7 @@ export default function MenuItemsManager() {
   const [spiceInput, setSpiceInput] = useState('');
   const [companionInput, setCompanionInput] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isGalleryUploading, setIsGalleryUploading] = useState(false);
 
   const queryClient = useQueryClient();
   const { sendNotification } = useNotifications();
@@ -174,6 +175,32 @@ export default function MenuItemsManager() {
     toast.success('Image uploaded');
   };
 
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    setIsGalleryUploading(true);
+    const uploadPromises = files.map(file => 
+      base44.integrations.Core.UploadFile({ file })
+    );
+    const results = await Promise.all(uploadPromises);
+    const urls = results.map(r => r.file_url);
+    
+    setFormData({ 
+      ...formData, 
+      gallery_images: [...formData.gallery_images, ...urls] 
+    });
+    setIsGalleryUploading(false);
+    toast.success(`${urls.length} image(s) added to gallery`);
+  };
+
+  const removeGalleryImage = (index) => {
+    setFormData({
+      ...formData,
+      gallery_images: formData.gallery_images.filter((_, i) => i !== index)
+    });
+  };
+
   const addItem = (type, input, setInput) => {
     if (input.trim()) {
       setFormData({
@@ -263,11 +290,27 @@ export default function MenuItemsManager() {
                 <p className="font-inter text-xs text-white/50 mb-3 line-clamp-2">
                   {item.description}
                 </p>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="px-2 py-1 rounded-full text-xs font-inter bg-[#c9a962]/20 text-[#c9a962]">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="px-2 py-1 rounded-full text-xs font-inter bg-[#c9a962]/20 text-[#c9a962] capitalize">
                     {item.category?.replace('_', ' ')}
                   </span>
+                  {item.dietary_tags?.slice(0, 2).map((tag, i) => (
+                    <span key={i} className="px-2 py-1 rounded-full text-xs font-inter bg-green-500/20 text-green-300">
+                      {tag}
+                    </span>
+                  ))}
+                  {item.dietary_tags?.length > 2 && (
+                    <span className="px-2 py-1 rounded-full text-xs font-inter bg-[#0a0a0a] text-white/50">
+                      +{item.dietary_tags.length - 2}
+                    </span>
+                  )}
                 </div>
+                {(item.ingredients?.length > 0 || item.spices?.length > 0) && (
+                  <p className="font-inter text-xs text-white/40 mb-3">
+                    {item.ingredients?.slice(0, 3).join(', ')}
+                    {item.ingredients?.length > 3 ? '...' : ''}
+                  </p>
+                )}
                 <div className="flex gap-2">
                   <LuxuryButton
                     variant="secondary"
@@ -408,6 +451,42 @@ export default function MenuItemsManager() {
                       <img src={formData.image_url} alt="Preview" className="w-20 h-20 rounded-lg object-cover" />
                     )}
                   </div>
+                </div>
+
+                {/* Gallery Images */}
+                <div>
+                  <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                    Gallery Images
+                  </label>
+                  <label className="cursor-pointer block mb-3">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-[#c9a962]/30 hover:border-[#c9a962]/60">
+                      {isGalleryUploading ? (
+                        <div className="w-5 h-5 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+                      ) : (
+                        <ImageIcon className="w-5 h-5 text-[#c9a962]/60" />
+                      )}
+                      <span className="font-inter text-sm text-white/50">
+                        Add gallery images
+                      </span>
+                    </div>
+                    <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} />
+                  </label>
+                  {formData.gallery_images.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2">
+                      {formData.gallery_images.map((url, i) => (
+                        <div key={i} className="relative group">
+                          <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-20 rounded-lg object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryImage(i)}
+                            className="absolute top-1 right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3 text-white" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Ingredients */}
