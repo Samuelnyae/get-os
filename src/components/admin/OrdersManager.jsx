@@ -158,6 +158,7 @@ export default function OrdersManager() {
     preparing: filteredOrders.filter(o => o.status === 'preparing'),
     ready: filteredOrders.filter(o => o.status === 'ready'),
     out_for_delivery: filteredOrders.filter(o => o.status === 'out_for_delivery'),
+    delivered: filteredOrders.filter(o => o.status === 'delivered'),
   };
 
   const statusColors = {
