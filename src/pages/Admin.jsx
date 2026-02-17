@@ -86,6 +86,7 @@ export default function Admin() {
     { id: 'menu', label: 'Menu Items', icon: Utensils },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
 
   return (
@@ -145,6 +146,7 @@ export default function Admin() {
           {activeTab === 'menu' && <MenuItemsManager />}
           {activeTab === 'custom' && <CustomRequestsManager />}
           {activeTab === 'feedback' && <FeedbackViewer />}
+          {activeTab === 'notifications' && <DNDSettings />}
         </motion.div>
       </div>
     </div>

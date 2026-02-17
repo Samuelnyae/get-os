@@ -39,23 +39,72 @@ export default function OrdersManager() {
   useEffect(() => {
     const unsubscribe = base44.entities.Order.subscribe((event) => {
       if (event.type === 'create') {
-        // New order notification
+        // New order notification - always urgent
         const order = event.data;
+        const noStaffAssigned = !order.assigned_staff_id;
+        
         sendNotification('🔔 New Order Received!', {
-          body: `Order ${order.order_reference} from ${order.customer_name} - KES ${order.total_amount?.toLocaleString()}`,
+          body: `Order ${order.order_reference} from ${order.customer_name} - KES ${order.total_amount?.toLocaleString()}${noStaffAssigned ? ' (NO STAFF ASSIGNED)' : ''}`,
           tag: `new-order-${order.id}`,
+          priority: noStaffAssigned ? 'urgent' : 'high',
           requireInteraction: true,
+          ignoreDND: true, // New orders bypass DND
           toastOptions: {
-            duration: 8000,
+            duration: 10000,
             action: {
-              label: 'View',
+              label: 'Assign Now',
               onClick: () => {
                 setQueueView('active');
                 setStatusFilter('pending');
+                const orders = queryClient.getQueryData(['admin-orders-list']) || [];
+                const foundOrder = orders.find(o => o.id === order.id);
+                if (foundOrder) {
+                  setSelectedOrder(foundOrder);
+                  setAssignDialogOpen(true);
+                }
               },
             },
           },
         });
+      }
+      
+      if (event.type === 'update') {
+        const order = event.data;
+        
+        // Alert if order is pending and has no staff for more than 5 minutes
+        if (order.status === 'pending' && !order.assigned_staff_id) {
+          const orderAge = Date.now() - new Date(order.created_date).getTime();
+          if (orderAge > 5 * 60 * 1000) { // 5 minutes
+            sendNotification('⚠️ Urgent: Unassigned Order', {
+              body: `Order ${order.order_reference} has been waiting for ${Math.round(orderAge / 60000)} minutes`,
+              tag: `urgent-unassigned-${order.id}`,
+              priority: 'urgent',
+              requireInteraction: true,
+              ignoreDND: true,
+              toastOptions: {
+                duration: 15000,
+                action: {
+                  label: 'Assign Staff',
+                  onClick: () => {
+                    setSelectedOrder(order);
+                    setAssignDialogOpen(true);
+                  },
+                },
+              },
+            });
+          }
+        }
+
+        // Notify on payment status change
+        if (order.payment_status === 'paid' && orders.find(o => o.id === order.id)?.payment_status === 'pending') {
+          sendNotification('💰 Payment Received', {
+            body: `Order ${order.order_reference} has been paid`,
+            tag: `payment-${order.id}`,
+            priority: 'high',
+            ignoreDND: true,
+            toastOptions: { duration: 5000 },
+          });
+        }
       }
       
       queryClient.invalidateQueries(['admin-orders-list']);

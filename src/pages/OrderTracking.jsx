@@ -71,12 +71,23 @@ export default function OrderTracking() {
             sendNotification(notification.title, {
               body: notification.body,
               tag: `order-${newOrder.id}`,
+              priority: ['ready', 'out_for_delivery', 'delivered'].includes(newOrder.status) ? 'high' : 'normal',
               requireInteraction: newOrder.status === 'delivered',
+              vibrate: [200, 100, 200],
               toastOptions: {
                 icon: notification.icon,
-                duration: 6000,
+                duration: newOrder.status === 'delivered' ? 10000 : 6000,
               },
             });
+
+            // Play sound for important status changes
+            if (['ready', 'out_for_delivery', 'delivered'].includes(newOrder.status)) {
+              try {
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTcIGWi77eefTRAMUKfj8LZjHAY4ktjyzHksBSR3x/DdkEAKFF6...');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+              } catch (err) {}
+            }
           }
         }
         
