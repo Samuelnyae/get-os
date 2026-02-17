@@ -6,8 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
-  CreditCard, Smartphone, Receipt, CheckCircle,
-  Mail, Phone, User, MapPin, MessageSquare
+  CheckCircle, Mail, Phone, User, MessageSquare
 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,7 +24,6 @@ export default function Order() {
     address: '',
     special_instructions: ''
   });
-  const [paymentMethod, setPaymentMethod] = useState('card');
   const [orderReference, setOrderReference] = useState('');
 
   useEffect(() => {
@@ -127,19 +125,15 @@ Hermanas Bites - Seven Star Dining
       customer_phone: customerInfo.phone,
       items: cart,
       total_amount: total,
-      payment_method: paymentMethod,
-      payment_status: 'paid',
+      payment_method: 'Pay at Counter',
+      payment_status: 'pending',
       status: 'pending',
       order_reference: reference,
       special_instructions: customerInfo.special_instructions
     });
   };
 
-  const paymentMethods = [
-    { id: 'card', label: 'Credit/Debit Card', icon: CreditCard },
-    { id: 'mobile_money', label: 'M-Pesa', icon: Smartphone },
-    { id: 'paypal', label: 'PayPal', icon: Receipt },
-  ];
+
 
   // Empty Cart
   if (cart.length === 0 && step === 'cart') {
@@ -170,27 +164,45 @@ Hermanas Bites - Seven Star Dining
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', duration: 0.5 }}
-            className="w-24 h-24 rounded-full bg-[#c9a962]/20 flex items-center justify-center mx-auto mb-8"
+            className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-8"
           >
-            <CheckCircle className="w-12 h-12 text-[#c9a962]" />
+            <CheckCircle className="w-12 h-12 text-green-400" />
           </motion.div>
-          <h2 className="font-playfair text-4xl text-white mb-4">Order Confirmed!</h2>
-          <p className="font-inter text-white/60 mb-2">Thank you for your order</p>
-          <p className="font-playfair text-2xl text-[#c9a962] mb-8">
-            Reference: {orderReference}
+          <h2 className="font-playfair text-4xl text-white mb-4">✅ Order Received!</h2>
+          <p className="font-inter text-white/60 mb-2">
+            Please proceed to the cashier to complete payment
           </p>
-          <div className="bg-[#1a1a1a] rounded-2xl p-6 mb-8 border border-[#c9a962]/10 text-left">
-            <div className="flex items-center gap-2 text-[#c9a962] mb-4">
-              <Mail className="w-5 h-5" />
-              <span className="font-inter text-sm">Confirmation sent to {customerInfo.email}</span>
+          <p className="font-inter text-sm text-[#c9a962] mb-4">Show this Order ID at the counter</p>
+          <p className="font-playfair text-3xl text-[#c9a962] mb-8 font-bold tracking-wider">
+            {orderReference}
+          </p>
+          <div className="bg-[#1a1a1a] rounded-2xl p-6 mb-8 border border-[#c9a962]/10 text-left space-y-4">
+            <div className="flex items-center gap-2 text-green-400">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-inter font-medium">Order Placed Successfully</span>
             </div>
-            <p className="font-inter text-white/50 text-sm mb-4">
-              Your order reference and tracking instructions have been sent to your email. You will receive real-time updates when your order status changes.
-            </p>
-            <div className="p-3 rounded-lg bg-[#c9a962]/10 border border-[#c9a962]/20">
-              <p className="font-inter text-xs text-white/70 mb-1">Track your order using:</p>
-              <p className="font-inter text-sm text-white">Reference: <span className="text-[#c9a962] font-mono">{orderReference}</span></p>
-              <p className="font-inter text-sm text-white">Email: <span className="text-[#c9a962]">{customerInfo.email}</span></p>
+            
+            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
+              <p className="font-inter text-sm text-orange-300 mb-2">⚠️ Payment Required</p>
+              <p className="font-inter text-xs text-orange-200/80">
+                Please visit the cashier counter and show your Order ID to complete payment. Your order will be prepared once payment is confirmed.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-[#c9a962]/10 border border-[#c9a962]/20">
+              <p className="font-inter text-xs text-white/50 mb-3">Order Details:</p>
+              <div className="space-y-2 text-sm">
+                <p className="text-white">Order ID: <span className="text-[#c9a962] font-mono font-bold">{orderReference}</span></p>
+                <p className="text-white">Customer: <span className="text-white/70">{customerInfo.name}</span></p>
+                <p className="text-white">Contact: <span className="text-white/70">{customerInfo.phone}</span></p>
+                <p className="text-white">Total: <span className="text-[#c9a962] font-bold">KES {total.toLocaleString()}</span></p>
+                <p className="text-white">Payment: <span className="text-orange-300">Pending at Counter</span></p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-[#c9a962]/70 text-xs">
+              <Mail className="w-4 h-4" />
+              <span>Confirmation sent to {customerInfo.email}</span>
             </div>
           </div>
           <div className="flex gap-3">
@@ -351,33 +363,32 @@ Hermanas Bites - Seven Star Dining
                     </div>
                   </div>
 
-                  {/* Payment Method */}
+                  {/* Payment Notice */}
                   <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10">
-                    <h3 className="font-playfair text-xl text-white mb-6 flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-[#c9a962]" />
-                      Payment Method
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {paymentMethods.map((method) => (
-                        <button
-                          key={method.id}
-                          onClick={() => setPaymentMethod(method.id)}
-                          className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${
-                            paymentMethod === method.id
-                              ? 'border-[#c9a962] bg-[#c9a962]/10'
-                              : 'border-[#c9a962]/20 hover:border-[#c9a962]/50'
-                          }`}
-                        >
-                          <method.icon className={`w-6 h-6 ${
-                            paymentMethod === method.id ? 'text-[#c9a962]' : 'text-white/50'
-                          }`} />
-                          <span className={`font-inter text-sm ${
-                            paymentMethod === method.id ? 'text-[#c9a962]' : 'text-white/70'
-                          }`}>
-                            {method.label}
-                          </span>
-                        </button>
-                      ))}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-[#c9a962]/20 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="w-6 h-6 text-[#c9a962]" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-playfair text-xl text-white mb-2">
+                          Pay at Counter
+                        </h3>
+                        <p className="font-inter text-sm text-white/70 mb-3">
+                          After placing your order, please visit our cashier counter to complete your payment. 
+                          Show your Order ID to the staff.
+                        </p>
+                        <div className="bg-[#c9a962]/10 rounded-lg p-3 border border-[#c9a962]/20">
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">
+                            ✓ Cash accepted
+                          </p>
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">
+                            ✓ Card payments at counter
+                          </p>
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">
+                            ✓ Mobile money at counter
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -429,12 +440,12 @@ Hermanas Bites - Seven Star Dining
                       {orderMutation.isPending ? (
                         <>
                           <div className="w-4 h-4 border-2 border-[#0a0a0a]/20 border-t-[#0a0a0a] rounded-full animate-spin mr-2" />
-                          Processing...
+                          Placing Order...
                         </>
                       ) : (
                         <>
                           <CheckCircle className="inline w-4 h-4 mr-2" />
-                          Confirm Payment
+                          Place Order
                         </>
                       )}
                     </LuxuryButton>
