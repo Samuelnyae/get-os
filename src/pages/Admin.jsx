@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, Utensils, ShoppingBag, 
-  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain
+  Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -23,6 +23,7 @@ import AIFeedbackAnalysis from '@/components/admin/AIFeedbackAnalysis';
 import AITableManagement from '@/components/admin/AITableManagement';
 import StaffManager from '@/components/admin/StaffManager';
 import LowStockAlerts from '@/components/admin/LowStockAlerts';
+import DNDSettings from '@/components/admin/DNDSettings';
 import LuxuryButton from '@/components/common/LuxuryButton';
 
 export default function Admin() {
