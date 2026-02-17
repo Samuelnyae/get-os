@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   ShoppingCart, User, Mail, Phone, Clock, Package, 
-  UserCheck, Play, Pause, CheckCircle, Bell 
+  UserCheck, Play, Pause, CheckCircle, Bell, DollarSign 
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -99,6 +99,13 @@ export default function OrdersManager() {
       toast.success('Staff assigned successfully');
     },
   });
+
+  const handleMarkAsPaid = (orderId) => {
+    updateOrderMutation.mutate({
+      id: orderId,
+      data: { payment_status: 'paid' }
+    });
+  };
 
   // Workflow automation - auto-progress orders
   const autoProgressOrder = (order) => {
@@ -260,6 +267,12 @@ export default function OrdersManager() {
                       <span className="text-[#c9a962]">KES {order.total_amount?.toLocaleString()}</span>
                     </div>
 
+                    {order.payment_status === 'pending' && (
+                      <div className="mb-3 p-2 rounded bg-orange-500/10 border border-orange-500/30">
+                        <p className="font-inter text-xs text-orange-300">⚠ Payment Pending</p>
+                      </div>
+                    )}
+
                     {order.assigned_staff_name && (
                       <div className="flex items-center gap-2 mb-3 p-2 rounded bg-[#0a0a0a]">
                         <UserCheck className="w-3 h-3 text-[#c9a962]" />
@@ -270,30 +283,43 @@ export default function OrdersManager() {
                     )}
 
                     <div className="flex gap-2">
-                      {!order.assigned_staff_id && status === 'pending' && (
+                      {order.payment_status === 'pending' ? (
                         <LuxuryButton
                           size="sm"
-                          variant="secondary"
-                          onClick={() => {
-                            setSelectedOrder(order);
-                            setAssignDialogOpen(true);
-                          }}
-                          className="flex-1 text-xs"
+                          onClick={() => handleMarkAsPaid(order.id)}
+                          className="flex-1 text-xs bg-green-600 hover:bg-green-700"
                         >
-                          <UserCheck className="w-3 h-3 mr-1" />
-                          Assign
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          Mark Paid
                         </LuxuryButton>
+                      ) : (
+                        <>
+                          {!order.assigned_staff_id && status === 'pending' && (
+                            <LuxuryButton
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setAssignDialogOpen(true);
+                              }}
+                              className="flex-1 text-xs"
+                            >
+                              <UserCheck className="w-3 h-3 mr-1" />
+                              Assign
+                            </LuxuryButton>
+                          )}
+                          
+                          <LuxuryButton
+                            size="sm"
+                            onClick={() => autoProgressOrder(order)}
+                            className="flex-1 text-xs"
+                            disabled={status === 'out_for_delivery'}
+                          >
+                            <Play className="w-3 h-3 mr-1" />
+                            Next
+                          </LuxuryButton>
+                        </>
                       )}
-                      
-                      <LuxuryButton
-                        size="sm"
-                        onClick={() => autoProgressOrder(order)}
-                        className="flex-1 text-xs"
-                        disabled={status === 'out_for_delivery'}
-                      >
-                        <Play className="w-3 h-3 mr-1" />
-                        Next
-                      </LuxuryButton>
                     </div>
                   </motion.div>
                 ))}
@@ -402,11 +428,19 @@ export default function OrdersManager() {
                       ))}
                     </div>
                     
-                    <div className="mt-4 pt-4 border-t border-[#c9a962]/10">
+                    <div className="mt-4 pt-4 border-t border-[#c9a962]/10 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-playfair text-lg text-white">Total</span>
                         <span className="font-playfair text-2xl text-[#c9a962]">
                           KES {order.total_amount?.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-inter text-xs text-white/50">Payment Status</span>
+                        <span className={`font-inter text-xs font-medium ${
+                          order.payment_status === 'paid' ? 'text-green-400' : 'text-orange-300'
+                        }`}>
+                          {order.payment_status === 'paid' ? '✓ Paid' : '⚠ Pending'}
                         </span>
                       </div>
                     </div>
@@ -414,9 +448,20 @@ export default function OrdersManager() {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-3">
+                    {order.payment_status === 'pending' && (
+                      <LuxuryButton
+                        onClick={() => handleMarkAsPaid(order.id)}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <DollarSign className="w-4 h-4 mr-2" />
+                        Mark as Paid
+                      </LuxuryButton>
+                    )}
+
                     <Select
                       value={order.status}
                       onValueChange={(status) => updateOrderMutation.mutate({ id: order.id, data: { status } })}
+                      disabled={order.payment_status === 'pending'}
                     >
                       <SelectTrigger className="w-full bg-[#0a0a0a] border-[#c9a962]/20 text-white">
                         <SelectValue />
@@ -430,7 +475,7 @@ export default function OrdersManager() {
                       </SelectContent>
                     </Select>
 
-                    {!order.assigned_staff_id && (
+                    {order.payment_status === 'paid' && !order.assigned_staff_id && (
                       <LuxuryButton
                         variant="secondary"
                         onClick={() => {
@@ -443,16 +488,26 @@ export default function OrdersManager() {
                       </LuxuryButton>
                     )}
 
-                    <LuxuryButton onClick={() => autoProgressOrder(order)}>
-                      <Play className="w-4 h-4 mr-2" />
-                      Auto Progress
-                    </LuxuryButton>
+                    {order.payment_status === 'paid' && (
+                      <LuxuryButton onClick={() => autoProgressOrder(order)}>
+                        <Play className="w-4 h-4 mr-2" />
+                        Auto Progress
+                      </LuxuryButton>
+                    )}
 
                     <div className={`px-4 py-3 rounded-xl text-center border ${statusColors[order.status]}`}>
                       <p className="font-inter text-xs uppercase tracking-wider">
                         {order.status?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                       </p>
                     </div>
+
+                    {order.payment_status === 'pending' && (
+                      <div className="px-4 py-3 rounded-xl text-center bg-orange-500/10 border border-orange-500/30">
+                        <p className="font-inter text-xs text-orange-300">
+                          ⚠ Awaiting Payment
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
