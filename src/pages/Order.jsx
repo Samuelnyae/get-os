@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import SEOHead from '../components/common/SEOHead';
-import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRateLimiter } from '../lib/security';
+import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRateLimiter } from '../components/utils/security';
 import { toast } from 'sonner';
 
 export default function Order() {

@@ -13,7 +13,7 @@ import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import AIRecommendedSlots from '../components/reservations/AIRecommendedSlots';
 import SEOHead from '../components/common/SEOHead';
-import { sanitizeInput, sanitizeEmail, sanitizePhone } from '../lib/security';
+import { sanitizeInput, sanitizeEmail, sanitizePhone } from '../components/utils/security';
 import { toast } from 'sonner';
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
 
