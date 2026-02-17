@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
+import SEOHead from '../components/common/SEOHead';
+import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRateLimiter } from '../lib/security';
 import { toast } from 'sonner';
 
 export default function Order() {
@@ -112,24 +114,37 @@ Hermanas Bites - Seven Star Dining
   });
 
   const handleCheckout = () => {
-    if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
-      toast.error('Please fill in all required fields');
+    // Sanitize inputs
+    const sanitizedData = {
+      customer_name: sanitizeInput(customerInfo.name),
+      customer_email: sanitizeEmail(customerInfo.email),
+      customer_phone: sanitizePhone(customerInfo.phone),
+      special_instructions: sanitizeInput(customerInfo.special_instructions || ''),
+      items: cart,
+    };
+
+    // Validate
+    const validation = validateOrderData(sanitizedData);
+    if (!validation.isValid) {
+      toast.error(validation.errors[0]);
+      return;
+    }
+
+    // Rate limiting
+    if (!orderRateLimiter.canMakeRequest(sanitizedData.customer_email)) {
+      toast.error('Too many orders. Please wait a minute before trying again.');
       return;
     }
 
     const reference = `HB-${Date.now().toString().slice(-8)}`;
     
     orderMutation.mutate({
-      customer_name: customerInfo.name,
-      customer_email: customerInfo.email,
-      customer_phone: customerInfo.phone,
-      items: cart,
+      ...sanitizedData,
       total_amount: total,
       payment_method: 'Pay at Counter',
       payment_status: 'pending',
       status: 'pending',
       order_reference: reference,
-      special_instructions: customerInfo.special_instructions
     });
   };
 

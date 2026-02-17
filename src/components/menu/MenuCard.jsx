@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
 import { motion } from 'framer-motion';
 import { Heart, Plus } from 'lucide-react';
 
-export default function MenuCard({ item, onAddToCart }) {
+const MenuCard = memo(function MenuCard({ item, onAddToCart }) {
   const addToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();

@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import AIRecommendedSlots from '../components/reservations/AIRecommendedSlots';
+import SEOHead from '../components/common/SEOHead';
+import { sanitizeInput, sanitizeEmail, sanitizePhone } from '../lib/security';
 import { toast } from 'sonner';
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
 
@@ -144,12 +146,20 @@ Hermanas Bites - Seven Star Dining
       return;
     }
 
-    if (!formData.customer_name || !formData.customer_email || !formData.customer_phone) {
-      toast.error('Please fill in all required fields');
+    // Sanitize inputs
+    const sanitizedData = {
+      customer_name: sanitizeInput(formData.customer_name),
+      customer_email: sanitizeEmail(formData.customer_email),
+      customer_phone: sanitizePhone(formData.customer_phone),
+      special_requests: sanitizeInput(formData.special_requests || '')
+    };
+
+    if (!sanitizedData.customer_name || !sanitizedData.customer_email || !sanitizedData.customer_phone) {
+      toast.error('Please fill in all required fields correctly');
       return;
     }
 
-    reservationMutation.mutate(formData);
+    reservationMutation.mutate(sanitizedData);
   };
 
   const resetForm = () => {
@@ -215,6 +225,11 @@ Hermanas Bites - Seven Star Dining
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+      <SEOHead 
+        title="Table Reservations"
+        description="Reserve your table at Hermanas Bites. Book online for an unforgettable seven-star luxury dining experience."
+        keywords="restaurant reservation, book table, reserve dining, table booking"
+      />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
           subtitle="Reserve Your Table" 
