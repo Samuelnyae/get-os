@@ -99,4 +99,6 @@ const MenuCard = memo(function MenuCard({ item, onAddToCart }) {
       </Link>
     </motion.div>
   );
-}
+});
+
+export default MenuCard;
