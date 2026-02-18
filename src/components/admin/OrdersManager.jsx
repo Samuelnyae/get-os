@@ -208,6 +208,7 @@ export default function OrdersManager() {
     ready: filteredOrders.filter(o => o.status === 'ready'),
     out_for_delivery: filteredOrders.filter(o => o.status === 'out_for_delivery'),
     delivered: filteredOrders.filter(o => o.status === 'delivered'),
+    cancelled: filteredOrders.filter(o => o.status === 'cancelled'),
   };
 
   const statusColors = {
@@ -280,7 +281,7 @@ export default function OrdersManager() {
       {/* Queue View */}
       {queueView === 'active' && statusFilter === 'all' ? (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          {Object.entries(ordersByStatus).map(([status, orders]) => (
+          {Object.entries(ordersByStatus).filter(([status]) => !['delivered', 'cancelled'].includes(status)).map(([status, orders]) => (
             <div key={status} className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-inter text-sm text-[#c9a962] uppercase tracking-wider">
