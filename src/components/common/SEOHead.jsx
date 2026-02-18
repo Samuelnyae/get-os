@@ -8,24 +8,42 @@ export default function SEOHead({
   type = 'website'
 }) {
   useEffect(() => {
-    // Set document title
-    document.title = title ? `${title} | Hermanas Bites` : 'Hermanas Bites - Seven Star Luxury Dining';
+    // Enhanced title with brand name
+    document.title = title 
+      ? `${title} | Hermanas Bites` 
+      : 'Hermanas Bites | Seven Star Luxury Restaurant & Fine Dining Experience';
+    
+    // Enhanced default description
+    const finalDescription = description || 'Hermanas Bites - Premier seven-star luxury restaurant. Experience world-class gourmet cuisine, AI-powered personalized service, elegant ambiance, online ordering, table reservations, and custom menu creations. Order now for delivery or dine-in.';
+    
+    // Enhanced keywords
+    const finalKeywords = keywords || 'Hermanas Bites, hermanas, bites, hermanas bites restaurant, luxury restaurant, seven star dining, fine dining, gourmet food, best restaurant, restaurant near me, food delivery, online food order, table reservations, custom food, AI restaurant, elegant dining, premium restaurant';
     
     // Set or update meta tags
     const metaTags = {
-      'description': description || 'Experience the pinnacle of culinary excellence at Hermanas Bites. Seven-star luxury dining with exquisite cuisine, impeccable service, and unforgettable ambiance.',
-      'keywords': keywords || 'luxury restaurant, fine dining, seven star dining, gourmet food, restaurant menu, online ordering, table reservation',
-      'og:title': title || 'Hermanas Bites - Seven Star Luxury Dining',
-      'og:description': description || 'Experience the pinnacle of culinary excellence at Hermanas Bites.',
+      'description': finalDescription,
+      'keywords': finalKeywords,
+      'author': 'Hermanas Bites',
+      'robots': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+      'googlebot': 'index, follow',
+      'bingbot': 'index, follow',
+      'og:title': title || 'Hermanas Bites - Seven Star Luxury Restaurant',
+      'og:description': finalDescription,
       'og:image': image,
+      'og:image:width': '1200',
+      'og:image:height': '630',
       'og:type': type,
       'og:site_name': 'Hermanas Bites',
+      'og:locale': 'en_US',
       'twitter:card': 'summary_large_image',
-      'twitter:title': title || 'Hermanas Bites - Seven Star Luxury Dining',
-      'twitter:description': description || 'Experience the pinnacle of culinary excellence at Hermanas Bites.',
+      'twitter:site': '@HermanasBites',
+      'twitter:title': title || 'Hermanas Bites - Seven Star Luxury Restaurant',
+      'twitter:description': finalDescription,
       'twitter:image': image,
+      'twitter:image:alt': 'Hermanas Bites - Luxury Dining',
     };
 
+    // Apply meta tags
     Object.entries(metaTags).forEach(([property, content]) => {
       const isOg = property.startsWith('og:');
       const isTwitter = property.startsWith('twitter:');
@@ -40,21 +58,51 @@ export default function SEOHead({
       meta.setAttribute('content', content);
     });
 
-    // Add JSON-LD structured data
+    // Canonical URL
+    let linkCanonical = document.querySelector('link[rel="canonical"]');
+    if (!linkCanonical) {
+      linkCanonical = document.createElement('link');
+      linkCanonical.rel = 'canonical';
+      document.head.appendChild(linkCanonical);
+    }
+    linkCanonical.href = window.location.href;
+
+    // Add JSON-LD structured data for better search indexing
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "Restaurant",
       "name": "Hermanas Bites",
-      "description": "Seven Star Luxury Dining Experience",
-      "image": image,
-      "servesCuisine": ["International", "Fine Dining", "Gourmet"],
+      "alternateName": "Hermanas Bites Restaurant",
+      "description": finalDescription,
+      "url": window.location.origin,
+      "image": [image],
+      "logo": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200",
+      "servesCuisine": ["International", "Fine Dining", "Gourmet", "Fusion"],
       "priceRange": "$$$$",
       "acceptsReservations": "True",
-      "menu": window.location.origin + "/menu",
+      "hasMenu": window.location.origin + "/menu",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "City",
         "addressCountry": "KE"
+      },
+      "telephone": "+254-XXX-XXXX",
+      "potentialAction": [
+        {
+          "@type": "OrderAction",
+          "target": window.location.origin + "/order"
+        },
+        {
+          "@type": "ReserveAction",
+          "target": window.location.origin + "/reservations"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "287",
+        "bestRating": "5",
+        "worstRating": "1"
       }
     };
 

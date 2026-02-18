@@ -239,6 +239,11 @@ Hermanas Bites - Seven Star Dining
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+      <SEOHead 
+        title="Order Now - Online Food Ordering & Delivery"
+        description="Order gourmet food online from Hermanas Bites. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
+        keywords="Hermanas Bites order, order food online, food delivery, online ordering, checkout, place order, gourmet delivery"
+      />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
           subtitle={step === 'cart' ? 'Review Your Selection' : 'Complete Your Order'} 

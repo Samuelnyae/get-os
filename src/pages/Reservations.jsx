@@ -226,9 +226,9 @@ Hermanas Bites - Seven Star Dining
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <SEOHead 
-        title="Table Reservations"
-        description="Reserve your table at Hermanas Bites. Book online for an unforgettable seven-star luxury dining experience."
-        keywords="restaurant reservation, book table, reserve dining, table booking"
+        title="Table Reservations - Book Your Table Online"
+        description="Reserve your table at Hermanas Bites. Easy online booking for luxury dining experience. Book now for fine dining, special occasions, and unforgettable meals."
+        keywords="Hermanas Bites reservations, book table online, restaurant reservations, table booking, reserve table, dining reservations"
       />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
