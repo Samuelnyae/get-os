@@ -1,21 +1,98 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Sparkles, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
+// Rate limiting
+const RATE_LIMIT_KEY = 'chatbot_rate_limit';
+const MAX_MESSAGES_PER_HOUR = 20;
+
+const checkRateLimit = () => {
+  const stored = localStorage.getItem(RATE_LIMIT_KEY);
+  const data = stored ? JSON.parse(stored) : { count: 0, resetAt: Date.now() + 3600000 };
+  
+  if (Date.now() > data.resetAt) {
+    data.count = 0;
+    data.resetAt = Date.now() + 3600000;
+  }
+  
+  if (data.count >= MAX_MESSAGES_PER_HOUR) {
+    return false;
+  }
+  
+  data.count++;
+  localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(data));
+  return true;
+};
+
+// Get or create session ID
+const getSessionId = () => {
+  let sessionId = localStorage.getItem('chat_session_id');
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('chat_session_id', sessionId);
+  }
+  return sessionId;
+};
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      role: 'assistant',
-      content: 'Welcome to Hermanas Bites! I\'m your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.',
-    }
-  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [userIdentifier, setUserIdentifier] = useState('');
+  const [conversationId, setConversationId] = useState(null);
   const messagesEndRef = useRef(null);
+  const queryClient = useQueryClient();
+
+  // Get user identifier
+  useEffect(() => {
+    const initUser = async () => {
+      try {
+        const user = await base44.auth.me();
+        setUserIdentifier(user.email);
+      } catch {
+        setUserIdentifier(getSessionId());
+      }
+    };
+    initUser();
+  }, []);
+
+  // Load or create conversation
+  const { data: conversation } = useQuery({
+    queryKey: ['chat-conversation', userIdentifier],
+    queryFn: async () => {
+      if (!userIdentifier) return null;
+      
+      const existing = await base44.entities.ChatConversation.filter({
+        user_identifier: userIdentifier
+      }, '-last_message_at', 1);
+      
+      if (existing.length > 0) {
+        setConversationId(existing[0].id);
+        return existing[0];
+      }
+      
+      const newConv = await base44.entities.ChatConversation.create({
+        user_identifier: userIdentifier,
+        messages: [{
+          role: 'assistant',
+          content: 'Welcome to Hermanas Bites! I\'m your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.',
+          timestamp: new Date().toISOString()
+        }],
+        last_message_at: new Date().toISOString()
+      });
+      
+      setConversationId(newConv.id);
+      return newConv;
+    },
+    enabled: !!userIdentifier,
+    staleTime: Infinity,
+  });
+
+  const messages = conversation?.messages || [];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,16 +102,62 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages]);
 
+  const updateConversationMutation = useMutation({
+    mutationFn: ({ messages }) => {
+      return base44.entities.ChatConversation.update(conversationId, {
+        messages,
+        last_message_at: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['chat-conversation', userIdentifier]);
+    },
+  });
+
+  const clearConversationMutation = useMutation({
+    mutationFn: async () => {
+      await base44.entities.ChatConversation.delete(conversationId);
+      const newConv = await base44.entities.ChatConversation.create({
+        user_identifier: userIdentifier,
+        messages: [{
+          role: 'assistant',
+          content: 'Welcome to Hermanas Bites! I\'m your AI concierge. How may I assist you today?',
+          timestamp: new Date().toISOString()
+        }],
+        last_message_at: new Date().toISOString()
+      });
+      setConversationId(newConv.id);
+      return newConv;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['chat-conversation', userIdentifier]);
+      toast.success('Conversation cleared');
+    },
+  });
+
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !conversationId) return;
+
+    // Rate limiting
+    if (!checkRateLimit()) {
+      toast.error('Rate limit exceeded. Please wait before sending more messages.');
+      return;
+    }
 
     const userMessage = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    
+    const newUserMsg = {
+      role: 'user',
+      content: userMessage,
+      timestamp: new Date().toISOString()
+    };
+    
+    const updatedMessages = [...messages, newUserMsg];
+    updateConversationMutation.mutate({ messages: updatedMessages });
     setIsLoading(true);
 
     try {
-      // Get context about the restaurant
       const menuItems = await base44.entities.MenuItem.list('-created_date', 50);
       
       const context = `You are an AI assistant for Hermanas Bites, a luxury seven-star restaurant. 
@@ -56,14 +179,24 @@ Be helpful, professional, and embody luxury hospitality. If asked about specific
         add_context_from_internet: false,
       });
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      const assistantMsg = {
+        role: 'assistant',
+        content: response,
+        timestamp: new Date().toISOString()
+      };
+      
+      updateConversationMutation.mutate({ messages: [...updatedMessages, assistantMsg] });
     } catch (error) {
       console.error('Chatbot error:', error);
       toast.error('Sorry, I encountered an error. Please try again.');
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'I apologize, but I\'m having trouble responding right now. Please try again or contact our staff directly.' 
-      }]);
+      
+      const errorMsg = {
+        role: 'assistant',
+        content: 'I apologize, but I\'m having trouble responding right now. Please try again or contact our staff directly.',
+        timestamp: new Date().toISOString()
+      };
+      
+      updateConversationMutation.mutate({ messages: [...updatedMessages, errorMsg] });
     } finally {
       setIsLoading(false);
     }
@@ -118,12 +251,22 @@ Be helpful, professional, and embody luxury hospitality. If asked about specific
                   <p className="font-inter text-xs text-[#c9a962]">Hermanas Bites</p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-[#c9a962]/10 flex items-center justify-center transition-colors"
-              >
-                <X className="w-5 h-5 text-white/70" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => clearConversationMutation.mutate()}
+                  disabled={clearConversationMutation.isLoading}
+                  className="w-8 h-8 rounded-full hover:bg-[#c9a962]/10 flex items-center justify-center transition-colors"
+                  title="Clear conversation"
+                >
+                  <Trash2 className="w-4 h-4 text-white/70" />
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-8 h-8 rounded-full hover:bg-[#c9a962]/10 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-5 h-5 text-white/70" />
+                </button>
+              </div>
             </div>
 
             {/* Messages */}
