@@ -9,22 +9,24 @@ import {
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SectionHeader from '@/components/common/SectionHeader';
-import MenuItemsManager from '@/components/admin/MenuItemsManager';
-import CustomRequestsManager from '@/components/admin/CustomRequestsManager';
-import OrdersManager from '@/components/admin/OrdersManager';
-import ReservationsManager from '@/components/admin/ReservationsManager';
-import FeedbackViewer from '@/components/admin/FeedbackViewer';
-import DashboardStats from '@/components/admin/DashboardStats';
-import AIInsights from '@/components/admin/AIInsights';
-import AIMarketingCampaigns from '@/components/admin/AIMarketingCampaigns';
-import AIOrderFulfillment from '@/components/admin/AIOrderFulfillment';
-import AIInventoryManagement from '@/components/admin/AIInventoryManagement';
-import AIFeedbackAnalysis from '@/components/admin/AIFeedbackAnalysis';
-import AITableManagement from '@/components/admin/AITableManagement';
-import StaffManager from '@/components/admin/StaffManager';
-import LowStockAlerts from '@/components/admin/LowStockAlerts';
-import DNDSettings from '@/components/admin/DNDSettings';
 import LuxuryButton from '@/components/common/LuxuryButton';
+
+// Lazy load heavy admin components
+const MenuItemsManager = React.lazy(() => import('@/components/admin/MenuItemsManager'));
+const CustomRequestsManager = React.lazy(() => import('@/components/admin/CustomRequestsManager'));
+const OrdersManager = React.lazy(() => import('@/components/admin/OrdersManager'));
+const ReservationsManager = React.lazy(() => import('@/components/admin/ReservationsManager'));
+const FeedbackViewer = React.lazy(() => import('@/components/admin/FeedbackViewer'));
+const DashboardStats = React.lazy(() => import('@/components/admin/DashboardStats'));
+const AIInsights = React.lazy(() => import('@/components/admin/AIInsights'));
+const AIMarketingCampaigns = React.lazy(() => import('@/components/admin/AIMarketingCampaigns'));
+const AIOrderFulfillment = React.lazy(() => import('@/components/admin/AIOrderFulfillment'));
+const AIInventoryManagement = React.lazy(() => import('@/components/admin/AIInventoryManagement'));
+const AIFeedbackAnalysis = React.lazy(() => import('@/components/admin/AIFeedbackAnalysis'));
+const AITableManagement = React.lazy(() => import('@/components/admin/AITableManagement'));
+const StaffManager = React.lazy(() => import('@/components/admin/StaffManager'));
+const LowStockAlerts = React.lazy(() => import('@/components/admin/LowStockAlerts'));
+const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -133,21 +135,27 @@ export default function Admin() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {activeTab === 'dashboard' && <DashboardStats />}
-          {activeTab === 'insights' && <AIInsights />}
-          {activeTab === 'fulfillment' && <AIOrderFulfillment />}
-          {activeTab === 'inventory' && <AIInventoryManagement />}
-          {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
-          {activeTab === 'tables' && <AITableManagement />}
-          {activeTab === 'marketing' && <AIMarketingCampaigns />}
-          {activeTab === 'orders' && <OrdersManager />}
-          {activeTab === 'reservations' && <ReservationsManager />}
-          {activeTab === 'staff' && <StaffManager />}
-          {activeTab === 'stock' && <LowStockAlerts />}
-          {activeTab === 'menu' && <MenuItemsManager />}
-          {activeTab === 'custom' && <CustomRequestsManager />}
-          {activeTab === 'feedback' && <FeedbackViewer />}
-          {activeTab === 'notifications' && <DNDSettings />}
+          <React.Suspense fallback={
+            <div className="flex justify-center py-12">
+              <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+            </div>
+          }>
+            {activeTab === 'dashboard' && <DashboardStats />}
+            {activeTab === 'insights' && <AIInsights />}
+            {activeTab === 'fulfillment' && <AIOrderFulfillment />}
+            {activeTab === 'inventory' && <AIInventoryManagement />}
+            {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
+            {activeTab === 'tables' && <AITableManagement />}
+            {activeTab === 'marketing' && <AIMarketingCampaigns />}
+            {activeTab === 'orders' && <OrdersManager />}
+            {activeTab === 'reservations' && <ReservationsManager />}
+            {activeTab === 'staff' && <StaffManager />}
+            {activeTab === 'stock' && <LowStockAlerts />}
+            {activeTab === 'menu' && <MenuItemsManager />}
+            {activeTab === 'custom' && <CustomRequestsManager />}
+            {activeTab === 'feedback' && <FeedbackViewer />}
+            {activeTab === 'notifications' && <DNDSettings />}
+          </React.Suspense>
         </motion.div>
       </div>
     </div>

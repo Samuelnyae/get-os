@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,15 +9,20 @@ import DailySpecials from '../components/menu/DailySpecials';
 import SectionHeader from '../components/common/SectionHeader';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
+import { useDebounce } from '../components/utils/performance';
 
 export default function Menu() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [cartItems, setCartItems] = useState([]);
 
   const { data: menuItems = [], isLoading } = useQuery({
     queryKey: ['menu-items'],
     queryFn: () => base44.entities.MenuItem.list('-created_date'),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   const categories = [
@@ -28,12 +33,14 @@ export default function Menu() {
     { id: 'drinks', label: 'Drinks' },
   ];
 
-  const filteredItems = menuItems.filter(item => {
-    const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
-    const matchesSearch = item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredItems = useMemo(() => {
+    return menuItems.filter(item => {
+      const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+      const matchesSearch = item.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+                           item.description?.toLowerCase().includes(debouncedSearch.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [menuItems, activeCategory, debouncedSearch]);
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');

@@ -27,12 +27,17 @@ export default function OrdersManager() {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['admin-orders-list'],
     queryFn: () => base44.entities.Order.list('-created_date', 200),
+    staleTime: 30 * 1000, // 30 seconds
+    cacheTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 60 * 1000, // Refetch every minute
   });
 
   const { data: staff = [] } = useQuery({
     queryKey: ['staff-list'],
     queryFn: () => base44.entities.Staff.list(),
     initialData: [],
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
   });
 
   // Real-time order updates with notifications

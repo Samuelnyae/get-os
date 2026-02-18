@@ -90,6 +90,7 @@ export default function Chatbot() {
     },
     enabled: !!userIdentifier,
     staleTime: Infinity,
+    cacheTime: 30 * 60 * 1000, // 30 minutes
   });
 
   const messages = conversation?.messages || [];
