@@ -7,6 +7,7 @@ import MenuCard from '../components/menu/MenuCard';
 import PersonalizedRecommendations from '../components/menu/PersonalizedRecommendations';
 import DailySpecials from '../components/menu/DailySpecials';
 import SectionHeader from '../components/common/SectionHeader';
+import SEOHead from '../components/common/SEOHead';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
 import { useDebounce } from '../components/utils/performance';
