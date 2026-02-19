@@ -290,7 +290,9 @@ export default function OrderTracking() {
 
                 <div className="space-y-8">
                   {statusSteps.map((step, index) => {
-                    const isCompleted = index <= currentStepIndex;
+                    // Mark delivered as completed when out_for_delivery is active
+                    const isCompleted = index <= currentStepIndex || 
+                      (trackedOrder.status === 'out_for_delivery' && step.key === 'delivered');
                     const isCurrent = index === currentStepIndex;
                     const Icon = step.icon;
 
