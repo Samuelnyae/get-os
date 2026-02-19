@@ -62,9 +62,9 @@ Hermanas Bites - Seven Star Dining
   };
 
   const contactInfo = [
-    { icon: MapPin, label: 'Address', value: '123 Luxury Avenue, Diamond District' },
-    { icon: Phone, label: 'Phone', value: '+1 (555) 123-4567' },
-    { icon: Mail, label: 'Email', value: 'hello@hermanasbites.com' },
+    { icon: MapPin, label: 'Address', value: 'Voi, Taita Taveta' },
+    { icon: Phone, label: 'Phone', value: '+254748358976' },
+    { icon: Mail, label: 'Email', value: 'menuhotel@gmail.com' },
     { icon: Clock, label: 'Hours', value: 'Mon-Sun: 11:00 AM - 11:00 PM' },
   ];
 
@@ -220,8 +220,8 @@ Hermanas Bites - Seven Star Dining
               <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0a]/50">
                 <div className="text-center">
                   <MapPin className="w-10 h-10 text-[#c9a962] mx-auto mb-2" />
-                  <p className="font-playfair text-xl text-white">123 Luxury Avenue</p>
-                  <p className="font-inter text-sm text-white/60">Diamond District</p>
+                  <p className="font-playfair text-xl text-white">Voi</p>
+                  <p className="font-inter text-sm text-white/60">Taita Taveta</p>
                 </div>
               </div>
             </div>
