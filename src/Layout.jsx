@@ -267,7 +267,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Footer */}
       <footer className="bg-[#0f0f0f] border-t border-[#c9a962]/20 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-start">
             {/* Brand */}
             <div className="md:col-span-2">
               <h2 className="font-playfair text-3xl gold-gradient mb-4">Hermanas Bites</h2>
@@ -278,7 +278,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className="self-start">
               <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Quick Links</h3>
               <div className="space-y-3">
                 <Link
@@ -300,7 +300,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Social */}
-            <div>
+            <div className="self-start">
               <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Connect</h3>
               <div className="flex space-x-4">
                 <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all">
