@@ -27,6 +27,7 @@ const AITableManagement = React.lazy(() => import('@/components/admin/AITableMan
 const StaffManager = React.lazy(() => import('@/components/admin/StaffManager'));
 const LowStockAlerts = React.lazy(() => import('@/components/admin/LowStockAlerts'));
 const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
+const AdvancedAnalytics = React.lazy(() => import('@/components/admin/AdvancedAnalytics'));
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -76,6 +77,7 @@ export default function Admin() {
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
     { id: 'inventory', label: 'AI Inventory', icon: TrendingUp },
@@ -141,6 +143,7 @@ export default function Admin() {
             </div>
           }>
             {activeTab === 'dashboard' && <DashboardStats />}
+            {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
             {activeTab === 'fulfillment' && <AIOrderFulfillment />}
             {activeTab === 'inventory' && <AIInventoryManagement />}
