@@ -30,14 +30,18 @@ export default function OrderTracking() {
   useEffect(() => {
     if (!trackedOrder) return;
 
-    const previousStatus = trackedOrder.status;
+    let lastStatus = trackedOrder.status;
 
     const unsubscribe = base44.entities.Order.subscribe((event) => {
       if (event.id === trackedOrder.id && event.type === 'update') {
         const newOrder = event.data;
         
+        // Immediately update UI for instant feedback
+        setTrackedOrder(newOrder);
+        
         // Check if status changed
-        if (newOrder.status !== previousStatus) {
+        if (newOrder.status !== lastStatus) {
+          lastStatus = newOrder.status;
           const statusMessages = {
             confirmed: {
               title: '✅ Order Confirmed!',
@@ -90,13 +94,11 @@ export default function OrderTracking() {
             }
           }
         }
-        
-        setTrackedOrder(newOrder);
       }
     });
 
     return unsubscribe;
-  }, [trackedOrder?.id, trackedOrder?.status, sendNotification]);
+  }, [trackedOrder?.id, sendNotification]);
 
   const handleTrackOrder = async () => {
     if (!orderRef || !email) {
@@ -284,7 +286,7 @@ export default function OrderTracking() {
                 {/* Progress Line */}
                 <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-[#c9a962]/20" />
                 <div 
-                  className="absolute left-6 top-0 w-0.5 bg-[#c9a962] transition-all duration-1000"
+                  className="absolute left-6 top-0 w-0.5 bg-[#c9a962] transition-all duration-500 ease-out"
                   style={{ height: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%` }}
                 />
 
@@ -305,13 +307,13 @@ export default function OrderTracking() {
                         className="relative flex items-start gap-4"
                       >
                         <div 
-                          className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                          className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ease-out ${
                             isCompleted 
-                              ? 'bg-[#c9a962] shadow-lg shadow-[#c9a962]/50' 
-                              : 'bg-[#0a0a0a] border border-[#c9a962]/20'
+                              ? 'bg-[#c9a962] shadow-lg shadow-[#c9a962]/50 scale-100' 
+                              : 'bg-[#0a0a0a] border border-[#c9a962]/20 scale-95'
                           }`}
                         >
-                          <Icon className={`w-6 h-6 ${isCompleted ? 'text-[#0a0a0a]' : 'text-[#c9a962]/40'}`} />
+                          <Icon className={`w-6 h-6 transition-colors duration-300 ${isCompleted ? 'text-[#0a0a0a]' : 'text-[#c9a962]/40'}`} />
                         </div>
                         
                         <div className="flex-1 pt-2">
