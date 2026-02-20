@@ -239,7 +239,7 @@ Be helpful, professional, and embody luxury hospitality. If asked about specific
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-50 w-full max-w-md h-[600px] bg-[#1a1a1a] rounded-2xl shadow-2xl border border-[#c9a962]/20 flex flex-col"
+            className="fixed bottom-6 right-6 z-50 w-full max-w-sm h-[500px] bg-[#1a1a1a] rounded-2xl shadow-2xl border border-[#c9a962]/20 flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-[#c9a962]/20">
