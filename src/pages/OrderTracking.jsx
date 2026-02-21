@@ -28,7 +28,7 @@ export default function OrderTracking() {
 
   // Real-time subscription for order updates
   useEffect(() => {
-    if (!trackedOrder) return;
+    if (!trackedOrder?.id) return;
 
     let lastStatus = trackedOrder.status;
 
@@ -97,8 +97,10 @@ export default function OrderTracking() {
       }
     });
 
-    return unsubscribe;
-  }, [trackedOrder?.id, sendNotification]);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [trackedOrder?.id]);
 
   const handleTrackOrder = async () => {
     if (!orderRef || !email) {
