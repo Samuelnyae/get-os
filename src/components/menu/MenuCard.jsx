@@ -47,37 +47,38 @@ const MenuCard = memo(function MenuCard({ item, onAddToCart }) {
       <Link to={createPageUrl(`FoodDetails?id=${item.id}`)}>
         <div className="relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-[#c9a962]/10 hover:border-[#c9a962]/30 transition-all duration-500">
           {/* Image Container */}
-          <div className="relative h-64 overflow-hidden">
+          <div className="relative h-56 sm:h-64 overflow-hidden">
             <img
               src={item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800'}
               alt={item.name}
-              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+              loading="lazy"
+              className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80" />
             
             {/* Likes Badge */}
-            <div className="absolute top-4 right-4 flex items-center space-x-1 px-3 py-1.5 rounded-full bg-[#0a0a0a]/60 backdrop-blur-sm border border-[#c9a962]/20">
-              <Heart className="w-3.5 h-3.5 text-[#c9a962]" />
+            <div className="absolute top-3 right-3 flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#0a0a0a]/80 border border-[#c9a962]/20">
+              <Heart className="w-3 h-3 text-[#c9a962]" />
               <span className="text-xs font-inter text-white/90">{item.likes_count || 0}</span>
             </div>
 
             {/* Dietary Tags */}
             {item.dietary_tags && item.dietary_tags.length > 0 && (
-              <div className="absolute top-4 left-4 flex flex-wrap gap-1">
+              <div className="absolute top-3 left-3 flex flex-wrap gap-1">
                 {item.dietary_tags.slice(0, 2).map((tag, i) => (
-                  <span key={i} className="px-2 py-1 text-[10px] font-inter uppercase tracking-wider bg-[#c9a962]/90 text-[#0a0a0a] rounded-full">
+                  <span key={i} className="px-2 py-0.5 text-[10px] font-inter uppercase tracking-wider bg-[#c9a962] text-[#0a0a0a] rounded-full">
                     {tag}
                   </span>
                 ))}
               </div>
             )}
 
-            {/* Add to Cart Button */}
+            {/* Add to Cart Button - always visible on mobile, hover on desktop */}
             <button
               onClick={addToCart}
-              className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-[#c9a962] text-[#0a0a0a] flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#e4d5a7]"
+              className="absolute bottom-3 right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#c9a962] text-[#0a0a0a] flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-300 active:scale-95"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
