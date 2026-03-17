@@ -77,6 +77,7 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
+          <ScrollToTop />
           <NavigationTracker />
           <AuthenticatedApp />
         </Router>
