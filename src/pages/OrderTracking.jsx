@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,7 +19,7 @@ export default function OrderTracking() {
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [trackedOrderId, setTrackedOrderId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const lastStatusRef = React.useRef(null);
+  const lastStatusRef = useRef(null);
   const { sendNotification, permission } = useNotifications();
 
   const statusMessages = {
