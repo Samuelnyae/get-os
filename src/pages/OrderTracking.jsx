@@ -93,14 +93,15 @@ export default function OrderTracking() {
       );
       
       if (found) {
+        lastStatusRef.current = found.status;
         setTrackedOrder(found);
+        setTrackedOrderId(found.id);
         
-        // Request notification permission when tracking starts
         if (permission !== 'granted') {
           requestNotificationPermission();
         }
         
-        toast.success('Order found! You will receive real-time updates.');
+        toast.success('Order found! Live updates enabled.');
       } else {
         toast.error('Order not found. Please check your order reference and email.');
         setTrackedOrder(null);
