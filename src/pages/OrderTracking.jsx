@@ -216,7 +216,7 @@ export default function OrderTracking() {
                   <LuxuryButton
                     variant="secondary"
                     size="sm"
-                    onClick={() => setTrackedOrder(null)}
+                    onClick={() => { setTrackedOrder(null); setTrackedOrderId(null); lastStatusRef.current = null; }}
                   >
                     Track Another Order
                   </LuxuryButton>
