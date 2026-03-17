@@ -17,90 +17,66 @@ export default function OrderTracking() {
   const [orderRef, setOrderRef] = useState('');
   const [email, setEmail] = useState('');
   const [trackedOrder, setTrackedOrder] = useState(null);
+  const [trackedOrderId, setTrackedOrderId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const lastStatusRef = React.useRef(null);
   const { sendNotification, permission } = useNotifications();
 
-  const { data: orders = [] } = useQuery({
-    queryKey: ['all-orders'],
-    queryFn: () => base44.entities.Order.list('-created_date', 500),
-    enabled: false,
+  const statusMessages = {
+    confirmed: { title: '✅ Order Confirmed!', body: 'Your order has been confirmed.', icon: '✅' },
+    preparing: { title: '👨‍🍳 Being Prepared', body: 'Our chefs are preparing your meal!', icon: '👨‍🍳' },
+    ready: { title: '✨ Order Ready!', body: 'Your order is ready for pickup/delivery.', icon: '✨' },
+    out_for_delivery: { title: '🚚 Out for Delivery', body: 'Your order is on its way!', icon: '🚚' },
+    delivered: { title: '🎉 Order Delivered!', body: 'Enjoy your meal from Hermanas Bites!', icon: '🎉' },
+  };
+
+  const handleStatusChange = (newOrder) => {
+    if (newOrder.status !== lastStatusRef.current) {
+      lastStatusRef.current = newOrder.status;
+      const notification = statusMessages[newOrder.status];
+      if (notification) {
+        toast.success(`${notification.icon} ${notification.title}`, { duration: 6000 });
+        sendNotification(notification.title, {
+          body: notification.body,
+          tag: `order-${newOrder.id}`,
+          priority: ['ready', 'out_for_delivery', 'delivered'].includes(newOrder.status) ? 'high' : 'normal',
+          requireInteraction: newOrder.status === 'delivered',
+        });
+      }
+    }
+  };
+
+  // Polling every 4 seconds as primary live update mechanism
+  useQuery({
+    queryKey: ['tracked-order', trackedOrderId],
+    queryFn: async () => {
+      const orders = await base44.entities.Order.list('-created_date', 500);
+      const found = orders.find(o => o.id === trackedOrderId);
+      if (found) {
+        handleStatusChange(found);
+        setTrackedOrder(found);
+      }
+      return found;
+    },
+    enabled: !!trackedOrderId,
+    refetchInterval: 4000,
+    refetchIntervalInBackground: true,
   });
 
-  // Real-time subscription for order updates
+  // Real-time subscription as instant update layer on top of polling
   useEffect(() => {
-    if (!trackedOrder?.id) return;
-
-    let lastStatus = trackedOrder.status;
+    if (!trackedOrderId) return;
 
     const unsubscribe = base44.entities.Order.subscribe((event) => {
-      if (event.id === trackedOrder.id && event.type === 'update') {
+      if (event.id === trackedOrderId && event.type === 'update') {
         const newOrder = event.data;
-        
-        // Immediately update UI for instant feedback
+        handleStatusChange(newOrder);
         setTrackedOrder(newOrder);
-        
-        // Check if status changed
-        if (newOrder.status !== lastStatus) {
-          lastStatus = newOrder.status;
-          const statusMessages = {
-            confirmed: {
-              title: '✅ Order Confirmed!',
-              body: 'Your order has been confirmed and is being prepared.',
-              icon: '✅',
-            },
-            preparing: {
-              title: '👨‍🍳 Order Being Prepared',
-              body: 'Our chefs are preparing your delicious meal!',
-              icon: '👨‍🍳',
-            },
-            ready: {
-              title: '✨ Order Ready!',
-              body: 'Your order is ready for pickup/delivery.',
-              icon: '✨',
-            },
-            out_for_delivery: {
-              title: '🚚 Out for Delivery',
-              body: 'Your order is on its way to you!',
-              icon: '🚚',
-            },
-            delivered: {
-              title: '🎉 Order Delivered!',
-              body: 'Enjoy your meal from Hermanas Bites!',
-              icon: '🎉',
-            },
-          };
-
-          const notification = statusMessages[newOrder.status];
-          if (notification) {
-            sendNotification(notification.title, {
-              body: notification.body,
-              tag: `order-${newOrder.id}`,
-              priority: ['ready', 'out_for_delivery', 'delivered'].includes(newOrder.status) ? 'high' : 'normal',
-              requireInteraction: newOrder.status === 'delivered',
-              vibrate: [200, 100, 200],
-              toastOptions: {
-                icon: notification.icon,
-                duration: newOrder.status === 'delivered' ? 10000 : 6000,
-              },
-            });
-
-            // Play sound for important status changes
-            if (['ready', 'out_for_delivery', 'delivered'].includes(newOrder.status)) {
-              try {
-                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTcIGWi77eefTRAMUKfj8LZjHAY4ktjyzHksBSR3x/DdkEAKFF6...');
-                audio.volume = 0.3;
-                audio.play().catch(() => {});
-              } catch (err) {}
-            }
-          }
-        }
       }
     });
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [trackedOrder?.id]);
+    return () => { if (unsubscribe) unsubscribe(); };
+  }, [trackedOrderId]);
 
   const handleTrackOrder = async () => {
     if (!orderRef || !email) {
