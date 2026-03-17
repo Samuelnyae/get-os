@@ -175,38 +175,41 @@ Make emails feel personal and luxurious, matching the seven-star dining experien
   };
 
   const sendCampaign = async (campaign) => {
-    if (!campaign.targetEmails || campaign.targetEmails.length === 0) {
-      toast.error('No recipients found for this campaign');
+    const recipients = campaign.targetEmails?.length > 0
+      ? campaign.targetEmails
+      : analyzeCustomerData().allCustomers.map(c => c.email);
+
+    if (!recipients || recipients.length === 0) {
+      toast.error('No customer emails found to send this campaign to');
       return;
     }
 
     setIsSending(true);
-    try {
-      let successCount = 0;
-      let failCount = 0;
+    let successCount = 0;
+    let failCount = 0;
 
-      for (const email of campaign.targetEmails) {
-        try {
-          await base44.integrations.Core.SendEmail({
-            to: email,
-            subject: campaign.subject,
-            body: campaign.body
-          });
-          successCount++;
-        } catch (error) {
-          failCount++;
-        }
-        
-        // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
+    for (const email of recipients) {
+      try {
+        await base44.integrations.Core.SendEmail({
+          from_name: 'Hermanas Bites',
+          to: email,
+          subject: campaign.subject,
+          body: campaign.body,
+        });
+        successCount++;
+      } catch (err) {
+        console.error('Failed to send to', email, err);
+        failCount++;
       }
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
 
-      toast.success(`Campaign sent! ${successCount} emails delivered, ${failCount} failed`);
-      setSelectedCampaign(null);
-    } catch (error) {
-      toast.error('Failed to send campaign: ' + error.message);
-    } finally {
-      setIsSending(false);
+    setIsSending(false);
+    setSelectedCampaign(null);
+    if (successCount > 0) {
+      toast.success(`Campaign sent! ${successCount} email${successCount > 1 ? 's' : ''} delivered${failCount > 0 ? `, ${failCount} failed` : ''}`);
+    } else {
+      toast.error(`All ${failCount} emails failed to send. Check the console for details.`);
     }
   };
 
