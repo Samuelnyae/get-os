@@ -92,6 +92,7 @@ export default function Admin() {
     { id: 'menu', label: 'Menu Items', icon: Utensils },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+    { id: 'feedback-insights', label: 'Feedback Insights', icon: Star },
     { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
 
