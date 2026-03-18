@@ -76,7 +76,7 @@ Current Cart: ${cartItemNames.length > 0 ? cartItemNames.join(', ') : 'Empty'}
 
 AVAILABLE MENU:
 ${allMenuItems.map(item => 
-  `- ${item.id}: ${item.name} (${item.category}, $${item.price}) - ${item.description || 'No description'}, Likes: ${item.likes_count || 0}`
+  `- ${item.id}: ${item.name} (${item.category}, KES ${item.price}) - ${item.description || 'No description'}, Likes: ${item.likes_count || 0}`
 ).join('\n')}
 
 TASK:
