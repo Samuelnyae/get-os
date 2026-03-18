@@ -12,6 +12,7 @@ import SectionHeader from '@/components/common/SectionHeader';
 import { format } from 'date-fns';
 import { useNotifications, requestNotificationPermission } from '@/components/notifications/NotificationManager';
 import { toast } from 'sonner';
+import DeliveryFeedbackWidget from '@/components/feedback/DeliveryFeedbackWidget';
 
 export default function OrderTracking() {
   const [orderRef, setOrderRef] = useState('');
