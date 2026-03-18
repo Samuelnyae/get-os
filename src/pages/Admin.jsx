@@ -159,6 +159,7 @@ export default function Admin() {
             {activeTab === 'menu' && <MenuItemsManager />}
             {activeTab === 'custom' && <CustomRequestsManager />}
             {activeTab === 'feedback' && <FeedbackViewer />}
+            {activeTab === 'feedback-insights' && <FeedbackInsights />}
             {activeTab === 'notifications' && <DNDSettings />}
           </React.Suspense>
         </motion.div>
