@@ -133,9 +133,8 @@ export default function OrderTracking() {
   const currentStepIndex = trackedOrder ? getCurrentStepIndex(trackedOrder.status) : -1;
 
   return (
-    <>
-    {trackedOrder && <DeliveryFeedbackWidget order={trackedOrder} />}
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+      {trackedOrder && <DeliveryFeedbackWidget order={trackedOrder} />}
       <div className="max-w-4xl mx-auto">
         <SectionHeader 
           title="Track Your Order" 
