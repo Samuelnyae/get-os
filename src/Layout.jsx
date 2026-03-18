@@ -277,28 +277,6 @@ export default function Layout({ children, currentPageName }) {
               </p>
             </div>
 
-            {/* Quick Links */}
-            <div className="self-start">
-              <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Quick Links</h3>
-              <div className="space-y-3">
-                <Link
-                  to={createPageUrl('Home')}
-                  className="block font-inter text-sm text-white/60 hover:text-[#c9a962] transition-colors"
-                >
-                  Home
-                </Link>
-                {servicesLinks.map((link) => (
-                  <Link
-                    key={link.page}
-                    to={createPageUrl(link.page)}
-                    className="block font-inter text-sm text-white/60 hover:text-[#c9a962] transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
             {/* Social */}
             <div className="self-start">
               <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Connect</h3>
