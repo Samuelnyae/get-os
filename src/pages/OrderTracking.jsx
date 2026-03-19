@@ -255,6 +255,35 @@ export default function OrderTracking() {
               )}
             </motion.div>
 
+            {/* Live Delivery Map */}
+            {(trackedOrder.status === 'out_for_delivery' || trackedOrder.status === 'delivered') && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/20"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Truck className="w-5 h-5 text-[#c9a962]" />
+                  <h4 className="font-playfair text-xl text-white">
+                    {trackedOrder.status === 'delivered' ? 'Order Delivered' : 'Live Driver Location'}
+                  </h4>
+                  {trackedOrder.status === 'out_for_delivery' && (
+                    <span className="ml-auto flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      <span className="font-inter text-xs text-green-400">Live</span>
+                    </span>
+                  )}
+                </div>
+                <DeliveryMap order={trackedOrder} />
+                <p className="font-inter text-xs text-white/40 mt-3 text-center">
+                  {trackedOrder.status === 'delivered'
+                    ? 'Your order has been delivered. Enjoy your meal!'
+                    : 'Driver location updates in real-time as they approach you.'}
+                </p>
+              </motion.div>
+            )}
+
             {/* Status Progress */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
