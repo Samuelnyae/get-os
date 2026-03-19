@@ -37,19 +37,20 @@ export default function DeliveryFeedbackWidget({ order }) {
   });
 
   useEffect(() => {
-    if (!order) return;
+    if (!order?.id) return;
     if (order.status !== 'delivered') return;
 
     const dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]');
     if (dismissed.includes(order.id)) return;
 
-    // Check if already submitted feedback for this order
     const submitted = JSON.parse(localStorage.getItem('hermanas_feedback_submitted') || '[]');
     if (submitted.includes(order.id)) return;
 
-    // Show after a short delay
-    const timer = setTimeout(() => setVisible(true), 2000);
-    return () => clearTimeout(timer);
+    // Use a flag to avoid re-triggering if already visible
+    setVisible(prev => {
+      if (prev) return prev;
+      return true; // show immediately, no delay needed
+    });
   }, [order?.status, order?.id]);
 
   const dismiss = () => {
