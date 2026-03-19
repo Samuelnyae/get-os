@@ -134,7 +134,7 @@ export default function OrderTracking() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
-      {trackedOrder && <DeliveryFeedbackWidget order={trackedOrder} />}
+      {trackedOrder && <DeliveryFeedbackWidget key={trackedOrder.id} order={trackedOrder} />}
       <div className="max-w-4xl mx-auto">
         <SectionHeader 
           title="Track Your Order" 
