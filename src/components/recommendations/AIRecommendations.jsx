@@ -6,8 +6,23 @@ import { Sparkles, RefreshCw } from 'lucide-react';
 import MenuCard from '../menu/MenuCard';
 import LuxuryButton from '../common/LuxuryButton';
 
+const CACHE_KEY = 'hermanas_recommendations';
+const CACHE_TTL = 1000 * 60 * 60 * 6; // 6 hours
+
+const loadCached = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (stored && Date.now() - stored.timestamp < CACHE_TTL) return stored.items;
+  } catch {}
+  return [];
+};
+
+const saveCache = (items) => {
+  localStorage.setItem(CACHE_KEY, JSON.stringify({ items, timestamp: Date.now() }));
+};
+
 export default function AIRecommendations() {
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState(() => loadCached());
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { data: orders = [] } = useQuery({
