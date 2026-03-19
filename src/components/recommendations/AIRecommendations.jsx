@@ -89,6 +89,7 @@ Please recommend 3-4 menu items that would be perfect for this customer. Conside
     ).slice(0, 4);
 
     setRecommendations(recommendedItems);
+    saveCache(recommendedItems);
     setIsGenerating(false);
   };
 
