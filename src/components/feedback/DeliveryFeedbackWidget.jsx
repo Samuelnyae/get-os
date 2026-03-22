@@ -63,30 +63,7 @@ export default function DeliveryFeedbackWidget({ order }) {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // Generate AI insights from the feedback
-      const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a restaurant improvement AI for Hermanas Bites luxury restaurant. A customer just completed an order and provided the following feedback. Generate concise, actionable improvement suggestions.
-
-ORDER ITEMS: ${order.items?.map(i => i.name).join(', ') || 'N/A'}
-
-RATINGS (out of 5):
-- Website/App: ${ratings.website}/5 — "${comments.website}"
-- Food Quality: ${ratings.food}/5 — "${comments.food}"
-- Hotel/Ambiance: ${ratings.hotel}/5 — "${comments.hotel}"
-- Reception/Staff: ${ratings.reception}/5 — "${comments.reception}"
-- Service: ${ratings.service}/5 — "${comments.service}"
-- Overall: "${comments.overall}"
-
-Provide specific, practical suggestions for improvement in each low-rated area. Be concise.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            insights: { type: "string" },
-            priority_areas: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
-
+      // Save feedback first — don't block on AI
       await base44.entities.DeliveryFeedback.create({
         order_id: order.id,
         order_reference: order.order_reference,
@@ -102,18 +79,38 @@ Provide specific, practical suggestions for improvement in each low-rated area. 
         reception_comment: comments.reception,
         service_comment: comments.service,
         overall_comment: comments.overall,
-        ai_insights: aiResponse.insights,
         ordered_items: order.items?.map(i => i.name) || []
       });
 
-      // Mark as submitted
+      // Mark as submitted immediately
       const submitted = JSON.parse(localStorage.getItem('hermanas_feedback_submitted') || '[]');
       submitted.push(order.id);
       localStorage.setItem('hermanas_feedback_submitted', JSON.stringify(submitted));
 
       setStep(3);
-      setTimeout(() => setVisible(false), 3000);
       toast.success('Thank you for your feedback!');
+      setTimeout(() => setVisible(false), 3000);
+
+      // Generate AI insights in background (non-blocking)
+      base44.integrations.Core.InvokeLLM({
+        prompt: `Restaurant improvement AI for Hermanas Bites. Customer feedback:
+ORDER ITEMS: ${order.items?.map(i => i.name).join(', ') || 'N/A'}
+RATINGS: Website ${ratings.website}/5, Food ${ratings.food}/5, Hotel ${ratings.hotel}/5, Reception ${ratings.reception}/5, Service ${ratings.service}/5
+COMMENTS: ${Object.values(comments).filter(Boolean).join(' | ')}
+Provide concise actionable improvement suggestions.`,
+        response_json_schema: {
+          type: "object",
+          properties: { insights: { type: "string" } }
+        }
+      }).then(aiResponse => {
+        // Update the record with AI insights silently
+        base44.entities.DeliveryFeedback.filter({ order_id: order.id }).then(records => {
+          if (records?.[0]?.id) {
+            base44.entities.DeliveryFeedback.update(records[0].id, { ai_insights: aiResponse.insights });
+          }
+        });
+      }).catch(() => {}); // silently ignore AI errors
+
     } catch (err) {
       console.error(err);
       toast.error('Failed to submit feedback. Please try again.');
