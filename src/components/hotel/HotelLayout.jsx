@@ -232,11 +232,10 @@ export default function HotelLayout({ children, hotel }) {
             <div className="self-start">
               <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Connect</h3>
               <div className="flex space-x-4">
-                {([Instagram, Facebook, Twitter, Phone] as const).map((IconComp, i) => (
-                  <a key={i} href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all">
-                    <IconComp className="w-4 h-4 text-[#c9a962]" />
-                  </a>
-                ))}
+                <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all"><Instagram className="w-4 h-4 text-[#c9a962]" /></a>
+                <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all"><Facebook className="w-4 h-4 text-[#c9a962]" /></a>
+                <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all"><Twitter className="w-4 h-4 text-[#c9a962]" /></a>
+                <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all"><Phone className="w-4 h-4 text-[#c9a962]" /></a>
               </div>
             </div>
           </div>
