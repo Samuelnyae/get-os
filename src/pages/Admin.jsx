@@ -29,6 +29,7 @@ const LowStockAlerts = React.lazy(() => import('@/components/admin/LowStockAlert
 const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
 const AdvancedAnalytics = React.lazy(() => import('@/components/admin/AdvancedAnalytics'));
 const FeedbackInsights = React.lazy(() => import('@/components/admin/FeedbackInsights'));
+const HotelsManager = React.lazy(() => import('@/components/admin/HotelsManager'));
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');

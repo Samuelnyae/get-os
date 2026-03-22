@@ -1,4 +1,6 @@
 import { Toaster } from "@/components/ui/toaster"
+import Hotels from './pages/Hotels';
+import HotelPage from './pages/HotelPage';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
