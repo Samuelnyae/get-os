@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart, ChevronDown, Shield } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu,
