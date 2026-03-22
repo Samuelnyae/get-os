@@ -67,6 +67,8 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/Hotels" element={<LayoutWrapper currentPageName="Hotels"><Hotels /></LayoutWrapper>} />
+      <Route path="/hotel/:slug" element={<LayoutWrapper currentPageName="HotelPage"><HotelPage /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
