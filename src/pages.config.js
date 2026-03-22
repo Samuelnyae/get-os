@@ -65,6 +65,7 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "About": About,
+    "Hotels": Hotels,
     "Admin": Admin,
     "Contact": Contact,
     "CustomFood": CustomFood,
