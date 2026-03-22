@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import Hotels from './pages/Hotels';
 import HotelPage from './pages/HotelPage';
+import HotelAdmin from './pages/HotelAdmin';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
@@ -68,7 +69,9 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/Hotels" element={<LayoutWrapper currentPageName="Hotels"><Hotels /></LayoutWrapper>} />
-      <Route path="/hotel/:slug" element={<LayoutWrapper currentPageName="HotelPage"><HotelPage /></LayoutWrapper>} />
+      <Route path="/hotel/:slug" element={<HotelPage />} />
+      <Route path="/hotel/:slug/admin" element={<HotelAdmin />} />
+      <Route path="/hotel/:slug/menu" element={<HotelPage />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
