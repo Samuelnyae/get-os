@@ -78,6 +78,7 @@ export default function Admin() {
   }
 
   const tabs = [
+    { id: 'hotels', label: 'Hotels', icon: Building2 },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
@@ -145,6 +146,7 @@ export default function Admin() {
               <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
             </div>
           }>
+            {activeTab === 'hotels' && <HotelsManager />}
             {activeTab === 'dashboard' && <DashboardStats />}
             {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
