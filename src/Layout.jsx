@@ -59,10 +59,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', page: 'Home' },
     { name: 'Menu', page: 'Menu' },
     { name: 'Drinks', page: 'Drinks' },
-    { name: 'Locations', page: 'Hotels' },
     { name: 'Track Order', page: 'OrderTracking' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
+    ...(isAdmin ? [{ name: 'Locations', page: 'Hotels' }] : []),
     ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),
   ];
 

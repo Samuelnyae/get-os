@@ -128,7 +128,8 @@ export default function HotelsManager() {
                 {field('Email', 'email', 'email', 'branch@hermanasbites.com')}
                 {field('Opening Hours', 'opening_hours', 'text', 'Mon-Sun 8am-10pm')}
                 {field('Owner Email', 'owner_email', 'email', 'manager@example.com')}
-                {field('Image URL', 'image_url', 'text', 'https://...')}
+                {field('Cover Image URL', 'image_url', 'text', 'https://...')}
+                {field('Logo URL', 'logo_url', 'text', 'https://... (shown in navbar)')}
                 {field('Latitude', 'latitude', 'number', '-1.286389')}
                 {field('Longitude', 'longitude', 'number', '36.817223')}
                 <div className="sm:col-span-2">
