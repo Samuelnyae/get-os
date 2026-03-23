@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, MapPin, Phone, Mail, Clock, Globe, X, Check } from 'lucide-react';
+import { Plus, Pencil, Trash2, MapPin, Phone, Mail, Clock, Globe, X, Check, ExternalLink, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
