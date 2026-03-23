@@ -218,6 +218,25 @@ export default function HotelsManager() {
                 {hotel.opening_hours && <div className="flex items-center gap-2 text-white/40"><Clock className="w-3.5 h-3.5 text-[#c9a962]" /><span className="font-inter text-xs">{hotel.opening_hours}</span></div>}
                 {hotel.owner_email && <div className="flex items-center gap-2 text-white/40"><Mail className="w-3.5 h-3.5 text-[#c9a962]" /><span className="font-inter text-xs">Owner: {hotel.owner_email}</span></div>}
               </div>
+              {/* Quick Links */}
+              <div className="flex gap-2 mt-4 pt-3 border-t border-[#c9a962]/10">
+                <a
+                  href={`/hotel/${hotel.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c9a962]/10 text-[#c9a962] font-inter text-xs hover:bg-[#c9a962]/20 transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" /> View Hotel
+                </a>
+                <a
+                  href={`/hotel/${hotel.slug}/admin`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-white/60 font-inter text-xs hover:bg-white/10 transition-colors"
+                >
+                  <Shield className="w-3 h-3" /> Hotel Admin
+                </a>
+              </div>
             </div>
           ))}
         </div>
