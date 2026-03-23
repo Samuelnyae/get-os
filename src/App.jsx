@@ -1,7 +1,14 @@
 import { Toaster } from "@/components/ui/toaster"
 import Hotels from './pages/Hotels';
-import HotelPage from './pages/HotelPage';
 import HotelAdmin from './pages/HotelAdmin';
+import HotelHome from './pages/hotel/HotelHome';
+import HotelMenu from './pages/hotel/HotelMenu';
+import HotelAbout from './pages/hotel/HotelAbout';
+import HotelReservations from './pages/hotel/HotelReservations';
+import HotelTrackOrder from './pages/hotel/HotelTrackOrder';
+import HotelTableDining from './pages/hotel/HotelTableDining';
+import HotelCustomize from './pages/hotel/HotelCustomize';
+import HotelRecommendations from './pages/hotel/HotelRecommendations';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
