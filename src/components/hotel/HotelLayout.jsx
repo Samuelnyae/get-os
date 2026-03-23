@@ -65,17 +65,17 @@ export default function HotelLayout({ children, hotel }) {
   const navLinks = [
     { name: 'Home', href: hotelBase },
     { name: 'Menu', href: `${hotelBase}/menu` },
-    { name: 'Reservations', href: `/Reservations` },
-    { name: 'Track Order', href: `/OrderTracking` },
-    { name: 'Contact', href: `/Contact` },
+    { name: 'About', href: `${hotelBase}/about` },
+    { name: 'Track Order', href: `${hotelBase}/track-order` },
     ...(isHotelAdmin ? [{ name: 'Dashboard', href: `${hotelBase}/admin` }] : []),
     ...(isMainAdmin ? [{ name: 'All Locations', href: '/Hotels' }] : []),
   ];
 
   const servicesLinks = [
-    { name: 'Table Dining', href: `/TableDining` },
-    { name: 'Reservations', href: `/Reservations` },
-    { name: 'Customize Order', href: `/CustomFood` },
+    { name: 'Reservations', href: `${hotelBase}/reservations` },
+    { name: 'Table Dining', href: `${hotelBase}/table-dining` },
+    { name: 'Customize Order', href: `${hotelBase}/customize` },
+    { name: 'Recommendations', href: `${hotelBase}/recommendations` },
   ];
 
   const formatTime = (date) =>
