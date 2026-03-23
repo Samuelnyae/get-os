@@ -76,9 +76,15 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/Hotels" element={<LayoutWrapper currentPageName="Hotels"><Hotels /></LayoutWrapper>} />
-      <Route path="/hotel/:slug" element={<HotelPage />} />
+      <Route path="/hotel/:slug" element={<HotelHome />} />
+      <Route path="/hotel/:slug/menu" element={<HotelMenu />} />
+      <Route path="/hotel/:slug/about" element={<HotelAbout />} />
+      <Route path="/hotel/:slug/reservations" element={<HotelReservations />} />
+      <Route path="/hotel/:slug/track-order" element={<HotelTrackOrder />} />
+      <Route path="/hotel/:slug/table-dining" element={<HotelTableDining />} />
+      <Route path="/hotel/:slug/customize" element={<HotelCustomize />} />
+      <Route path="/hotel/:slug/recommendations" element={<HotelRecommendations />} />
       <Route path="/hotel/:slug/admin" element={<HotelAdmin />} />
-      <Route path="/hotel/:slug/menu" element={<HotelPage />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
