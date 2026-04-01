@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Pencil, Trash2, MapPin, Phone, Mail, Clock, Globe, X, Check, ExternalLink, Shield } from 'lucide-react';
+import { Plus, Pencil, Trash2, MapPin, Phone, Mail, Clock, Globe, X, Check, ExternalLink, Shield, MessageCircle, QrCode } from 'lucide-react';
+import HotelQRCode from '@/components/hotel/HotelQRCode';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
@@ -14,6 +15,26 @@ const EMPTY_HOTEL = {
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+/** Collapsible QR code panel per hotel card */
+function QRToggle({ hotel }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="mt-3">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 text-white/30 hover:text-[#c9a962] font-inter text-xs transition-colors"
+      >
+        <QrCode className="w-3.5 h-3.5" /> {open ? 'Hide QR Code' : 'Show QR Code'}
+      </button>
+      {open && (
+        <div className="mt-3 flex justify-center">
+          <HotelQRCode hotel={hotel} size={140} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function HotelsManager() {
@@ -130,6 +151,19 @@ export default function HotelsManager() {
                 {field('Owner Email', 'owner_email', 'email', 'manager@example.com')}
                 {field('Cover Image URL', 'image_url', 'text', 'https://...')}
                 {field('Logo URL', 'logo_url', 'text', 'https://... (shown in navbar)')}
+                <div className="sm:col-span-2">
+                  <label className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1 block">WhatsApp Number (for order notifications)</label>
+                  <div className="flex items-center gap-2">
+                    <span className="font-inter text-xs text-white/30">+</span>
+                    <Input
+                      value={form.whatsapp_number ?? ''}
+                      onChange={e => setForm(f => ({ ...f, whatsapp_number: e.target.value.replace(/[^0-9]/g, '') }))}
+                      placeholder="254700000000 (no + or spaces)"
+                      className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/20"
+                    />
+                  </div>
+                  <p className="font-inter text-xs text-white/30 mt-1">Customers will be redirected here after placing an order.</p>
+                </div>
                 {field('Latitude', 'latitude', 'number', '-1.286389')}
                 {field('Longitude', 'longitude', 'number', '36.817223')}
                 <div className="sm:col-span-2">
@@ -219,7 +253,7 @@ export default function HotelsManager() {
                 {hotel.owner_email && <div className="flex items-center gap-2 text-white/40"><Mail className="w-3.5 h-3.5 text-[#c9a962]" /><span className="font-inter text-xs">Owner: {hotel.owner_email}</span></div>}
               </div>
               {/* Quick Links */}
-              <div className="flex gap-2 mt-4 pt-3 border-t border-[#c9a962]/10">
+              <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-[#c9a962]/10">
                 <a
                   href={`/hotel/${hotel.slug}`}
                   target="_blank"
@@ -236,10 +270,23 @@ export default function HotelsManager() {
                 >
                   <Shield className="w-3 h-3" /> Hotel Admin
                 </a>
+                {hotel.whatsapp_number && (
+                  <a
+                    href={`https://wa.me/${hotel.whatsapp_number}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 font-inter text-xs hover:bg-green-500/20 transition-colors"
+                  >
+                    <MessageCircle className="w-3 h-3" /> WhatsApp
+                  </a>
+                )}
               </div>
+
+              {/* QR Code collapsible */}
+              <QRToggle hotel={hotel} />
             </div>
           ))}
-        </div>
+              </div>
       )}
     </div>
   );

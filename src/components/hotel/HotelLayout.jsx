@@ -157,7 +157,7 @@ export default function HotelLayout({ children, hotel }) {
                 <p className="text-[10px] tracking-wider text-[#c9a962]/70 font-inter uppercase">{formatDate(currentTime)}</p>
                 <p className="text-sm font-inter text-white/90 tabular-nums">{formatTime(currentTime)}</p>
               </div>
-              <Link to="/Order" className="relative p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300">
+              <Link to={hotel ? `/hotel/${hotel.slug}/order` : '/Order'} className="relative p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300">
                 <ShoppingCart className="w-5 h-5 text-[#c9a962]" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#c9a962] text-[#0a0a0a] text-xs font-bold rounded-full flex items-center justify-center">

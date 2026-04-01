@@ -1,0 +1,66 @@
+{
+  "name": "Hotel",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Hotel/branch name"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier e.g. 'nairobi-west'"
+    },
+    "location": {
+      "type": "string",
+      "description": "City or district"
+    },
+    "address": {
+      "type": "string",
+      "description": "Full street address"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "whatsapp_number": {
+      "type": "string",
+      "description": "WhatsApp number in international format e.g. 254700000000 (no + or spaces)"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Hero/cover image"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Hotel logo image URL shown in navbar"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Email of the user who manages this hotel"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "opening_hours": {
+      "type": "string",
+      "description": "e.g. Mon-Sun 8am-10pm"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "location"
+  ]
+}

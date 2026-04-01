@@ -9,6 +9,7 @@ import HotelTrackOrder from './pages/hotel/HotelTrackOrder';
 import HotelTableDining from './pages/hotel/HotelTableDining';
 import HotelCustomize from './pages/hotel/HotelCustomize';
 import HotelRecommendations from './pages/hotel/HotelRecommendations';
+import HotelOrder from './pages/hotel/HotelOrder';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
@@ -84,6 +85,7 @@ const AuthenticatedApp = () => {
       <Route path="/hotel/:slug/table-dining" element={<HotelTableDining />} />
       <Route path="/hotel/:slug/customize" element={<HotelCustomize />} />
       <Route path="/hotel/:slug/recommendations" element={<HotelRecommendations />} />
+      <Route path="/hotel/:slug/order" element={<HotelOrder />} />
       <Route path="/hotel/:slug/admin" element={<HotelAdmin />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
