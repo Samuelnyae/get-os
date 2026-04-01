@@ -56,6 +56,26 @@
     },
     "longitude": {
       "type": "number"
+    },
+    "social_instagram": {
+      "type": "string",
+      "description": "Instagram profile URL"
+    },
+    "social_facebook": {
+      "type": "string",
+      "description": "Facebook page URL"
+    },
+    "social_twitter": {
+      "type": "string",
+      "description": "Twitter/X profile URL"
+    },
+    "social_tiktok": {
+      "type": "string",
+      "description": "TikTok profile URL"
+    },
+    "social_youtube": {
+      "type": "string",
+      "description": "YouTube channel URL"
     }
   },
   "required": [

@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 const EMPTY_HOTEL = {
   name: '', slug: '', location: '', address: '', phone: '', email: '',
   description: '', image_url: '', owner_email: '', opening_hours: '',
-  latitude: '', longitude: '', is_active: true
+  latitude: '', longitude: '', is_active: true,
+  social_instagram: '', social_facebook: '', social_twitter: '', social_tiktok: '', social_youtube: ''
 };
 
 function slugify(str) {
@@ -166,6 +167,29 @@ export default function HotelsManager() {
                 </div>
                 {field('Latitude', 'latitude', 'number', '-1.286389')}
                 {field('Longitude', 'longitude', 'number', '36.817223')}
+
+                {/* Social Media */}
+                <div className="sm:col-span-2">
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3 mt-2">Social Media Links</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[['Instagram', 'social_instagram', 'https://instagram.com/...'],
+                      ['Facebook', 'social_facebook', 'https://facebook.com/...'],
+                      ['Twitter / X', 'social_twitter', 'https://twitter.com/...'],
+                      ['TikTok', 'social_tiktok', 'https://tiktok.com/@...'],
+                      ['YouTube', 'social_youtube', 'https://youtube.com/...'],
+                    ].map(([label, key, placeholder]) => (
+                      <div key={key}>
+                        <label className="font-inter text-xs text-white/40 mb-1 block">{label}</label>
+                        <Input
+                          value={form[key] ?? ''}
+                          onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                          placeholder={placeholder}
+                          className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/20"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="sm:col-span-2">
                   <label className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1 block">Description</label>
                   <textarea
