@@ -50,15 +50,16 @@ export default function HotelLayout({ children, hotel }) {
   }, [hotel]);
 
   useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    const cartKey = hotel?.slug ? `hermanas_cart_${hotel.slug}` : 'hermanas_cart';
+    const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
     setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0));
     const handleCartUpdate = () => {
-      const updatedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+      const updatedCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       setCartCount(updatedCart.reduce((sum, item) => sum + item.quantity, 0));
     };
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-  }, []);
+  }, [hotel?.slug]);
 
   const hotelBase = hotel ? `/hotel/${hotel.slug}` : '/';
 

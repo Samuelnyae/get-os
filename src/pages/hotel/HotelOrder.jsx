@@ -15,7 +15,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
-  CheckCircle, Phone, User, Clock, MessageCircle, Mail
+  CheckCircle, Phone, User, Clock, MessageCircle, Mail, MapPin, Home
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,19 +27,23 @@ import { toast } from 'sonner';
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /** Build a pre-filled WhatsApp message URL */
-function buildWhatsAppUrl(whatsappNumber, orderRef, customerInfo, cart, total, pickupTime) {
+function buildWhatsAppUrl(whatsappNumber, orderRef, customerInfo, cart, total, orderType) {
   const itemLines = cart
     .map(i => `  • ${i.name} x${i.quantity} — KES ${(i.price * i.quantity).toLocaleString()}`)
     .join('\n');
 
+  const typeLabel = orderType === 'remote' ? '🚚 Remote/Delivery' : '🏨 In-Hotel Pickup';
+
   const message = [
     `🛒 *New Order: ${orderRef}*`,
+    `📦 *Type: ${typeLabel}*`,
     ``,
     `👤 *Customer*`,
     `  Name: ${customerInfo.name}`,
     `  Phone: ${customerInfo.phone}`,
     `  Email: ${customerInfo.email}`,
-    pickupTime ? `  Pickup: ${pickupTime}` : null,
+    orderType === 'remote' && customerInfo.delivery_address ? `  Address: ${customerInfo.delivery_address}` : null,
+    orderType === 'in_hotel' && customerInfo.pickup_time ? `  Pickup Time: ${customerInfo.pickup_time}` : null,
     ``,
     `🍽️ *Items Ordered*`,
     itemLines,
@@ -64,6 +68,7 @@ const generateRef = () => `HB-${Date.now().toString().slice(-8)}`;
 
 export default function HotelOrder() {
   const { slug } = useParams();
+  const cartKey = `hermanas_cart_${slug}`;
 
   // ── Hotel data ──
   const { data: hotel, isLoading: hotelLoading } = useQuery({
@@ -72,28 +77,29 @@ export default function HotelOrder() {
     select: (data) => data[0],
   });
 
-  // ── Cart state (shared localStorage cart) ──
+  // ── Cart state (hotel-specific localStorage cart) ──
   const [cart, setCart] = useState([]);
-  const [step, setStep] = useState('cart'); // 'cart' | 'checkout' | 'confirmation'
+  const [orderType, setOrderType] = useState(null); // 'remote' | 'in_hotel'
+  const [step, setStep] = useState('type'); // 'type' | 'cart' | 'checkout' | 'confirmation'
   const [orderRef, setOrderRef] = useState('');
   const [whatsappUrl, setWhatsappUrl] = useState('');
 
   // ── Customer form ──
   const [customer, setCustomer] = useState({
-    name: '', email: '', phone: '', pickup_time: '', special_instructions: '',
+    name: '', email: '', phone: '', pickup_time: '', delivery_address: '', special_instructions: '',
   });
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    const saved = JSON.parse(localStorage.getItem(cartKey) || '[]');
     setCart(saved);
-  }, []);
+  }, [cartKey]);
 
   // ── Cart helpers ──
   const syncCart = (newCart) => {
     setCart(newCart);
-    localStorage.setItem('hermanas_cart', JSON.stringify(newCart));
-    window.dispatchEvent(new Event('cartUpdated'));
+    localStorage.setItem(cartKey, JSON.stringify(newCart));
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { slug } }));
   };
 
   const updateQty = (idx, delta) => {
@@ -108,9 +114,7 @@ export default function HotelOrder() {
   };
 
   // ── Totals ──
-  const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
+  const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
   // ── Order mutation (saves to DB for tracking) ──
   const orderMutation = useMutation({
@@ -128,13 +132,13 @@ export default function HotelOrder() {
             customer,
             cart,
             total,
-            customer.pickup_time
+            orderType
           )
         );
       }
 
       // Clear cart
-      localStorage.removeItem('hermanas_cart');
+      localStorage.removeItem(cartKey);
       syncCart([]);
       setStep('confirmation');
     },
@@ -165,7 +169,7 @@ export default function HotelOrder() {
     orderMutation.mutate({
       ...safe,
       total_amount: total,
-      payment_method: 'Pay at Counter',
+      payment_method: orderType === 'remote' ? 'Remote Delivery' : 'Pay at Counter',
       payment_status: 'pending',
       status: 'pending',
       order_reference: ref,
@@ -242,7 +246,7 @@ export default function HotelOrder() {
   }
 
   // ── Empty cart ──
-  if (cart.length === 0 && step === 'cart') {
+  if (cart.length === 0 && step !== 'type' && step !== 'confirmation') {
     return (
       <HotelLayout hotel={hotel}>
         <div className="min-h-screen flex flex-col items-center justify-center py-20 px-4 text-center">
@@ -257,6 +261,41 @@ export default function HotelOrder() {
     );
   }
 
+  // ── Order type selector ──
+  if (step === 'type') {
+    return (
+      <HotelLayout hotel={hotel}>
+        <div className="min-h-screen flex flex-col items-center justify-center py-20 px-4">
+          <p className="font-inter text-xs tracking-[0.3em] text-[#c9a962] uppercase mb-3">How would you like to order?</p>
+          <h1 className="font-playfair text-4xl text-white mb-12">Choose Order Type</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+            {/* In-Hotel */}
+            <button
+              onClick={() => { setOrderType('in_hotel'); setStep(cart.length ? 'cart' : 'cart'); }}
+              className="group bg-[#1a1a1a] border border-[#c9a962]/20 hover:border-[#c9a962] rounded-2xl p-8 text-center transition-all duration-300 hover:bg-[#c9a962]/5"
+            >
+              <Home className="w-12 h-12 text-[#c9a962] mx-auto mb-4" />
+              <h2 className="font-playfair text-2xl text-white mb-2">In-Hotel Order</h2>
+              <p className="font-inter text-sm text-white/50">You're at {hotel.name}. Order & pick up from the counter.</p>
+            </button>
+            {/* Remote */}
+            <button
+              onClick={() => { setOrderType('remote'); setStep(cart.length ? 'cart' : 'cart'); }}
+              className="group bg-[#1a1a1a] border border-[#c9a962]/20 hover:border-[#c9a962] rounded-2xl p-8 text-center transition-all duration-300 hover:bg-[#c9a962]/5"
+            >
+              <MapPin className="w-12 h-12 text-[#c9a962] mx-auto mb-4" />
+              <h2 className="font-playfair text-2xl text-white mb-2">Remote Order</h2>
+              <p className="font-inter text-sm text-white/50">Ordering from outside? We'll arrange delivery to your location.</p>
+            </button>
+          </div>
+          {cart.length === 0 && (
+            <p className="font-inter text-white/30 text-sm mt-8">Your cart is empty — <Link to={`/hotel/${slug}/menu`} className="text-[#c9a962] hover:underline">browse the menu first</Link></p>
+          )}
+        </div>
+      </HotelLayout>
+    );
+  }
+
   // ── Main cart + checkout ──
   return (
     <HotelLayout hotel={hotel}>
@@ -265,11 +304,13 @@ export default function HotelOrder() {
           {/* Page title */}
           <div className="text-center mb-10">
             <p className="font-inter text-xs tracking-[0.3em] text-[#c9a962] uppercase mb-2">
+              {orderType === 'remote' ? '🚚 Remote Order' : '🏨 In-Hotel Order'} —{' '}
               {step === 'cart' ? 'Review Your Selection' : 'Complete Your Order'}
             </p>
             <h1 className="font-playfair text-4xl text-white">
               {step === 'cart' ? 'Your Cart' : 'Checkout'}
             </h1>
+            <button onClick={() => setStep('type')} className="font-inter text-xs text-white/30 hover:text-[#c9a962] mt-2 transition-colors">← Change order type</button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -337,13 +378,22 @@ export default function HotelOrder() {
                           <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Phone *</label>
                           <Input type="tel" value={customer.phone} onChange={e => setCustomer(c => ({ ...c, phone: e.target.value }))} placeholder="+254 700 000 000" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                         </div>
-                        {/* Pickup time */}
-                        <div>
-                          <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                            <Clock className="inline w-3 h-3 mr-1" />Pickup Time
-                          </label>
-                          <Input type="time" value={customer.pickup_time} onChange={e => setCustomer(c => ({ ...c, pickup_time: e.target.value }))} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white" />
-                        </div>
+                        {/* Conditional field: pickup time vs delivery address */}
+                        {orderType === 'in_hotel' ? (
+                          <div>
+                            <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                              <Clock className="inline w-3 h-3 mr-1" />Pickup Time
+                            </label>
+                            <Input type="time" value={customer.pickup_time} onChange={e => setCustomer(c => ({ ...c, pickup_time: e.target.value }))} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white" />
+                          </div>
+                        ) : (
+                          <div className="md:col-span-2">
+                            <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                              <MapPin className="inline w-3 h-3 mr-1" />Delivery Address *
+                            </label>
+                            <Input value={customer.delivery_address} onChange={e => setCustomer(c => ({ ...c, delivery_address: e.target.value }))} placeholder="Your full delivery address" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                          </div>
+                        )}
                       </div>
                       {/* Special instructions */}
                       <div className="mt-4">
@@ -383,16 +433,8 @@ export default function HotelOrder() {
                   ))}
                 </div>
 
-                <div className="border-t border-[#c9a962]/20 pt-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-inter text-white/50">Subtotal</span>
-                    <span className="font-inter text-white">KES {subtotal.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-inter text-white/50">Tax (10%)</span>
-                    <span className="font-inter text-white">KES {tax.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between pt-3 border-t border-[#c9a962]/20">
+                <div className="border-t border-[#c9a962]/20 pt-4">
+                  <div className="flex justify-between pt-2">
                     <span className="font-playfair text-lg text-white">Total</span>
                     <span className="font-playfair text-2xl text-[#c9a962]">KES {total.toLocaleString()}</span>
                   </div>
