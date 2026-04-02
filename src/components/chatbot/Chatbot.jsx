@@ -38,7 +38,7 @@ const getSessionId = () => {
   return sessionId;
 };
 
-export default function Chatbot() {
+export default function Chatbot({ hotel = null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -66,20 +66,23 @@ export default function Chatbot() {
     queryFn: async () => {
       if (!userIdentifier) return null;
       
+      const convKey = hotel ? `${userIdentifier}_hotel_${hotel.id}` : userIdentifier;
       const existing = await base44.entities.ChatConversation.filter({
-        user_identifier: userIdentifier
+        user_identifier: convKey
       }, '-last_message_at', 1);
       
       if (existing.length > 0) {
         setConversationId(existing[0].id);
         return existing[0];
       }
-      
+      const welcomeMsg = hotel
+        ? `Welcome to ${hotel.name}! I'm your AI concierge for this location. I can help with our menu, reservations, order tracking, and more.`
+        : `Welcome to Hermanas Bites! I'm your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.`;
       const newConv = await base44.entities.ChatConversation.create({
-        user_identifier: userIdentifier,
+        user_identifier: convKey,
         messages: [{
           role: 'assistant',
-          content: 'Welcome to Hermanas Bites! I\'m your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.',
+          content: welcomeMsg,
           timestamp: new Date().toISOString()
         }],
         last_message_at: new Date().toISOString()
@@ -117,12 +120,16 @@ export default function Chatbot() {
 
   const clearConversationMutation = useMutation({
     mutationFn: async () => {
+      const convKey = hotel ? `${userIdentifier}_hotel_${hotel.id}` : userIdentifier;
       await base44.entities.ChatConversation.delete(conversationId);
+      const welcomeMsg = hotel
+        ? `Welcome to ${hotel.name}! I'm your AI concierge for this location. How may I assist you today?`
+        : `Welcome to Hermanas Bites! I'm your AI concierge. How may I assist you today?`;
       const newConv = await base44.entities.ChatConversation.create({
-        user_identifier: userIdentifier,
+        user_identifier: convKey,
         messages: [{
           role: 'assistant',
-          content: 'Welcome to Hermanas Bites! I\'m your AI concierge. How may I assist you today?',
+          content: welcomeMsg,
           timestamp: new Date().toISOString()
         }],
         last_message_at: new Date().toISOString()
@@ -161,7 +168,11 @@ export default function Chatbot() {
     try {
       const menuItems = await base44.entities.MenuItem.list('-created_date', 50);
       
-      const context = `You are an AI assistant for Hermanas Bites, a luxury seven-star restaurant. 
+      const hotelContext = hotel
+        ? `You are an AI concierge for ${hotel.name}, located at ${hotel.location}${hotel.address ? ', ' + hotel.address : ''}. ${hotel.description || ''}`
+        : `You are an AI assistant for Hermanas Bites, a luxury seven-star restaurant.`;
+
+      const context = `${hotelContext}
       
 Current menu highlights:
 ${menuItems.slice(0, 10).map(item => `- ${item.name} (${item.category}): KES ${item.price} - ${item.description}`).join('\n')}
@@ -172,6 +183,8 @@ Restaurant information:
 - Custom food requests accepted
 - Payment at counter model
 - Real-time order tracking available
+${hotel?.opening_hours ? `- Opening hours: ${hotel.opening_hours}` : ''}
+${hotel?.phone ? `- Phone: ${hotel.phone}` : ''}
 
 Be helpful, professional, and embody luxury hospitality. If asked about specific menu items, recommend from the list. If asked about orders, guide them to the Order Tracking page. For reservations, guide them to the Reservations page.`;
 
@@ -249,7 +262,7 @@ Be helpful, professional, and embody luxury hospitality. If asked about specific
                 </div>
                 <div>
                   <h3 className="font-playfair text-lg text-white">AI Concierge</h3>
-                  <p className="font-inter text-xs text-[#c9a962]">Hermanas Bites</p>
+                  <p className="font-inter text-xs text-[#c9a962]">{hotel ? hotel.name : 'Hermanas Bites'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

@@ -251,7 +251,7 @@ export default function HotelLayout({ children, hotel }) {
         </div>
       </footer>
 
-      <Chatbot />
+      <Chatbot hotel={hotel} />
     </div>
   );
 }

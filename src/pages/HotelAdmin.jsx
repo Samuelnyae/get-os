@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Shield, AlertCircle, LayoutDashboard, Utensils, ShoppingBag,
-  Calendar, MessageSquare, User, Star, Bell, BarChart3
+  Calendar, MessageSquare, User, Star, Bell, BarChart3,
+  Brain, Package, TrendingUp, Table, Megaphone, Truck
 } from 'lucide-react';
 import LuxuryButton from '@/components/common/LuxuryButton';
 import HotelLayout from '@/components/hotel/HotelLayout';
@@ -19,6 +20,13 @@ const FeedbackViewer = React.lazy(() => import('@/components/admin/FeedbackViewe
 const FeedbackInsights = React.lazy(() => import('@/components/admin/FeedbackInsights'));
 const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
 const AdvancedAnalytics = React.lazy(() => import('@/components/admin/AdvancedAnalytics'));
+const AIInsights = React.lazy(() => import('@/components/admin/AIInsights'));
+const AIInventoryManagement = React.lazy(() => import('@/components/admin/AIInventoryManagement'));
+const AIFeedbackAnalysis = React.lazy(() => import('@/components/admin/AIFeedbackAnalysis'));
+const AITableManagement = React.lazy(() => import('@/components/admin/AITableManagement'));
+const AIMarketingCampaigns = React.lazy(() => import('@/components/admin/AIMarketingCampaigns'));
+const AIOrderFulfillment = React.lazy(() => import('@/components/admin/AIOrderFulfillment'));
+const LowStockAlerts = React.lazy(() => import('@/components/admin/LowStockAlerts'));
 
 export default function HotelAdmin() {
   const { slug } = useParams();
@@ -91,6 +99,13 @@ export default function HotelAdmin() {
     { id: 'staff', label: 'Staff', icon: User },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'feedback-insights', label: 'Feedback Insights', icon: Star },
+    { id: 'ai-insights', label: 'AI Insights', icon: Brain },
+    { id: 'ai-inventory', label: 'AI Inventory', icon: Package },
+    { id: 'ai-feedback', label: 'AI Feedback', icon: TrendingUp },
+    { id: 'ai-tables', label: 'AI Tables', icon: Table },
+    { id: 'ai-marketing', label: 'AI Marketing', icon: Megaphone },
+    { id: 'ai-fulfillment', label: 'AI Fulfillment', icon: Truck },
+    { id: 'stock-alerts', label: 'Stock Alerts', icon: Bell },
     { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
 
@@ -147,6 +162,13 @@ export default function HotelAdmin() {
               {activeTab === 'staff' && <StaffManager hotelId={hotel.id} />}
               {activeTab === 'feedback' && <FeedbackViewer hotelId={hotel.id} />}
               {activeTab === 'feedback-insights' && <FeedbackInsights hotelId={hotel.id} />}
+              {activeTab === 'ai-insights' && <AIInsights hotelId={hotel.id} />}
+              {activeTab === 'ai-inventory' && <AIInventoryManagement hotelId={hotel.id} />}
+              {activeTab === 'ai-feedback' && <AIFeedbackAnalysis hotelId={hotel.id} />}
+              {activeTab === 'ai-tables' && <AITableManagement hotelId={hotel.id} />}
+              {activeTab === 'ai-marketing' && <AIMarketingCampaigns hotelId={hotel.id} />}
+              {activeTab === 'ai-fulfillment' && <AIOrderFulfillment hotelId={hotel.id} />}
+              {activeTab === 'stock-alerts' && <LowStockAlerts hotelId={hotel.id} />}
               {activeTab === 'notifications' && <DNDSettings />}
             </React.Suspense>
           </motion.div>
