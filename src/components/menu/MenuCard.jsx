@@ -4,12 +4,12 @@ import { createPageUrl } from '../../utils';
 import { motion } from 'framer-motion';
 import { Heart, Plus } from 'lucide-react';
 
-const MenuCard = memo(function MenuCard({ item, onAddToCart }) {
+const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas_cart' }) {
   const addToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
     const existingIndex = cart.findIndex(i => i.menu_item_id === item.id);
     
     if (existingIndex >= 0) {
@@ -24,7 +24,7 @@ const MenuCard = memo(function MenuCard({ item, onAddToCart }) {
       });
     }
     
-    localStorage.setItem('hermanas_cart', JSON.stringify(cart));
+    localStorage.setItem(cartKey, JSON.stringify(cart));
     window.dispatchEvent(new Event('cartUpdated'));
     
     // Track viewed items for browsing behavior

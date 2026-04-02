@@ -151,7 +151,7 @@ export default function HotelHome() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <MenuCard item={item} />
+                    <MenuCard item={item} cartKey={`hermanas_cart_${slug}`} />
                   </motion.div>
                 ))}
               </div>

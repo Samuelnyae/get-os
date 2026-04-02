@@ -66,7 +66,7 @@ export default function HotelMenu() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((item, i) => (
                 <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-                  <MenuCard item={item} />
+                  <MenuCard item={item} cartKey={`hermanas_cart_${slug}`} />
                 </motion.div>
               ))}
             </div>
