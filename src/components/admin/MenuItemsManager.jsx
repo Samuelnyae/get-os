@@ -14,7 +14,7 @@ import LuxuryButton from '../common/LuxuryButton';
 import { toast } from 'sonner';
 import { useNotifications } from '@/components/notifications/NotificationManager';
 
-export default function MenuItemsManager() {
+export default function MenuItemsManager({ hotelId }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,8 +45,10 @@ export default function MenuItemsManager() {
   const { sendNotification } = useNotifications();
 
   const { data: menuItems = [], isLoading } = useQuery({
-    queryKey: ['admin-menu-items'],
-    queryFn: () => base44.entities.MenuItem.list('-created_date'),
+    queryKey: ['admin-menu-items', hotelId],
+    queryFn: () => hotelId
+      ? base44.entities.MenuItem.filter({ hotel_id: hotelId }, '-created_date')
+      : base44.entities.MenuItem.list('-created_date'),
   });
 
   // Monitor low stock (based on likes/popularity as proxy)
@@ -68,7 +70,7 @@ export default function MenuItemsManager() {
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MenuItem.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items']);
+      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item created successfully');
@@ -79,7 +81,7 @@ export default function MenuItemsManager() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.MenuItem.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items']);
+      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item updated successfully');
@@ -90,7 +92,7 @@ export default function MenuItemsManager() {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.MenuItem.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items']);
+      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item deleted successfully');
@@ -107,6 +109,7 @@ export default function MenuItemsManager() {
     const data = {
       ...formData,
       price: parseFloat(formData.price),
+      ...(hotelId ? { hotel_id: hotelId } : {}),
     };
 
     if (editingItem) {
