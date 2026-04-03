@@ -1,15 +1,5 @@
 import { Toaster } from "@/components/ui/toaster"
-import Hotels from './pages/Hotels';
-import HotelAdmin from './pages/HotelAdmin';
-import HotelHome from './pages/hotel/HotelHome';
-import HotelMenu from './pages/hotel/HotelMenu';
-import HotelAbout from './pages/hotel/HotelAbout';
-import HotelReservations from './pages/hotel/HotelReservations';
-import HotelTrackOrder from './pages/hotel/HotelTrackOrder';
-import HotelTableDining from './pages/hotel/HotelTableDining';
-import HotelCustomize from './pages/hotel/HotelCustomize';
-import HotelRecommendations from './pages/hotel/HotelRecommendations';
-import HotelOrder from './pages/hotel/HotelOrder';
+
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
@@ -76,17 +66,7 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
-      <Route path="/Hotels" element={<LayoutWrapper currentPageName="Hotels"><Hotels /></LayoutWrapper>} />
-      <Route path="/hotel/:slug" element={<HotelHome />} />
-      <Route path="/hotel/:slug/menu" element={<HotelMenu />} />
-      <Route path="/hotel/:slug/about" element={<HotelAbout />} />
-      <Route path="/hotel/:slug/reservations" element={<HotelReservations />} />
-      <Route path="/hotel/:slug/track-order" element={<HotelTrackOrder />} />
-      <Route path="/hotel/:slug/table-dining" element={<HotelTableDining />} />
-      <Route path="/hotel/:slug/customize" element={<HotelCustomize />} />
-      <Route path="/hotel/:slug/recommendations" element={<HotelRecommendations />} />
-      <Route path="/hotel/:slug/order" element={<HotelOrder />} />
-      <Route path="/hotel/:slug/admin" element={<HotelAdmin />} />
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

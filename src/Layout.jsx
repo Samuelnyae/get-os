@@ -62,7 +62,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Track Order', page: 'OrderTracking' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
-    ...(isAdmin ? [{ name: 'Locations', page: 'Hotels' }] : []),
+
     ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),
   ];
 
