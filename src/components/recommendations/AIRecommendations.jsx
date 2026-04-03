@@ -45,22 +45,26 @@ export default function AIRecommendations() {
     queryFn: () => base44.entities.CustomFoodRequest.list('-created_date', 10),
   });
 
+  const [error, setError] = useState(null);
+
   const generateRecommendations = async () => {
     setIsGenerating(true);
+    setError(null);
 
-    const orderedItems = orders.flatMap(o => o.items?.map(i => i.name) || []);
-    const likedItemIds = likes.map(l => l.menu_item_id);
-    const likedItems = menuItems.filter(m => likedItemIds.includes(m.id));
-    
-    const dietaryPreferences = [...new Set(
-      customRequests.flatMap(r => r.dietary_preferences || [])
-    )];
-    
-    const preferredCategories = [...new Set(
-      customRequests.map(r => r.food_category).filter(Boolean)
-    )];
+    try {
+      const orderedItems = orders.flatMap(o => o.items?.map(i => i.name) || []);
+      const likedItemIds = likes.map(l => l.menu_item_id);
+      const likedItems = menuItems.filter(m => likedItemIds.includes(m.id));
+      
+      const dietaryPreferences = [...new Set(
+        customRequests.flatMap(r => r.dietary_preferences || [])
+      )];
+      
+      const preferredCategories = [...new Set(
+        customRequests.map(r => r.food_category).filter(Boolean)
+      )];
 
-    const prompt = `You are a luxury restaurant AI sommelier for Hermanas Bites, a seven-star dining establishment.
+      const prompt = `You are a luxury restaurant AI sommelier for Hermanas Bites, a seven-star dining establishment.
 
 Based on the customer's profile:
 - Previously ordered: ${orderedItems.join(', ') || 'None yet'}
@@ -73,25 +77,35 @@ ${menuItems.map(m => `- ${m.name} (${m.category}, $${m.price}) - ${m.description
 
 Please recommend 3-4 menu items that would be perfect for this customer. Consider their tastes, preferences, and dining history. Return ONLY the exact names of the dishes from the menu, one per line.`;
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: prompt,
-    });
+      const response = await base44.integrations.Core.InvokeLLM({ prompt });
 
-    const recommendedNames = response.split('\n')
-      .map(line => line.replace(/^[-•*]\s*/, '').trim())
-      .filter(Boolean);
+      const recommendedNames = response.split('\n')
+        .map(line => line.replace(/^[-•*]\s*/, '').trim())
+        .filter(Boolean);
 
-    const recommendedItems = menuItems.filter(item =>
-      recommendedNames.some(name => 
-        item.name.toLowerCase().includes(name.toLowerCase()) ||
-        name.toLowerCase().includes(item.name.toLowerCase())
-      )
-    ).slice(0, 4);
+      const recommendedItems = menuItems.filter(item =>
+        recommendedNames.some(name => 
+          item.name.toLowerCase().includes(name.toLowerCase()) ||
+          name.toLowerCase().includes(item.name.toLowerCase())
+        )
+      ).slice(0, 4);
 
-    setRecommendations(recommendedItems);
-    saveCache(recommendedItems);
-    setIsGenerating(false);
+      setRecommendations(recommendedItems);
+      saveCache(recommendedItems);
+    } catch (err) {
+      setError('AI recommendations are currently unavailable. Please try again later.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
+
+  if (error) {
+    return (
+      <div className="bg-[#1a1a1a] rounded-2xl p-8 border border-red-500/20 text-center">
+        <p className="font-inter text-white/60">{error}</p>
+      </div>
+    );
+  }
 
   if (recommendations.length === 0 && !isGenerating) {
     return (
