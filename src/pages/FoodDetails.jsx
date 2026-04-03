@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 export default function FoodDetails() {
   const urlParams = new URLSearchParams(window.location.search);
   const itemId = urlParams.get('id');
+  const hotelSlug = urlParams.get('hotelSlug');
+  const activeCartKey = hotelSlug ? `hermanas_cart_${hotelSlug}` : 'hermanas_cart';
   
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -37,17 +39,17 @@ export default function FoodDetails() {
     const likedItems = JSON.parse(localStorage.getItem('hermanas_likes') || '[]');
     setHasLiked(likedItems.includes(itemId));
     
-    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    const cart = JSON.parse(localStorage.getItem(activeCartKey) || '[]');
     setCartItems(cart);
     
     const handleCartUpdate = () => {
-      const updatedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+      const updatedCart = JSON.parse(localStorage.getItem(activeCartKey) || '[]');
       setCartItems(updatedCart);
     };
     
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
-  }, [itemId]);
+  }, [itemId, activeCartKey]);
 
   const { data: item, isLoading } = useQuery({
     queryKey: ['menu-item', itemId],
@@ -95,7 +97,7 @@ export default function FoodDetails() {
   });
 
   const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
+    const cart = JSON.parse(localStorage.getItem(activeCartKey) || '[]');
     const existingIndex = cart.findIndex(i => i.menu_item_id === item.id);
     
     if (existingIndex >= 0) {
@@ -110,7 +112,7 @@ export default function FoodDetails() {
       });
     }
     
-    localStorage.setItem('hermanas_cart', JSON.stringify(cart));
+    localStorage.setItem(activeCartKey, JSON.stringify(cart));
     window.dispatchEvent(new Event('cartUpdated'));
     toast.success(`${quantity} × ${item.name} added to cart`);
   };

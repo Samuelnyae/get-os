@@ -7,15 +7,19 @@ import {
   Users, TrendingUp, Star, Sparkles, MessageSquare 
 } from 'lucide-react';
 
-export default function DashboardStats() {
+export default function DashboardStats({ hotelId } = {}) {
   const { data: orders = [] } = useQuery({
-    queryKey: ['admin-orders'],
-    queryFn: () => base44.entities.Order.list('-created_date', 100),
+    queryKey: ['admin-orders', hotelId],
+    queryFn: () => hotelId
+      ? base44.entities.Order.filter({ hotel_id: hotelId }, '-created_date', 100)
+      : base44.entities.Order.list('-created_date', 100),
   });
 
   const { data: menuItems = [] } = useQuery({
-    queryKey: ['admin-menu'],
-    queryFn: () => base44.entities.MenuItem.list(),
+    queryKey: ['admin-menu', hotelId],
+    queryFn: () => hotelId
+      ? base44.entities.MenuItem.filter({ hotel_id: hotelId })
+      : base44.entities.MenuItem.list(),
   });
 
   const { data: customRequests = [] } = useQuery({

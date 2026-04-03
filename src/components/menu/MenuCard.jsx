@@ -4,7 +4,7 @@ import { createPageUrl } from '../../utils';
 import { motion } from 'framer-motion';
 import { Heart, Plus } from 'lucide-react';
 
-const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas_cart' }) {
+const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas_cart', hotelSlug = null }) {
   const addToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -44,7 +44,7 @@ const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas
       transition={{ duration: 0.3 }}
       className="group"
     >
-      <Link to={createPageUrl(`FoodDetails?id=${item.id}`)}>
+      <Link to={hotelSlug ? `/FoodDetails?id=${item.id}&hotelSlug=${hotelSlug}` : createPageUrl(`FoodDetails?id=${item.id}`)}>
         <div className="relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-[#c9a962]/10 hover:border-[#c9a962]/30 transition-all duration-500">
           {/* Image Container */}
           <div className="relative h-56 sm:h-64 overflow-hidden">

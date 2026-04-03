@@ -43,6 +43,7 @@ function buildWhatsAppUrl(whatsappNumber, orderRef, customerInfo, cart, total, o
     `  Phone: ${customerInfo.phone}`,
     `  Email: ${customerInfo.email}`,
     orderType === 'remote' && customerInfo.delivery_address ? `  Address: ${customerInfo.delivery_address}` : null,
+    orderType === 'in_hotel' && customerInfo.table_room_number ? `  Table/Room: ${customerInfo.table_room_number}` : null,
     orderType === 'in_hotel' && customerInfo.pickup_time ? `  Pickup Time: ${customerInfo.pickup_time}` : null,
     ``,
     `🍽️ *Items Ordered*`,
@@ -86,7 +87,7 @@ export default function HotelOrder() {
 
   // ── Customer form ──
   const [customer, setCustomer] = useState({
-    name: '', email: '', phone: '', pickup_time: '', delivery_address: '', special_instructions: '',
+    name: '', email: '', phone: '', pickup_time: '', delivery_address: '', special_instructions: '', table_room_number: '',
   });
 
   // Load cart from localStorage on mount
@@ -168,6 +169,8 @@ export default function HotelOrder() {
     const ref = generateRef();
     orderMutation.mutate({
       ...safe,
+      hotel_id: hotel.id,
+      table_room_number: orderType === 'in_hotel' ? sanitizeInput(customer.table_room_number || '') : '',
       total_amount: total,
       payment_method: orderType === 'remote' ? 'Remote Delivery' : 'Pay at Counter',
       payment_status: 'pending',
@@ -380,12 +383,20 @@ export default function HotelOrder() {
                         </div>
                         {/* Conditional field: pickup time vs delivery address */}
                         {orderType === 'in_hotel' ? (
-                          <div>
-                            <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                              <Clock className="inline w-3 h-3 mr-1" />Pickup Time
-                            </label>
-                            <Input type="time" value={customer.pickup_time} onChange={e => setCustomer(c => ({ ...c, pickup_time: e.target.value }))} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white" />
-                          </div>
+                          <>
+                            <div>
+                              <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                                🪑 Table / Room Number
+                              </label>
+                              <Input value={customer.table_room_number} onChange={e => setCustomer(c => ({ ...c, table_room_number: e.target.value }))} placeholder="e.g. Table 5 or Room 12" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                            </div>
+                            <div>
+                              <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                                <Clock className="inline w-3 h-3 mr-1" />Pickup Time
+                              </label>
+                              <Input type="time" value={customer.pickup_time} onChange={e => setCustomer(c => ({ ...c, pickup_time: e.target.value }))} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white" />
+                            </div>
+                          </>
                         ) : (
                           <div className="md:col-span-2">
                             <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
@@ -394,8 +405,8 @@ export default function HotelOrder() {
                             <Input value={customer.delivery_address} onChange={e => setCustomer(c => ({ ...c, delivery_address: e.target.value }))} placeholder="Your full delivery address" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                           </div>
                         )}
-                      </div>
-                      {/* Special instructions */}
+                        </div>
+                        {/* Special instructions */}
                       <div className="mt-4">
                         <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Special Instructions</label>
                         <Textarea value={customer.special_instructions} onChange={e => setCustomer(c => ({ ...c, special_instructions: e.target.value }))} placeholder="Allergies, preferences, etc." rows={3} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />

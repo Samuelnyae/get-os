@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useNotifications, requestNotificationPermission } from '@/components/notifications/NotificationManager';
 
-export default function OrdersManager() {
+export default function OrdersManager({ hotelId } = {}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [queueView, setQueueView] = useState('active'); // active, completed
@@ -25,8 +25,10 @@ export default function OrdersManager() {
   const { sendNotification, permission } = useNotifications();
 
   const { data: orders = [], isLoading } = useQuery({
-    queryKey: ['admin-orders-list'],
-    queryFn: () => base44.entities.Order.list('-created_date', 200),
+    queryKey: ['admin-orders-list', hotelId],
+    queryFn: () => hotelId
+      ? base44.entities.Order.filter({ hotel_id: hotelId }, '-created_date', 200)
+      : base44.entities.Order.list('-created_date', 200),
     staleTime: 30 * 1000, // 30 seconds
     cacheTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 60 * 1000, // Refetch every minute
@@ -112,7 +114,7 @@ export default function OrdersManager() {
         }
       }
       
-      queryClient.invalidateQueries(['admin-orders-list']);
+      queryClient.invalidateQueries(['admin-orders-list', hotelId]);
     });
     return unsubscribe;
   }, [queryClient, sendNotification]);
@@ -120,7 +122,7 @@ export default function OrdersManager() {
   const updateOrderMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Order.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-orders-list']);
+      queryClient.invalidateQueries(['admin-orders-list', hotelId]);
       toast.success('Order updated');
     },
   });
@@ -139,7 +141,7 @@ export default function OrdersManager() {
       });
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['admin-orders-list']);
+      queryClient.invalidateQueries(['admin-orders-list', hotelId]);
       setAssignDialogOpen(false);
       
       // Notify about staff assignment
