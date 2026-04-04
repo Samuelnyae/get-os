@@ -333,7 +333,12 @@ export default function OrdersManager({ hotelId } = {}) {
                           <Clock className="w-3 h-3" /> {order.order_type === 'delivery' ? 'Deliver' : 'Pickup'} at {order.pickup_time}
                         </p>
                       )}
-                    </div>
+                      {order.table_room_number && (
+                        <p className="font-inter text-xs text-blue-300 mt-0.5 flex items-center gap-1">
+                          <Utensils className="w-3 h-3" /> Table/Room: {order.table_room_number}
+                        </p>
+                      )}
+                      </div>
                       <p className="font-inter text-xs text-white/50">
                         {format(new Date(order.created_date), 'h:mm a')}
                       </p>
@@ -448,6 +453,11 @@ export default function OrdersManager({ hotelId } = {}) {
                       {order.delivery_address && (
                         <p className="font-inter text-xs text-purple-300 mt-1 flex items-center gap-1">
                           <MapPin className="w-3 h-3" /> {order.delivery_address}
+                        </p>
+                      )}
+                      {order.table_room_number && (
+                        <p className="font-inter text-sm text-blue-300 mt-1 flex items-center gap-1">
+                          <Utensils className="w-4 h-4" /> Table / Room: {order.table_room_number}
                         </p>
                       )}
                     </div>
