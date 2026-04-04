@@ -8,6 +8,7 @@ import {
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
   CheckCircle, Mail, Phone, User, Clock, MapPin, Package, Utensils
 } from 'lucide-react';
+import WhatsAppNotifier from '../components/admin/WhatsAppNotifier';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SectionHeader from '../components/common/SectionHeader';
@@ -261,6 +262,27 @@ Hermanas Bites - Seven Star Dining
               <Mail className="w-4 h-4" />
               <span>Confirmation sent to {customerInfo.email}</span>
             </div>
+
+            {customerInfo.phone && (
+              <div className="pt-2">
+                <p className="font-inter text-xs text-white/40 mb-2">Send yourself a WhatsApp reminder:</p>
+                <WhatsAppNotifier
+                  order={{
+                    customer_name: customerInfo.name,
+                    customer_phone: customerInfo.phone,
+                    order_reference: orderReference,
+                    order_type: orderType,
+                    pickup_time: pickupTime,
+                    delivery_address: deliveryAddress,
+                    total_amount: total,
+                    items: cart,
+                  }}
+                  status="confirmed"
+                  size="md"
+                  label="📲 Save to WhatsApp"
+                />
+              </div>
+            )}
           </div>
           <div className="flex gap-3">
             <Link to={createPageUrl('OrderTracking')} className="flex-1">

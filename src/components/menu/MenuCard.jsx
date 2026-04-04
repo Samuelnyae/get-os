@@ -5,9 +5,12 @@ import { motion } from 'framer-motion';
 import { Heart, Plus } from 'lucide-react';
 
 const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas_cart', hotelSlug = null }) {
+  const isOutOfStock = item.stock_count !== undefined && item.stock_count !== null && item.stock_count <= 0;
+
   const addToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     
     const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
     const existingIndex = cart.findIndex(i => i.menu_item_id === item.id);
@@ -73,13 +76,22 @@ const MenuCard = memo(function MenuCard({ item, onAddToCart, cartKey = 'hermanas
               </div>
             )}
 
+            {/* Out of Stock Overlay */}
+            {isOutOfStock && (
+              <div className="absolute inset-0 bg-[#0a0a0a]/70 flex items-center justify-center">
+                <span className="px-3 py-1.5 rounded-full bg-red-500/80 text-white text-xs font-inter font-semibold uppercase tracking-wider">Out of Stock</span>
+              </div>
+            )}
+
             {/* Add to Cart Button - always visible on mobile, hover on desktop */}
-            <button
-              onClick={addToCart}
-              className="absolute bottom-3 right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#c9a962] text-[#0a0a0a] flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-300 active:scale-95"
-            >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            {!isOutOfStock && (
+              <button
+                onClick={addToCart}
+                className="absolute bottom-3 right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#c9a962] text-[#0a0a0a] flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-300 active:scale-95"
+              >
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+            )}
           </div>
 
           {/* Content */}

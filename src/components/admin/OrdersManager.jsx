@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import LuxuryButton from '../common/LuxuryButton';
+import WhatsAppNotifier from './WhatsAppNotifier';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useNotifications, requestNotificationPermission } from '@/components/notifications/NotificationManager';
@@ -364,7 +365,8 @@ export default function OrdersManager({ hotelId } = {}) {
                       </div>
                     )}
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <WhatsAppNotifier order={order} status={order.status === 'ready' ? 'ready' : order.status === 'preparing' ? 'preparing' : 'confirmed'} label="Notify" />
                       {order.payment_status === 'pending' ? (
                         <LuxuryButton
                           size="sm"
@@ -390,7 +392,7 @@ export default function OrdersManager({ hotelId } = {}) {
                               Assign
                             </LuxuryButton>
                           )}
-                          
+
                           <LuxuryButton
                             size="sm"
                             onClick={() => autoProgressOrder(order)}
@@ -403,10 +405,10 @@ export default function OrdersManager({ hotelId } = {}) {
                         </>
                       )}
                     </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                    ))}
 
-                {orders.length === 0 && (
+                    {orders.length === 0 && (
                   <div className="text-center py-8 text-white/30 text-xs">
                     No orders
                   </div>
@@ -590,6 +592,8 @@ export default function OrdersManager({ hotelId } = {}) {
                         Auto Progress
                       </LuxuryButton>
                     )}
+
+                    <WhatsAppNotifier order={order} status={order.status === 'ready' ? 'ready' : order.status === 'preparing' ? 'preparing' : order.status === 'out_for_delivery' ? 'out_for_delivery' : 'confirmed'} size="md" label="📲 WhatsApp Customer" />
 
                     <div className={`px-4 py-3 rounded-xl text-center border ${statusColors[order.status]}`}>
                       <p className="font-inter text-xs uppercase tracking-wider">
