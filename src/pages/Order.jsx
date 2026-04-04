@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
-  CheckCircle, Mail, Phone, User, MessageSquare
+  CheckCircle, Mail, Phone, User, Clock, MapPin, Package, Utensils
 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,10 @@ import { toast } from 'sonner';
 export default function Order() {
   const [cart, setCart] = useState([]);
   const [step, setStep] = useState('cart'); // cart, checkout, confirmation
+  const [orderType, setOrderType] = useState('takeaway'); // dine_in, takeaway, delivery
+  const [pickupTime, setPickupTime] = useState('');
+  const [pickupDate, setPickupDate] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
@@ -27,6 +31,22 @@ export default function Order() {
     special_instructions: ''
   });
   const [orderReference, setOrderReference] = useState('');
+
+  // Generate pickup time slots (next 2 hours to closing)
+  const generateTimeSlots = () => {
+    const slots = [];
+    const now = new Date();
+    const start = new Date(now.getTime() + 30 * 60 * 1000); // 30 min from now
+    start.setMinutes(Math.ceil(start.getMinutes() / 30) * 30, 0, 0);
+    const end = new Date();
+    end.setHours(22, 0, 0, 0);
+    while (start <= end) {
+      slots.push(start.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: true }));
+      start.setMinutes(start.getMinutes() + 30);
+    }
+    return slots;
+  };
+  const timeSlots = generateTimeSlots();
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
@@ -138,6 +158,15 @@ Hermanas Bites - Seven Star Dining
 
     const reference = `HB-${Date.now().toString().slice(-8)}`;
     
+    if ((orderType === 'takeaway' || orderType === 'delivery') && !pickupTime) {
+      toast.error('Please select a pickup/delivery time');
+      return;
+    }
+    if (orderType === 'delivery' && !deliveryAddress.trim()) {
+      toast.error('Please enter a delivery address');
+      return;
+    }
+
     orderMutation.mutate({
       ...sanitizedData,
       total_amount: total,
@@ -145,6 +174,11 @@ Hermanas Bites - Seven Star Dining
       payment_status: 'pending',
       status: 'pending',
       order_reference: reference,
+      order_type: orderType,
+      pickup_time: pickupTime || null,
+      pickup_date: pickupDate || new Date().toLocaleDateString('en-KE'),
+      delivery_address: orderType === 'delivery' ? deliveryAddress : null,
+      table_room_number: orderType === 'dine_in' ? customerInfo.address : null,
     });
   };
 
@@ -187,7 +221,9 @@ Hermanas Bites - Seven Star Dining
           <p className="font-inter text-white/60 mb-2">
             Please proceed to the cashier to complete payment
           </p>
-          <p className="font-inter text-sm text-[#c9a962] mb-4">Show this Order ID at the counter</p>
+          <p className="font-inter text-sm text-[#c9a962] mb-4">
+            {orderType === 'dine_in' ? 'Show this Order ID at the counter' : orderType === 'takeaway' ? `Ready for pickup at ${pickupTime}` : `Delivery to your address at ${pickupTime}`}
+          </p>
           <p className="font-playfair text-3xl text-[#c9a962] mb-8 font-bold tracking-wider">
             {orderReference}
           </p>
@@ -212,6 +248,12 @@ Hermanas Bites - Seven Star Dining
                 <p className="text-white">Contact: <span className="text-white/70">{customerInfo.phone}</span></p>
                 <p className="text-white">Total: <span className="text-[#c9a962] font-bold">KES {total.toLocaleString()}</span></p>
                 <p className="text-white">Payment: <span className="text-orange-300">Pending at Counter</span></p>
+                {orderType !== 'dine_in' && pickupTime && (
+                  <p className="text-white">{orderType === 'takeaway' ? 'Pickup' : 'Delivery'} Time: <span className="text-[#c9a962] font-bold">{pickupTime}</span></p>
+                )}
+                {orderType === 'delivery' && deliveryAddress && (
+                  <p className="text-white">Address: <span className="text-white/70">{deliveryAddress}</span></p>
+                )}
               </div>
             </div>
 
@@ -249,6 +291,34 @@ Hermanas Bites - Seven Star Dining
           subtitle={step === 'cart' ? 'Review Your Selection' : 'Complete Your Order'} 
           title={step === 'cart' ? 'Your Cart' : 'Checkout'} 
         />
+
+        {/* Order Type Selector - show on cart and checkout */}
+        {step !== 'confirmation' && (
+          <div className="mb-8">
+            <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">How would you like to receive your order?</p>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { id: 'dine_in', label: 'Dine In', icon: Utensils, desc: 'Eat at the restaurant' },
+                { id: 'takeaway', label: 'Takeaway', icon: Package, desc: 'Pick up your order' },
+                { id: 'delivery', label: 'Delivery', icon: MapPin, desc: 'Get it delivered' },
+              ].map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => setOrderType(type.id)}
+                  className={`p-4 rounded-xl border transition-all text-left ${
+                    orderType === type.id
+                      ? 'bg-[#c9a962]/10 border-[#c9a962] text-[#c9a962]'
+                      : 'bg-[#1a1a1a] border-[#c9a962]/10 text-white/60 hover:border-[#c9a962]/30'
+                  }`}
+                >
+                  <type.icon className="w-5 h-5 mb-2" />
+                  <p className="font-inter font-medium text-sm">{type.label}</p>
+                  <p className="font-inter text-xs opacity-60 mt-0.5">{type.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -323,63 +393,57 @@ Hermanas Bites - Seven Star Dining
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                          Full Name *
-                        </label>
-                        <Input
-                          value={customerInfo.name}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                          placeholder="Your name"
-                          className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30"
-                        />
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Full Name *</label>
+                        <Input value={customerInfo.name} onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })} placeholder="Your name" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                          Email *
-                        </label>
-                        <Input
-                          type="email"
-                          value={customerInfo.email}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                          placeholder="your@email.com"
-                          className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30"
-                        />
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Email *</label>
+                        <Input type="email" value={customerInfo.email} onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })} placeholder="your@email.com" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                          Phone *
-                        </label>
-                        <Input
-                          type="tel"
-                          value={customerInfo.phone}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                          placeholder="+1 (555) 000-0000"
-                          className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30"
-                        />
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Phone *</label>
+                        <Input type="tel" value={customerInfo.phone} onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })} placeholder="+254 700 000 000" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
-                      <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                          Room/Table Number
-                        </label>
-                        <Input
-                          value={customerInfo.address}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                          placeholder="e.g., Room 302"
-                          className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30"
-                        />
-                      </div>
+                      {orderType === 'dine_in' && (
+                        <div>
+                          <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Table Number</label>
+                          <Input value={customerInfo.address} onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })} placeholder="e.g., Table 5" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                        </div>
+                      )}
                     </div>
+
+                    {/* Pickup/Delivery Fields */}
+                    {(orderType === 'takeaway' || orderType === 'delivery') && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                          <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                            <Clock className="inline w-3 h-3 mr-1" />
+                            {orderType === 'takeaway' ? 'Pickup Time *' : 'Delivery Time *'}
+                          </label>
+                          <select
+                            value={pickupTime}
+                            onChange={(e) => setPickupTime(e.target.value)}
+                            className="w-full h-9 rounded-md border border-[#c9a962]/20 bg-[#0a0a0a] px-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#c9a962]"
+                          >
+                            <option value="">Select a time...</option>
+                            {timeSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                          </select>
+                        </div>
+                        {orderType === 'delivery' && (
+                          <div>
+                            <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
+                              <MapPin className="inline w-3 h-3 mr-1" />
+                              Delivery Address *
+                            </label>
+                            <Input value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} placeholder="Street, area, landmark..." className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="mt-4">
-                      <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                        Special Instructions
-                      </label>
-                      <Textarea
-                        value={customerInfo.special_instructions}
-                        onChange={(e) => setCustomerInfo({ ...customerInfo, special_instructions: e.target.value })}
-                        placeholder="Any dietary requirements or special requests..."
-                        rows={3}
-                        className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30"
-                      />
+                      <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Special Instructions</label>
+                      <Textarea value={customerInfo.special_instructions} onChange={(e) => setCustomerInfo({ ...customerInfo, special_instructions: e.target.value })} placeholder="Any dietary requirements or special requests..." rows={3} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                     </div>
                   </div>
 

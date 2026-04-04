@@ -19,6 +19,28 @@
       "type": "string",
       "description": "Table number or room number for in-hotel orders"
     },
+    "order_type": {
+      "type": "string",
+      "enum": [
+        "dine_in",
+        "takeaway",
+        "delivery"
+      ],
+      "default": "dine_in",
+      "description": "How the customer wants to receive their order"
+    },
+    "pickup_time": {
+      "type": "string",
+      "description": "Scheduled pickup/delivery time e.g. '19:30'"
+    },
+    "pickup_date": {
+      "type": "string",
+      "description": "Date for scheduled pickup/delivery (ISO format or readable)"
+    },
+    "delivery_address": {
+      "type": "string",
+      "description": "Delivery address for delivery orders"
+    },
     "items": {
       "type": "array",
       "items": {
@@ -75,17 +97,14 @@
       "type": "string"
     },
     "assigned_staff_id": {
-      "type": "string",
-      "description": "ID of staff member assigned to this order"
+      "type": "string"
     },
     "assigned_staff_name": {
-      "type": "string",
-      "description": "Name of assigned staff member"
+      "type": "string"
     },
     "estimated_completion": {
       "type": "string",
-      "format": "date-time",
-      "description": "Estimated completion time"
+      "format": "date-time"
     },
     "status_history": {
       "type": "array",

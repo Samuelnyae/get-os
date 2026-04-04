@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
   ShoppingCart, User, Mail, Phone, Clock, Package, 
-  UserCheck, Play, Pause, CheckCircle, Bell, DollarSign 
+  UserCheck, Play, CheckCircle, Bell, DollarSign, MapPin, Utensils, Home
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -218,6 +218,21 @@ export default function OrdersManager({ hotelId } = {}) {
     cancelled: filteredOrders.filter(o => o.status === 'cancelled'),
   };
 
+  const orderTypeBadge = (order) => {
+    const type = order.order_type || 'dine_in';
+    const configs = {
+      dine_in: { label: 'Dine In', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30', Icon: Utensils },
+      takeaway: { label: 'Takeaway', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30', Icon: Package },
+      delivery: { label: 'Delivery', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30', Icon: MapPin },
+    };
+    const cfg = configs[type] || configs.dine_in;
+    return (
+      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border font-medium ${cfg.color}`}>
+        <cfg.Icon className="w-3 h-3" />{cfg.label}
+      </span>
+    );
+  };
+
   const statusColors = {
     pending: 'bg-gray-900/30 text-gray-400 border-gray-700',
     confirmed: 'bg-green-900/30 text-green-400 border-green-700',
@@ -307,14 +322,18 @@ export default function OrdersManager({ hotelId } = {}) {
                     className="bg-[#1a1a1a] rounded-xl p-4 border border-[#c9a962]/10 hover:border-[#c9a962]/30 transition-all"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="font-inter text-sm text-white font-medium">
-                          {order.customer_name}
-                        </p>
-                        <p className="font-inter text-xs text-[#c9a962] font-mono">
-                          {order.order_reference}
-                        </p>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-inter text-sm text-white font-medium">{order.customer_name}</p>
+                        {orderTypeBadge(order)}
                       </div>
+                      <p className="font-inter text-xs text-[#c9a962] font-mono">{order.order_reference}</p>
+                      {order.pickup_time && (
+                        <p className="font-inter text-xs text-amber-300 mt-0.5 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {order.order_type === 'delivery' ? 'Deliver' : 'Pickup'} at {order.pickup_time}
+                        </p>
+                      )}
+                    </div>
                       <p className="font-inter text-xs text-white/50">
                         {format(new Date(order.created_date), 'h:mm a')}
                       </p>
@@ -416,12 +435,21 @@ export default function OrdersManager({ hotelId } = {}) {
                   {/* Customer Info */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="font-playfair text-xl text-white mb-1">
-                        {order.customer_name}
-                      </h3>
-                      <p className="font-inter text-xs text-[#c9a962] font-mono">
-                        {order.order_reference}
-                      </p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-playfair text-xl text-white">{order.customer_name}</h3>
+                        {orderTypeBadge(order)}
+                      </div>
+                      <p className="font-inter text-xs text-[#c9a962] font-mono">{order.order_reference}</p>
+                      {order.pickup_time && (
+                        <p className="font-inter text-sm text-amber-300 mt-1 flex items-center gap-1">
+                          <Clock className="w-4 h-4" /> {order.order_type === 'delivery' ? 'Delivery' : 'Pickup'} at {order.pickup_time} · {order.pickup_date}
+                        </p>
+                      )}
+                      {order.delivery_address && (
+                        <p className="font-inter text-xs text-purple-300 mt-1 flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {order.delivery_address}
+                        </p>
+                      )}
                     </div>
                     
                     <div className="space-y-2 text-sm">
