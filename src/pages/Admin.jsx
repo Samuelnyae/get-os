@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
-LayoutDashboard, Utensils, ShoppingBag, 
+LayoutDashboard, Utensils, ShoppingBag, Truck,
 Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -87,6 +87,7 @@ export default function Admin() {
     { id: 'feedbackai', label: 'AI Feedback', icon: Brain },
     { id: 'tables', label: 'AI Table Mgmt', icon: Calendar },
     { id: 'marketing', label: 'AI Marketing', icon: Mail },
+    { id: 'driver', label: '🚚 Driver Mode', icon: Truck },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
     { id: 'staff', label: 'Staff', icon: User },
@@ -155,6 +156,11 @@ export default function Admin() {
             {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
             {activeTab === 'tables' && <AITableManagement />}
             {activeTab === 'marketing' && <AIMarketingCampaigns />}
+            {activeTab === 'driver' && (
+              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
+                {React.createElement(React.lazy(() => import('./DriverMode')))}
+              </React.Suspense>
+            )}
             {activeTab === 'orders' && <OrdersManager />}
             {activeTab === 'reservations' && <ReservationsManager />}
             {activeTab === 'staff' && <StaffManager />}

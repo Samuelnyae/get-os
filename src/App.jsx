@@ -8,7 +8,8 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
+const DriverModePage = lazy(() => import('./pages/DriverMode'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
         />
       ))}
 
+      <Route path="/DriverMode" element={<LayoutWrapper currentPageName="DriverMode"><Suspense fallback={null}><DriverModePage /></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

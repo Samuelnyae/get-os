@@ -35,7 +35,7 @@
     },
     "pickup_date": {
       "type": "string",
-      "description": "Date for scheduled pickup/delivery (ISO format or readable)"
+      "description": "Date for scheduled pickup/delivery"
     },
     "delivery_address": {
       "type": "string",
@@ -105,6 +105,18 @@
     "estimated_completion": {
       "type": "string",
       "format": "date-time"
+    },
+    "driver_lat": {
+      "type": "number",
+      "description": "Real-time driver latitude from GPS"
+    },
+    "driver_lng": {
+      "type": "number",
+      "description": "Real-time driver longitude from GPS"
+    },
+    "driver_updated_at": {
+      "type": "string",
+      "description": "ISO timestamp of last driver GPS update"
     },
     "status_history": {
       "type": "array",
