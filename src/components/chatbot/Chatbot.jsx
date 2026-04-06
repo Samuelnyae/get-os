@@ -77,7 +77,7 @@ export default function Chatbot({ hotel = null }) {
       }
       const welcomeMsg = hotel
         ? `Welcome to ${hotel.name}! I'm your AI concierge for this location. I can help with our menu, reservations, order tracking, and more.`
-        : `Welcome to Hermanas Bites! I'm your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.`;
+        : `Welcome to Digital Bites! I'm your AI concierge. How may I assist you today? I can help with menu recommendations, reservations, order tracking, and more.`;
       const newConv = await base44.entities.ChatConversation.create({
         user_identifier: convKey,
         messages: [{
@@ -124,7 +124,7 @@ export default function Chatbot({ hotel = null }) {
       await base44.entities.ChatConversation.delete(conversationId);
       const welcomeMsg = hotel
         ? `Welcome to ${hotel.name}! I'm your AI concierge for this location. How may I assist you today?`
-        : `Welcome to Hermanas Bites! I'm your AI concierge. How may I assist you today?`;
+        : `Welcome to Digital Bites! I'm your AI concierge. How may I assist you today?`;
       const newConv = await base44.entities.ChatConversation.create({
         user_identifier: convKey,
         messages: [{
@@ -170,7 +170,7 @@ export default function Chatbot({ hotel = null }) {
       
       const hotelContext = hotel
         ? `You are an AI concierge for ${hotel.name}, located at ${hotel.location}${hotel.address ? ', ' + hotel.address : ''}. ${hotel.description || ''}`
-        : `You are an AI assistant for Hermanas Bites, a luxury seven-star restaurant.`;
+        : `You are an AI assistant for Digital Bites, a luxury seven-star restaurant.`;
 
       const context = `${hotelContext}
       
@@ -262,7 +262,7 @@ Be helpful, professional, and embody luxury hospitality. If asked about specific
                 </div>
                 <div>
                   <h3 className="font-playfair text-lg text-white">AI Concierge</h3>
-                  <p className="font-inter text-xs text-[#c9a962]">{hotel ? hotel.name : 'Hermanas Bites'}</p>
+                  <p className="font-inter text-xs text-[#c9a962]">{hotel ? hotel.name : 'Digital Bites'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
