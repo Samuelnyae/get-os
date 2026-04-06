@@ -9,6 +9,8 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { useEffect, Suspense, lazy } from 'react';
+import { LanguageProvider } from '@/lib/LanguageContext';
+import QRCodePage from './pages/QRCode';
 const DriverModePage = lazy(() => import('./pages/DriverMode'));
 
 function ScrollToTop() {
@@ -69,6 +71,7 @@ const AuthenticatedApp = () => {
       ))}
 
       <Route path="/DriverMode" element={<LayoutWrapper currentPageName="DriverMode"><Suspense fallback={null}><DriverModePage /></Suspense></LayoutWrapper>} />
+      <Route path="/QRCode" element={<LayoutWrapper currentPageName="QRCode"><QRCodePage /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -79,6 +82,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <LanguageProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
@@ -87,6 +91,7 @@ function App() {
         </Router>
         <Toaster />
       </QueryClientProvider>
+      </LanguageProvider>
     </AuthProvider>
   )
 }

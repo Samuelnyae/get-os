@@ -9,9 +9,11 @@ import MenuCard from '../components/menu/MenuCard';
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import AIRecommendations from '../components/recommendations/AIRecommendations';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -24,9 +26,9 @@ export default function Home() {
   });
 
   const features = [
-    { icon: Star, title: 'Seven Star Quality', description: 'Unmatched excellence in every dish we serve' },
-    { icon: ChefHat, title: 'Master Chefs', description: 'World-renowned culinary artists at your service' },
-    { icon: Utensils, title: 'Fine Dining', description: 'An unforgettable gastronomic experience' },
+    { icon: Star, title: t('sevenStarQuality'), description: t('sevenStarQualityDesc') },
+    { icon: ChefHat, title: t('masterChefs'), description: t('masterChefsDesc') },
+    { icon: Utensils, title: t('fineDining'), description: t('fineDiningDesc') },
   ];
 
   return (
@@ -57,27 +59,26 @@ export default function Home() {
             transition={{ duration: 1 }}
           >
             <p className="font-inter text-xs tracking-[0.4em] text-[#c9a962] uppercase mb-6">
-              Welcome to Hermanas Bites
+              {t('welcomeTo')}
             </p>
             <h1 className="font-playfair text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-tight">
-              Seven-Star<br />
-              <span className="gold-gradient">Dining Experience</span>
+              {t('heroTitle1')}<br />
+              <span className="gold-gradient">{t('heroTitle2')}</span>
             </h1>
             <p className="font-cormorant text-xl md:text-2xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Where culinary artistry meets timeless elegance. 
-              Embark on a journey of extraordinary flavors crafted with passion.
+              {t('heroSubtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Link to={createPageUrl('Menu')}>
                 <LuxuryButton size="lg" className="min-w-[200px]">
-                  Explore Menu <ArrowRight className="inline ml-2 w-4 h-4" />
+                  {t('exploreMenu')} <ArrowRight className="inline ml-2 w-4 h-4" />
                 </LuxuryButton>
               </Link>
               <Link to={createPageUrl('CustomFood')}>
                 <LuxuryButton variant="secondary" size="lg" className="min-w-[200px]">
                   <Sparkles className="inline mr-2 w-4 h-4" />
-                  Customize Your Dish
+                  {t('customizeYourDish')}
                 </LuxuryButton>
               </Link>
             </div>
@@ -148,8 +149,8 @@ export default function Home() {
         <section className="py-24 px-4">
           <div className="max-w-7xl mx-auto">
             <SectionHeader 
-              subtitle="Chef's Selection" 
-              title="Featured Dishes" 
+              subtitle={t('chefsSelection')} 
+              title={t('featuredDishes')} 
             />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -161,7 +162,7 @@ export default function Home() {
             <div className="text-center mt-12">
               <Link to={createPageUrl('Menu')}>
                 <LuxuryButton variant="secondary">
-                  View Full Menu <ArrowRight className="inline ml-2 w-4 h-4" />
+                  {t('viewFullMenu')} <ArrowRight className="inline ml-2 w-4 h-4" />
                 </LuxuryButton>
               </Link>
             </div>
@@ -187,18 +188,18 @@ export default function Home() {
             <div className="absolute inset-0 bg-[#0a0a0a]/80" />
             <div className="relative z-10 p-12 md:p-20 text-center">
               <p className="font-inter text-xs tracking-[0.3em] text-[#c9a962] uppercase mb-4">
-                Personalized Experience
+                {t('personalizedExperience')}
               </p>
               <h2 className="font-playfair text-4xl md:text-5xl text-white mb-6">
-                Customize Your Dish
+                {t('customizeYourDish')}
               </h2>
               <p className="font-cormorant text-xl text-white/60 max-w-xl mx-auto mb-8">
-                Your taste, our craft. Let our master chefs create a unique culinary masterpiece tailored just for you.
+                {t('customizeCTA')}
               </p>
               <Link to={createPageUrl('CustomFood')}>
                 <LuxuryButton size="lg">
                   <Sparkles className="inline mr-2 w-4 h-4" />
-                  Create Your Dish
+                  {t('createYourDish')}
                 </LuxuryButton>
               </Link>
             </div>
@@ -216,10 +217,10 @@ export default function Home() {
           >
             <div className="text-6xl text-[#c9a962]/30 mb-6">"</div>
             <blockquote className="font-cormorant text-3xl md:text-4xl text-white/80 italic leading-relaxed mb-8">
-              Every dish is a symphony of flavors, composed with love and served with grace.
+              {t('quote')}
             </blockquote>
             <p className="font-inter text-sm text-[#c9a962] tracking-wider">
-              — HERMANAS BITES
+              — DIGITAL BITES
             </p>
           </motion.div>
         </div>

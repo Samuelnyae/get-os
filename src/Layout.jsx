@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
-import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart, ChevronDown } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Twitter, Phone, ShoppingCart, ChevronDown, QrCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu,
@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Chatbot from '@/components/chatbot/Chatbot';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Layout({ children, currentPageName }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +20,7 @@ export default function Layout({ children, currentPageName }) {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -56,20 +59,19 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   const mainNavLinks = [
-    { name: 'Home', page: 'Home' },
-    { name: 'Menu', page: 'Menu' },
-    { name: 'Drinks', page: 'Drinks' },
-    { name: 'Track Order', page: 'OrderTracking' },
-    { name: 'About', page: 'About' },
-    { name: 'Contact', page: 'Contact' },
-
-    ...(isAdmin ? [{ name: 'Dashboard', page: 'Admin' }] : []),
+    { name: t('home'), page: 'Home' },
+    { name: t('menu'), page: 'Menu' },
+    { name: t('drinks'), page: 'Drinks' },
+    { name: t('trackOrder'), page: 'OrderTracking' },
+    { name: t('about'), page: 'About' },
+    { name: t('contact'), page: 'Contact' },
+    ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }] : []),
   ];
 
   const servicesLinks = [
-    { name: 'Table Dining', page: 'TableDining' },
-    { name: 'Reservations', page: 'Reservations' },
-    { name: 'Customize Order', page: 'CustomFood' },
+    { name: t('tableDining'), page: 'TableDining' },
+    { name: t('reservations'), page: 'Reservations' },
+    { name: t('customizeOrder'), page: 'CustomFood' },
   ];
 
   const formatDate = (date) => {
@@ -132,10 +134,10 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c9a962] to-[#e4d5a7] flex items-center justify-center">
-                <span className="font-playfair text-xl text-[#0a0a0a] font-bold">HB</span>
+                <span className="font-playfair text-xl text-[#0a0a0a] font-bold">DB</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-playfair text-xl font-semibold gold-gradient">Hermanas Bites</h1>
+                <h1 className="font-playfair text-xl font-semibold gold-gradient">Digital Bites</h1>
                 <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Seven Star Dining</p>
               </div>
             </Link>
@@ -159,7 +161,7 @@ export default function Layout({ children, currentPageName }) {
                 <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
                   ['TableDining', 'Reservations', 'CustomFood'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
                 }`}>
-                  Services
+                  {t('services')}
                   <ChevronDown className="w-3 h-3" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-[#1a1a1a] border-[#c9a962]/20">
@@ -178,12 +180,24 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {/* Date & Time */}
               <div className="hidden md:block text-right">
                 <p className="text-[10px] tracking-wider text-[#c9a962]/70 font-inter uppercase">{formatDate(currentTime)}</p>
                 <p className="text-sm font-inter text-white/90 tabular-nums">{formatTime(currentTime)}</p>
               </div>
+
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
+              {/* QR Code Link */}
+              <Link
+                to="/QRCode"
+                className="p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300"
+                title="QR Code"
+              >
+                <QrCode className="w-5 h-5 text-[#c9a962]" />
+              </Link>
 
               {/* Cart */}
               <Link 
@@ -233,7 +247,7 @@ export default function Layout({ children, currentPageName }) {
                 ))}
 
                 <div className="pt-2 pb-2">
-                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">Services</p>
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('services')}</p>
                   <div className="space-y-3 pl-3">
                     {servicesLinks.map((link) => (
                       <Link
@@ -271,16 +285,15 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-start">
             {/* Brand */}
             <div className="md:col-span-2">
-              <h2 className="font-playfair text-3xl gold-gradient mb-4">Hermanas Bites</h2>
+              <h2 className="font-playfair text-3xl gold-gradient mb-4">Digital Bites</h2>
               <p className="font-cormorant text-lg text-white/60 leading-relaxed max-w-md">
-                Experience the pinnacle of culinary excellence at our seven-star establishment. 
-                Where every dish tells a story of passion, tradition, and innovation.
+                {t('footerTagline')}
               </p>
             </div>
 
             {/* Social */}
             <div className="self-start">
-              <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">Connect</h3>
+              <h3 className="font-inter text-sm tracking-wider text-[#c9a962] uppercase mb-6">{t('connect')}</h3>
               <div className="flex space-x-4">
                 <a href="#" className="w-10 h-10 rounded-full luxury-border flex items-center justify-center hover:bg-[#c9a962]/10 transition-all">
                   <Instagram className="w-4 h-4 text-[#c9a962]" />
@@ -300,7 +313,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-[#c9a962]/20 mt-12 pt-8 text-center">
             <p className="font-inter text-xs text-white/40">
-              © {new Date().getFullYear()} Hermanas Bites. Seven Star Luxury Dining Experience. All rights reserved.
+              © {new Date().getFullYear()} Digital Bites. Seven Star Luxury Dining Experience. {t('allRightsReserved')}
             </p>
           </div>
         </div>
