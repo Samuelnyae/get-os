@@ -1,0 +1,46 @@
+{
+  "name": "Staff",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Staff member name"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "chef",
+        "kitchen_assistant",
+        "delivery",
+        "manager"
+      ],
+      "description": "Staff role"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "busy",
+        "offline"
+      ],
+      "default": "available",
+      "description": "Current availability status"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Staff WhatsApp phone number (e.g. 0712345678 or +254712345678)"
+    },
+    "current_orders": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Array of order IDs currently assigned"
+    }
+  },
+  "required": [
+    "name",
+    "role"
+  ]
+}

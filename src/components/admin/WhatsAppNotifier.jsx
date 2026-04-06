@@ -14,13 +14,28 @@ const formatWhatsAppNumber = (phone = '') => {
 export const buildOrderMessage = (order, status) => {
   const typeLabel = order.order_type === 'takeaway' ? 'Takeaway' : order.order_type === 'delivery' ? 'Delivery' : 'Dine-in';
   const messages = {
-    confirmed: `✅ *Hermanas Bites* — Order Confirmed!\n\nHi ${order.customer_name}, your ${typeLabel} order *${order.order_reference}* has been confirmed!\n\n🍽️ Items:\n${order.items?.map(i => `  • ${i.name} x${i.quantity}`).join('\n')}\n\n💰 Total: KES ${order.total_amount?.toLocaleString()}${order.pickup_time ? `\n⏰ ${order.order_type === 'delivery' ? 'Delivery' : 'Pickup'} at: ${order.pickup_time}` : ''}\n\nTrack your order at our website. Thank you! 🙏`,
-    preparing: `👨‍🍳 *Hermanas Bites* — Being Prepared!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is now being prepared by our kitchen team.\n\nWe'll notify you when it's ready! ⏳`,
-    ready: `🔔 *Hermanas Bites* — Order Ready!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is READY!\n\n${order.order_type === 'dine_in' ? '🪑 Our staff will bring it to your table shortly.' : order.order_type === 'delivery' ? '🚗 Your delivery is on the way!' : '🛍️ Please come to the counter to collect your order.'}\n\nThank you for choosing Hermanas Bites! 🌟`,
-    out_for_delivery: `🚗 *Hermanas Bites* — On the Way!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is out for delivery!\n\nExpect it shortly at: ${order.delivery_address || 'your address'}.\n\nEnjoy your meal! 🍽️`,
-    new: `🔔 *New Order Alert!*\n\nOrder: *${order.order_reference}*\nCustomer: ${order.customer_name}\nPhone: ${order.customer_phone}\nType: ${typeLabel}${order.pickup_time ? `\nTime: ${order.pickup_time}` : ''}\nTotal: KES ${order.total_amount?.toLocaleString()}\n\nItems:\n${order.items?.map(i => `  • ${i.name} x${i.quantity}`).join('\n')}\n\nPlease process this order promptly.`,
+    confirmed: `✅ *Digital Bites* — Order Confirmed!\n\nHi ${order.customer_name}, your ${typeLabel} order *${order.order_reference}* has been confirmed!\n\n🍽️ Items:\n${order.items?.map(i => `  • ${i.name} x${i.quantity}`).join('\n')}\n\n💰 Total: KES ${order.total_amount?.toLocaleString()}${order.pickup_time ? `\n⏰ ${order.order_type === 'delivery' ? 'Delivery' : 'Pickup'} at: ${order.pickup_time}` : ''}\n\nTrack your order at our website. Thank you! 🙏`,
+    preparing: `👨‍🍳 *Digital Bites* — Being Prepared!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is now being prepared by our kitchen team.\n\nWe'll notify you when it's ready! ⏳`,
+    ready: `🔔 *Digital Bites* — Order Ready!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is READY!\n\n${order.order_type === 'dine_in' ? '🪑 Our staff will bring it to your table shortly.' : order.order_type === 'delivery' ? '🚗 Your delivery is on the way!' : '🛍️ Please come to the counter to collect your order.'}\n\nThank you for choosing Digital Bites! 🌟`,
+    out_for_delivery: `🚗 *Digital Bites* — On the Way!\n\nHi ${order.customer_name}, your order *${order.order_reference}* is out for delivery!\n\nExpect it shortly at: ${order.delivery_address || 'your address'}.\n\nEnjoy your meal! 🍽️`,
+    new: `🔔 *New Order Alert — Digital Bites!*\n\nOrder: *${order.order_reference}*\nCustomer: ${order.customer_name}\nPhone: ${order.customer_phone || 'N/A'}\nType: ${typeLabel}${order.table_room_number ? `\nTable: ${order.table_room_number}` : ''}${order.pickup_time ? `\nTime: ${order.pickup_time}` : ''}\nTotal: KES ${order.total_amount?.toLocaleString()}\n\nItems:\n${order.items?.map(i => `  • ${i.name} x${i.quantity}`).join('\n')}\n\nPlease process this order promptly.`,
   };
   return encodeURIComponent(messages[status] || messages.confirmed);
+};
+
+// Opens WhatsApp for each staff member with a phone number
+export const notifyAllStaff = (staffList, order) => {
+  const staffWithPhone = staffList.filter(s => s.phone && s.status !== 'offline');
+  if (staffWithPhone.length === 0) return;
+  const message = buildOrderMessage(order, 'new');
+  // Open the first staff member's WhatsApp directly; others are opened with slight delay
+  staffWithPhone.forEach((staff, index) => {
+    const number = staff.phone.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '');
+    const cleaned = (number.startsWith('07') || number.startsWith('01')) ? '254' + number.slice(1) : number;
+    setTimeout(() => {
+      window.open(`https://wa.me/${cleaned}?text=${message}`, '_blank');
+    }, index * 600);
+  });
 };
 
 export default function WhatsAppNotifier({ order, status = 'confirmed', label, size = 'sm', staffPhone = null }) {

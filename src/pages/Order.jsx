@@ -8,7 +8,8 @@ import {
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
   CheckCircle, Mail, Phone, User, Clock, MapPin, Package, Utensils
 } from 'lucide-react';
-import WhatsAppNotifier from '../components/admin/WhatsAppNotifier';
+import WhatsAppNotifier, { notifyAllStaff } from '../components/admin/WhatsAppNotifier';
+import { useQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SectionHeader from '../components/common/SectionHeader';
@@ -19,6 +20,11 @@ import { toast } from 'sonner';
 
 export default function Order() {
   const [cart, setCart] = useState([]);
+
+  const { data: allStaff = [] } = useQuery({
+    queryKey: ['staff-list'],
+    queryFn: () => base44.entities.Staff.list(),
+  });
   const [step, setStep] = useState('cart'); // cart, checkout, confirmation
   const [orderType, setOrderType] = useState('takeaway'); // dine_in, takeaway, delivery
   const [pickupTime, setPickupTime] = useState('');
@@ -86,27 +92,14 @@ export default function Order() {
         try {
           await base44.integrations.Core.SendEmail({
             to: orderData.customer_email,
-            subject: `Hermanas Bites - Order Confirmation #${orderData.order_reference}`,
+            subject: `Digital Bites - Order Confirmation #${orderData.order_reference}`,
             body: `
 Dear ${orderData.customer_name},
 
-Thank you for your order at Hermanas Bites!
-
-📋 Order Reference: ${orderData.order_reference}
-💰 Total Amount: KES ${orderData.total_amount.toLocaleString()}
-
-🍽️ Order Details:
-${orderData.items.map(item => `- ${item.name} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`).join('\n')}
-
-📱 Track Your Order:
-You can track your order status in real-time by visiting our Track Order page and entering:
-- Order Reference: ${orderData.order_reference}
-- Email: ${orderData.customer_email}
-
-We will prepare your order with love and care.
-
+Thank you for your order at Digital Bites!
+...
 Best regards,
-Hermanas Bites - Seven Star Dining
+Digital Bites - Seven Star Dining
             `
           });
           toast.success('Order confirmation email sent!');
@@ -127,6 +120,8 @@ Hermanas Bites - Seven Star Dining
       localStorage.removeItem('hermanas_cart');
       setCart([]);
       window.dispatchEvent(new Event('cartUpdated'));
+      // Notify all staff via WhatsApp
+      notifyAllStaff(allStaff, order);
     },
     onError: (error) => {
       console.error('Order mutation error:', error);
@@ -305,8 +300,8 @@ Hermanas Bites - Seven Star Dining
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <SEOHead 
         title="Order Now - Online Food Ordering & Delivery"
-        description="Order gourmet food online from Hermanas Bites. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
-        keywords="Hermanas Bites order, order food online, food delivery, online ordering, checkout, place order, gourmet delivery"
+        description="Order gourmet food online from Digital Bites. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
+        keywords="Digital Bites order, order food online, food delivery, online ordering, checkout, place order, gourmet delivery"
       />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 

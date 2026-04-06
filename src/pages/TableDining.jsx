@@ -11,15 +11,18 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import MenuCard from '@/components/menu/MenuCard';
+import { notifyAllStaff } from '@/components/admin/WhatsAppNotifier';
 
 export default function TableDining() {
-  const [view, setView] = useState('start'); // start, join, menu, cart, split
+  const [view, setView] = useState('start'); // start, join, menu, cart, split, ordered
   const [tableNumber, setTableNumber] = useState('');
   const [sessionCode, setSessionCode] = useState('');
   const [participantName, setParticipantName] = useState('');
   const [participantId, setParticipantId] = useState('');
   const [currentTableOrder, setCurrentTableOrder] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [placedOrder, setPlacedOrder] = useState(null);
+  const [checkoutForm, setCheckoutForm] = useState({ customerName: '', customerEmail: '', customerPhone: '', specialInstructions: '' });
   const queryClient = useQueryClient();
 
   // Generate participant ID on mount
@@ -38,6 +41,11 @@ export default function TableDining() {
     queryKey: ['menu-items'],
     queryFn: () => base44.entities.MenuItem.list(),
     enabled: view === 'menu',
+  });
+
+  const { data: allStaff = [] } = useQuery({
+    queryKey: ['staff-list'],
+    queryFn: () => base44.entities.Staff.list(),
   });
 
   const { data: tableOrder } = useQuery({
@@ -183,6 +191,35 @@ export default function TableDining() {
     });
     queryClient.invalidateQueries(['table-order', sessionCode]);
   };
+
+  const placeOrderMutation = useMutation({
+    mutationFn: async ({ customerName, customerEmail, customerPhone, specialInstructions }) => {
+      const ref = `TBL-${Date.now().toString(36).toUpperCase()}`;
+      const order = await base44.entities.Order.create({
+        customer_name: customerName,
+        customer_email: customerEmail || 'table@digitalbites.com',
+        customer_phone: customerPhone || '',
+        table_room_number: currentTableOrder.table_number,
+        order_type: 'dine_in',
+        items: currentTableOrder.items,
+        total_amount: currentTableOrder.total_amount,
+        status: 'pending',
+        payment_method: 'Pay at Counter',
+        payment_status: 'pending',
+        order_reference: ref,
+        special_instructions: specialInstructions || '',
+      });
+      // Mark table order as ordering
+      await base44.entities.TableOrder.update(currentTableOrder.id, { status: 'ordering' });
+      return order;
+    },
+    onSuccess: (order) => {
+      toast.success(`Order placed! Reference: ${order.order_reference}`);
+      notifyAllStaff(allStaff, order);
+      setView('ordered');
+      setPlacedOrder(order);
+    },
+  });
 
   const filteredMenuItems = menuItems.filter(item =>
     item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -508,40 +545,82 @@ export default function TableDining() {
             </div>
           )}
 
-          <div className="mt-8 bg-[#1a1a1a] rounded-xl p-6 border border-[#c9a962]/10">
-            <h3 className="font-playfair text-xl text-white mb-4">Your Items</h3>
-            {myItems.length === 0 ? (
-              <p className="font-inter text-white/50">You haven't added any items yet</p>
-            ) : (
-              <>
-                <div className="space-y-2 mb-4">
-                  {myItems.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <span className="font-inter text-white">{item.name} x{item.quantity}</span>
-                      <span className="font-inter text-[#c9a962]">
-                        KES {(item.price * item.quantity).toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-[#c9a962]/20 pt-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-playfair text-lg text-white">Your Total</span>
-                    <span className="font-playfair text-2xl text-[#c9a962]">
-                      KES {myTotal.toLocaleString()}
-                    </span>
-                  </div>
-                  <Link to={createPageUrl('Order')}>
-                    <LuxuryButton className="w-full">
-                      <Check className="w-4 h-4 mr-2" />
-                      Proceed to Checkout (My Items)
-                    </LuxuryButton>
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
+          {/* Place Full Table Order */}
+          {(currentTableOrder?.items?.length || 0) > 0 && (
+            <div className="mt-8 bg-[#1a1a1a] rounded-xl p-6 border border-[#c9a962]/30">
+              <h3 className="font-playfair text-xl text-white mb-2">Place Table Order</h3>
+              <p className="font-inter text-sm text-white/50 mb-6">Submit the full table order to the kitchen. Staff will be notified via WhatsApp.</p>
+              <div className="space-y-3 mb-4">
+                <Input
+                  placeholder="Your name *"
+                  value={checkoutForm.customerName}
+                  onChange={e => setCheckoutForm(f => ({ ...f, customerName: e.target.value }))}
+                  className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                />
+                <Input
+                  placeholder="Phone number (optional)"
+                  value={checkoutForm.customerPhone}
+                  onChange={e => setCheckoutForm(f => ({ ...f, customerPhone: e.target.value }))}
+                  className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                />
+                <Input
+                  placeholder="Special instructions (optional)"
+                  value={checkoutForm.specialInstructions}
+                  onChange={e => setCheckoutForm(f => ({ ...f, specialInstructions: e.target.value }))}
+                  className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                />
+              </div>
+              <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-[#0a0a0a]">
+                <span className="font-playfair text-lg text-white">Table Total</span>
+                <span className="font-playfair text-2xl text-[#c9a962]">
+                  KES {currentTableOrder?.total_amount?.toLocaleString()}
+                </span>
+              </div>
+              <LuxuryButton
+                className="w-full"
+                disabled={!checkoutForm.customerName || placeOrderMutation.isPending}
+                onClick={() => placeOrderMutation.mutate(checkoutForm)}
+              >
+                <Check className="w-4 h-4 mr-2" />
+                {placeOrderMutation.isPending ? 'Placing Order...' : 'Place Order & Notify Staff'}
+              </LuxuryButton>
+            </div>
+          )}
         </div>
+      </div>
+    );
+  }
+
+  // Order Placed Confirmation View
+  if (view === 'ordered' && placedOrder) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] py-20 px-4 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full text-center"
+        >
+          <div className="w-20 h-20 rounded-full bg-[#c9a962]/10 border border-[#c9a962]/30 flex items-center justify-center mx-auto mb-6">
+            <Check className="w-10 h-10 text-[#c9a962]" />
+          </div>
+          <h2 className="font-playfair text-3xl text-white mb-2">Order Placed!</h2>
+          <p className="font-inter text-white/60 mb-6">
+            Your table order has been sent to the kitchen. Staff have been notified via WhatsApp.
+          </p>
+          <div className="bg-[#1a1a1a] rounded-xl p-4 border border-[#c9a962]/10 mb-6">
+            <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">Order Reference</p>
+            <p className="font-mono text-xl text-white">{placedOrder.order_reference}</p>
+            <p className="font-inter text-sm text-white/50 mt-1">Table {placedOrder.table_room_number}</p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Link to={createPageUrl('OrderTracking')}>
+              <LuxuryButton className="w-full">Track Your Order</LuxuryButton>
+            </Link>
+            <LuxuryButton variant="secondary" onClick={() => setView('menu')} className="w-full">
+              Continue Ordering
+            </LuxuryButton>
+          </div>
+        </motion.div>
       </div>
     );
   }

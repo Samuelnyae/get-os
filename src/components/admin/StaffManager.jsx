@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 export default function StaffManager() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
-  const [formData, setFormData] = useState({ name: '', role: 'chef', status: 'available' });
+  const [formData, setFormData] = useState({ name: '', role: 'chef', status: 'available', phone: '' });
   const queryClient = useQueryClient();
 
   const { data: staff = [], isLoading } = useQuery({
@@ -25,7 +25,7 @@ export default function StaffManager() {
     onSuccess: () => {
       queryClient.invalidateQueries(['staff-list']);
       setDialogOpen(false);
-      setFormData({ name: '', role: 'chef', status: 'available' });
+      setFormData({ name: '', role: 'chef', status: 'available', phone: '' });
       toast.success('Staff member added');
     },
   });
@@ -36,7 +36,7 @@ export default function StaffManager() {
       queryClient.invalidateQueries(['staff-list']);
       setDialogOpen(false);
       setEditingStaff(null);
-      setFormData({ name: '', role: 'chef', status: 'available' });
+      setFormData({ name: '', role: 'chef', status: 'available', phone: '' });
       toast.success('Staff member updated');
     },
   });
@@ -61,7 +61,7 @@ export default function StaffManager() {
 
   const handleEdit = (member) => {
     setEditingStaff(member);
-    setFormData({ name: member.name, role: member.role, status: member.status });
+    setFormData({ name: member.name, role: member.role, status: member.status, phone: member.phone || '' });
     setDialogOpen(true);
   };
 
@@ -139,6 +139,14 @@ export default function StaffManager() {
                 </p>
               </div>
 
+              {member.phone ? (
+                <div className="mt-3 flex items-center gap-2 text-sm text-white/50">
+                  <span className="font-inter text-xs">📱 {member.phone}</span>
+                </div>
+              ) : (
+                <p className="mt-3 font-inter text-xs text-orange-400/70">⚠ No WhatsApp number</p>
+              )}
+
               {member.current_orders?.length > 0 && (
                 <div className="mt-4 p-3 rounded-lg bg-[#0a0a0a] border border-[#c9a962]/10">
                   <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider">
@@ -197,6 +205,17 @@ export default function StaffManager() {
                   <SelectItem value="offline">Offline</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <label className="font-inter text-sm text-white/70 mb-2 block">WhatsApp Phone Number</label>
+              <Input
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-[#0a0a0a] border-[#c9a962]/20 text-white"
+                placeholder="e.g. 0712345678"
+              />
+              <p className="font-inter text-xs text-white/40 mt-1">Required to receive new order alerts on WhatsApp</p>
             </div>
 
             <LuxuryButton onClick={handleSubmit} disabled={!formData.name} className="w-full">
