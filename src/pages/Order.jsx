@@ -79,8 +79,7 @@ export default function Order() {
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
+  const total = subtotal;
 
   const orderMutation = useMutation({
     mutationFn: async (orderData) => {
@@ -511,16 +510,8 @@ Digital Bites - Seven Star Dining
                 ))}
               </div>
 
-              <div className="border-t border-[#c9a962]/20 pt-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-inter text-white/50">Subtotal</span>
-                  <span className="font-inter text-white">KES {subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-inter text-white/50">Tax (10%)</span>
-                  <span className="font-inter text-white">KES {tax.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between pt-3 border-t border-[#c9a962]/20">
+              <div className="border-t border-[#c9a962]/20 pt-4">
+                <div className="flex justify-between pt-3">
                   <span className="font-playfair text-lg text-white">Total</span>
                   <span className="font-playfair text-2xl text-[#c9a962]">KES {total.toLocaleString()}</span>
                 </div>
