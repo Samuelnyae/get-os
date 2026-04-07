@@ -7,9 +7,11 @@ import MenuCard from '../components/menu/MenuCard';
 import SectionHeader from '../components/common/SectionHeader';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Drinks() {
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useLanguage();
 
   const { data: drinks = [], isLoading } = useQuery({
     queryKey: ['drinks'],
@@ -29,9 +31,9 @@ export default function Drinks() {
   };
 
   const drinkTypes = [
-    { icon: Wine, label: 'Fine Wines', description: 'Curated selection from premier vineyards' },
-    { icon: Coffee, label: 'Artisan Coffee', description: 'Specialty roasts from around the world' },
-    { icon: GlassWater, label: 'Signature Cocktails', description: 'Crafted by our master mixologists' },
+    { icon: Wine, label: t('fineWines'), description: t('fineWinesDesc') },
+    { icon: Coffee, label: t('artisanCoffee'), description: t('artisanCoffeeDesc') },
+    { icon: GlassWater, label: t('signatureCocktails'), description: t('signatureCocktailsDesc') },
   ];
 
   return (
@@ -39,8 +41,8 @@ export default function Drinks() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <SectionHeader 
-          subtitle="Beverages & Spirits" 
-          title="Drinks Menu" 
+          subtitle={t('beveragesSpirits')} 
+          title={t('drinksMenu')} 
         />
 
         {/* Drink Types */}
@@ -65,7 +67,7 @@ export default function Drinks() {
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#c9a962]/50" />
           <Input
             type="text"
-            placeholder="Search drinks..."
+            placeholder={t('searchDrinks')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border-[#c9a962]/20 text-white placeholder:text-white/40 rounded-full focus:border-[#c9a962] focus:ring-[#c9a962]/20"
@@ -94,8 +96,8 @@ export default function Drinks() {
             className="text-center py-20"
           >
             <Wine className="w-16 h-16 text-[#c9a962]/30 mx-auto mb-4" />
-            <h3 className="font-playfair text-2xl text-white mb-2">No drinks found</h3>
-            <p className="font-inter text-white/50">Check back soon for our refreshing selection</p>
+            <h3 className="font-playfair text-2xl text-white mb-2">{t('noDrinksFound')}</h3>
+            <p className="font-inter text-white/50">{t('checkBackSoon')}</p>
           </motion.div>
         )}
       </div>

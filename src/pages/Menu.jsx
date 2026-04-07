@@ -14,11 +14,11 @@ import { useDebounce } from '../components/utils/performance';
 import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Menu() {
-  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
   const [cartItems, setCartItems] = useState([]);
+  const { t } = useLanguage();
 
   const { data: menuItems = [], isLoading } = useQuery({
     queryKey: ['menu-items'],
@@ -151,7 +151,7 @@ export default function Menu() {
           >
             <Filter className="w-16 h-16 text-[#c9a962]/30 mx-auto mb-4" />
             <h3 className="font-playfair text-2xl text-white mb-2">{t('noDishesFound')}</h3>
-            <p className="font-inter text-white/50">{t('tryAdjustingFilter')}</p>
+            <p className="font-inter text-white/50">{t('tryAdjusting')}</p>
           </motion.div>
         )}
       </div>

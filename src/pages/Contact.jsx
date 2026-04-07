@@ -26,7 +26,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
-      toast.error(t('fillAllFields'));
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -50,14 +50,14 @@ Hermanas Bites - Seven Star Dining
         `
       });
 
-      toast.success(t('messageReceived'), {
-        description: t('messageConfirmation')
+      toast.success('Message received!', {
+        description: 'Check your email for confirmation. We will respond within 24 hours.'
       });
       
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error) {
       console.error('Email error:', error);
-      toast.error(t('failedToSend'));
+      toast.error('Failed to send message. Please check your email address and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -92,17 +92,17 @@ Hermanas Bites - Seven Star Dining
             animate={{ opacity: 1, x: 0 }}
             className="bg-[#1a1a1a] rounded-2xl p-8 border border-[#c9a962]/10"
           >
-            <h3 className="font-playfair text-2xl text-white mb-6">{t('sendUsMessage')}</h3>
+            <h3 className="font-playfair text-2xl text-white mb-6">{t('sendMessage')}</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                    {t('fullName')} *
+                    {t('name')} *
                   </label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder={t('namePlaceholder')}
+                    placeholder={t('yourName')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
@@ -114,7 +114,7 @@ Hermanas Bites - Seven Star Dining
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder={t('emailPlaceholder')}
+                    placeholder={t('yourEmail')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
@@ -128,13 +128,13 @@ Hermanas Bites - Seven Star Dining
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder={t('phonePlaceholder')}
+                    placeholder="+254 700 000 000"
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
                 <div>
                   <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                    Subject
+                    {t('subject')}
                   </label>
                   <Input
                     value={formData.subject}
@@ -146,7 +146,7 @@ Hermanas Bites - Seven Star Dining
               </div>
               <div>
                 <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                  Message *
+                  {t('message')} *
                   </label>
                   <Textarea
                    value={formData.message}
@@ -165,7 +165,7 @@ Hermanas Bites - Seven Star Dining
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    {t('sendMessage')}
+                    {t('sendMessageBtn')}
                   </>
                 )}
               </LuxuryButton>

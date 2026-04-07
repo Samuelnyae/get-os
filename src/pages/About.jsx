@@ -35,7 +35,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="font-cormorant text-xl text-white/60 max-w-3xl mx-auto leading-relaxed"
           >
-            {t('aboutIntro')}
+            {t('aboutDesc')}
           </motion.p>
         </div>
       </section>
@@ -93,9 +93,9 @@ export default function About() {
               className="space-y-6"
             >
               <h3 className="font-inter text-xs tracking-[0.3em] text-[#c9a962] uppercase">{t('ourHeritage')}</h3>
-              <h2 className="font-playfair text-4xl text-white">{t('legacyTitle')}</h2>
-              <p className="font-inter text-white/60 leading-relaxed">{t('legacyP1')}</p>
-              <p className="font-inter text-white/60 leading-relaxed">{t('legacyP2')}</p>
+              <h2 className="font-playfair text-4xl text-white">{t('legacyOfExcellence')}</h2>
+              <p className="font-inter text-white/60 leading-relaxed">{t('heritageDesc1')}</p>
+              <p className="font-inter text-white/60 leading-relaxed">{t('heritageDesc2')}</p>
             </motion.div>
           </div>
         </div>
@@ -134,12 +134,12 @@ export default function About() {
         <div className="max-w-6xl mx-auto">
           <SectionHeader 
             subtitle={t('meetOurTeam')} 
-            title={t('masterChefsTitle')} 
+            title={t('masterChefs')} 
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: 'Chef Maria Hermana', role: t('executiveChef'), image: 'https://images.unsplash.com/photo-1583394293214-28ez1c29def9?w=400' },
-              { name: 'Chef Isabella Hermana', role: t('pastryChef'), image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400' },
+              { name: 'Chef Maria', role: t('executiveChef'), image: 'https://images.unsplash.com/photo-1583394293214-28ez1c29def9?w=400' },
+              { name: 'Chef Isabella', role: t('pastryChef'), image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400' },
               { name: 'Chef Carlos Rodriguez', role: t('headChef'), image: 'https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=400' },
             ].map((chef, index) => (
               <motion.div
