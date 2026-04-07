@@ -190,14 +190,16 @@ export default function Layout({ children, currentPageName }) {
               {/* Language Switcher */}
               <LanguageSwitcher />
 
-              {/* QR Code Link */}
-              <Link
-                to="/QRCode"
-                className="p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300"
-                title="QR Code"
-              >
-                <QrCode className="w-5 h-5 text-[#c9a962]" />
-              </Link>
+              {/* QR Code Link - Admin only */}
+              {isAdmin && (
+                <Link
+                  to="/QRCode"
+                  className="p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300"
+                  title="QR Code"
+                >
+                  <QrCode className="w-5 h-5 text-[#c9a962]" />
+                </Link>
+              )}
 
               {/* Cart */}
               <Link 
