@@ -11,8 +11,10 @@ import SEOHead from '../components/common/SEOHead';
 import { Input } from "@/components/ui/input";
 import { toast } from 'sonner';
 import { useDebounce } from '../components/utils/performance';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Menu() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -27,11 +29,11 @@ export default function Menu() {
   });
 
   const categories = [
-    { id: 'all', label: 'All Dishes' },
-    { id: 'starters', label: 'Starters' },
-    { id: 'main_dishes', label: 'Main Dishes' },
-    { id: 'desserts', label: 'Desserts' },
-    { id: 'drinks', label: 'Drinks' },
+    { id: 'all', label: t('allDishes') },
+    { id: 'starters', label: t('starters') },
+    { id: 'main_dishes', label: t('mainDishes') },
+    { id: 'desserts', label: t('desserts') },
+    { id: 'drinks', label: t('drinks') },
   ];
 
   const filteredItems = useMemo(() => {
@@ -68,8 +70,8 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <SectionHeader 
-          subtitle="Culinary Excellence" 
-          title="Our Menu" 
+          subtitle={t('culinaryExcellence')} 
+          title={t('ourMenu')} 
         />
 
         {/* Search & Filters */}
@@ -79,7 +81,7 @@ export default function Menu() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#c9a962]/50" />
             <Input
               type="text"
-              placeholder="Search dishes..."
+              placeholder={t('searchDishes')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border-[#c9a962]/20 text-white placeholder:text-white/40 rounded-full focus:border-[#c9a962] focus:ring-[#c9a962]/20"
@@ -148,8 +150,8 @@ export default function Menu() {
             className="text-center py-20"
           >
             <Filter className="w-16 h-16 text-[#c9a962]/30 mx-auto mb-4" />
-            <h3 className="font-playfair text-2xl text-white mb-2">No dishes found</h3>
-            <p className="font-inter text-white/50">Try adjusting your search or filter</p>
+            <h3 className="font-playfair text-2xl text-white mb-2">{t('noDishesFound')}</h3>
+            <p className="font-inter text-white/50">{t('tryAdjustingFilter')}</p>
           </motion.div>
         )}
       </div>

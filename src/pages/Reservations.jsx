@@ -16,8 +16,10 @@ import SEOHead from '../components/common/SEOHead';
 import { sanitizeInput, sanitizeEmail, sanitizePhone } from '../components/utils/security';
 import { toast } from 'sonner';
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Reservations() {
+  const { t } = useLanguage();
   const [step, setStep] = useState('select'); // select, form, confirmation
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
@@ -126,15 +128,13 @@ Hermanas Bites - Seven Star Dining
     onSuccess: ({ code, status }) => {
       setConfirmationCode(code);
       setStep('confirmation');
-      toast.success(status === 'waitlist' 
-        ? 'Added to waiting list!' 
-        : 'Reservation confirmed!',
-        { description: `Confirmation code: ${code}` }
+      toast.success(status === 'waitlist' ? t('addedToWaitlist') : t('reservationConfirmedToast'),
+        { description: `${t('confirmationCode')}: ${code}` }
       );
     },
     onError: (error) => {
       console.error('Reservation error:', error);
-      toast.error('Failed to create reservation. Please try again.');
+      toast.error(t('failedReservation'));
     },
   });
 

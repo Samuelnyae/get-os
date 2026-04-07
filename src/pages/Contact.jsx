@@ -10,8 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,7 +26,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
-      toast.error('Please fill in all required fields');
+      toast.error(t('fillAllFields'));
       return;
     }
 
@@ -48,24 +50,24 @@ Hermanas Bites - Seven Star Dining
         `
       });
 
-      toast.success('Message received!', {
-        description: 'Check your email for confirmation. We will respond within 24 hours.'
+      toast.success(t('messageReceived'), {
+        description: t('messageConfirmation')
       });
       
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error) {
       console.error('Email error:', error);
-      toast.error('Failed to send message. Please check your email address and try again.');
+      toast.error(t('failedToSend'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const contactInfo = [
-    { icon: MapPin, label: 'Address', value: 'Voi, Taita Taveta' },
-    { icon: Phone, label: 'Phone', value: '+254748358976' },
-    { icon: Mail, label: 'Email', value: 'menuhotel@gmail.com' },
-    { icon: Clock, label: 'Hours', value: 'Mon-Sun: 11:00 AM - 11:00 PM' },
+    { icon: MapPin, label: t('address'), value: 'Voi, Taita Taveta' },
+    { icon: Phone, label: t('phone'), value: '+254748358976' },
+    { icon: Mail, label: t('email'), value: 'menuhotel@gmail.com' },
+    { icon: Clock, label: t('hours'), value: 'Mon-Sun: 11:00 AM - 11:00 PM' },
   ];
 
   const socialLinks = [
@@ -79,8 +81,8 @@ Hermanas Bites - Seven Star Dining
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
-          subtitle="Get in Touch" 
-          title="Contact Us" 
+          subtitle={t('getInTouch')} 
+          title={t('contactUs')} 
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
@@ -90,29 +92,29 @@ Hermanas Bites - Seven Star Dining
             animate={{ opacity: 1, x: 0 }}
             className="bg-[#1a1a1a] rounded-2xl p-8 border border-[#c9a962]/10"
           >
-            <h3 className="font-playfair text-2xl text-white mb-6">Send us a Message</h3>
+            <h3 className="font-playfair text-2xl text-white mb-6">{t('sendUsMessage')}</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                    Name *
+                    {t('fullName')} *
                   </label>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Your name"
+                    placeholder={t('namePlaceholder')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
                 <div>
                   <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                    Email *
+                    {t('email')} *
                   </label>
                   <Input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your@email.com"
+                    placeholder={t('emailPlaceholder')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
@@ -120,13 +122,13 @@ Hermanas Bites - Seven Star Dining
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
-                    Phone
+                    {t('phone')}
                   </label>
                   <Input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder={t('phonePlaceholder')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
@@ -137,7 +139,7 @@ Hermanas Bites - Seven Star Dining
                   <Input
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    placeholder="Reservation inquiry"
+                    placeholder={t('subjectPlaceholder')}
                     className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                   />
                 </div>
@@ -145,11 +147,11 @@ Hermanas Bites - Seven Star Dining
               <div>
                 <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
                   Message *
-                </label>
-                <Textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Tell us how we can assist you..."
+                  </label>
+                  <Textarea
+                   value={formData.message}
+                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                   placeholder={t('messagePlaceholder')}
                   rows={5}
                   className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30 focus:border-[#c9a962]"
                 />
@@ -158,12 +160,12 @@ Hermanas Bites - Seven Star Dining
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-[#0a0a0a]/20 border-t-[#0a0a0a] rounded-full animate-spin mr-2" />
-                    Sending...
+                    {t('sending')}
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    Send Message
+                    {t('sendMessage')}
                   </>
                 )}
               </LuxuryButton>
@@ -195,7 +197,7 @@ Hermanas Bites - Seven Star Dining
             {/* Social Links */}
             <div className="p-6 rounded-2xl bg-[#1a1a1a]/50 border border-[#c9a962]/10">
               <h4 className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-4">
-                Follow Us
+                {t('followUs')}
               </h4>
               <div className="flex gap-4">
                 {socialLinks.map((social, index) => (
