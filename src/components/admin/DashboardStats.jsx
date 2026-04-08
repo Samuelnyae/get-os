@@ -18,8 +18,8 @@ export default function DashboardStats({ hotelId } = {}) {
   const { data: menuItems = [] } = useQuery({
     queryKey: ['admin-menu', hotelId],
     queryFn: () => hotelId
-      ? base44.entities.MenuItem.filter({ hotel_id: hotelId })
-      : base44.entities.MenuItem.list(),
+      ? base44.entities.MenuItem.filter({ hotel_id: hotelId }, '-created_date', 200)
+      : base44.entities.MenuItem.list('-created_date', 200),
   });
 
   const { data: customRequests = [] } = useQuery({

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, ChevronDown } from 'lucide-react';
 import MenuCard from '../components/menu/MenuCard';
 import PersonalizedRecommendations from '../components/menu/PersonalizedRecommendations';
 import DailySpecials from '../components/menu/DailySpecials';
@@ -13,11 +13,14 @@ import { toast } from 'sonner';
 import { useDebounce } from '../components/utils/performance';
 import { useLanguage } from '@/lib/LanguageContext';
 
+const PAGE_SIZE = 12;
+
 export default function Menu() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
   const [cartItems, setCartItems] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { t } = useLanguage();
 
   const { data: menuItems = [], isLoading } = useQuery({
@@ -44,6 +47,12 @@ export default function Menu() {
       return matchesCategory && matchesSearch;
     });
   }, [menuItems, activeCategory, debouncedSearch]);
+
+  // Reset visible count when filter/search changes
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [activeCategory, debouncedSearch]);
+
+  const visibleItems = filteredItems.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredItems.length;
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
@@ -136,11 +145,24 @@ export default function Menu() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {filteredItems.map((item) => (
+            {visibleItems.map((item) => (
               <MenuCard key={item.id} item={item} onAddToCart={handleAddToCart} />
             ))}
           </motion.div>
         </AnimatePresence>
+
+        {/* Load More */}
+        {hasMore && (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
+              className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#1a1a1a] border border-[#c9a962]/30 text-white/70 hover:text-[#c9a962] hover:border-[#c9a962] transition-all font-inter text-sm"
+            >
+              <ChevronDown className="w-4 h-4" />
+              Load More ({filteredItems.length - visibleCount} remaining)
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
         {!isLoading && filteredItems.length === 0 && (

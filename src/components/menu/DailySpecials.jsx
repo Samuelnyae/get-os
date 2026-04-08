@@ -116,11 +116,16 @@ For each, provide the item IDs, bundle composition, pricing, and compelling mark
         }
       });
 
-      setSpecials({
+      const result = {
         date: currentDate,
         featured: response.featured_special,
         bundles: response.bundle_offers
-      });
+      };
+      setSpecials(result);
+      localStorage.setItem('hermanas_daily_specials', JSON.stringify({
+        date: new Date().toDateString(),
+        data: result
+      }));
     } catch (error) {
       console.error('Failed to generate specials:', error);
     } finally {
@@ -141,14 +146,7 @@ For each, provide the item IDs, bundle composition, pricing, and compelling mark
     }
 
     if (menuItems.length > 0 && orders.length > 0 && !specials && !isGenerating) {
-      generateDailySpecials().then(() => {
-        if (specials) {
-          localStorage.setItem('hermanas_daily_specials', JSON.stringify({
-            date: new Date().toDateString(),
-            data: specials
-          }));
-        }
-      });
+      generateDailySpecials();
     }
   }, [menuItems, orders]);
 

@@ -10,9 +10,20 @@ import {
 import LuxuryButton from '../common/LuxuryButton';
 import { toast } from 'sonner';
 
+const FEEDBACK_CACHE_KEY = 'db_ai_feedback_cache';
+const FEEDBACK_CACHE_TTL = 1000 * 60 * 60; // 1 hour
+
+const loadFeedbackCache = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(FEEDBACK_CACHE_KEY) || 'null');
+    if (stored && Date.now() - stored.timestamp < FEEDBACK_CACHE_TTL) return stored.data;
+  } catch {}
+  return null;
+};
+
 export default function AIFeedbackAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState(null);
+  const [analysis, setAnalysis] = useState(() => loadFeedbackCache());
 
   const { data: comments = [] } = useQuery({
     queryKey: ['feedback-comments'],
@@ -31,7 +42,7 @@ export default function AIFeedbackAnalysis() {
 
   const { data: customRequests = [] } = useQuery({
     queryKey: ['feedback-custom'],
-    queryFn: () => base44.entities.CustomFoodRequest.list(),
+    queryFn: () => base44.entities.CustomFoodRequest.list('-created_date', 100),
   });
 
   const analyzeFeedback = async () => {
@@ -191,7 +202,7 @@ Provide data-driven, specific, actionable insights.`;
         }
       });
 
-      setAnalysis({
+      const result = {
         ...response,
         metrics: {
           totalComments: comments.length,
@@ -199,7 +210,9 @@ Provide data-driven, specific, actionable insights.`;
           ratingDistribution
         },
         generatedAt: new Date().toISOString()
-      });
+      };
+      setAnalysis(result);
+      localStorage.setItem(FEEDBACK_CACHE_KEY, JSON.stringify({ data: result, timestamp: Date.now() }));
 
       toast.success('Feedback analysis complete');
     } catch (error) {

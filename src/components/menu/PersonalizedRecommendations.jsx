@@ -6,8 +6,19 @@ import { Sparkles, Loader2, RefreshCw, User } from 'lucide-react';
 import MenuCard from './MenuCard';
 import LuxuryButton from '../common/LuxuryButton';
 
+const PREC_CACHE_KEY = 'db_personalized_recs_cache';
+const PREC_CACHE_TTL = 1000 * 60 * 60 * 4; // 4 hours
+
+const loadPrecsCache = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PREC_CACHE_KEY) || 'null');
+    if (stored && Date.now() - stored.timestamp < PREC_CACHE_TTL) return stored.data;
+  } catch {}
+  return null;
+};
+
 export default function PersonalizedRecommendations({ cartItems = [] }) {
-  const [recommendations, setRecommendations] = useState(null);
+  const [recommendations, setRecommendations] = useState(() => loadPrecsCache());
   const [isGenerating, setIsGenerating] = useState(false);
   const [viewedItems, setViewedItems] = useState([]);
 
@@ -119,10 +130,12 @@ Provide personalized reasoning for each recommendation.`;
         .filter(item => item.id)
         .slice(0, 6);
 
-      setRecommendations({
+      const result = {
         items: recommendedItems,
         summary: response.personalization_summary
-      });
+      };
+      setRecommendations(result);
+      localStorage.setItem(PREC_CACHE_KEY, JSON.stringify({ data: result, timestamp: Date.now() }));
     } catch (error) {
       console.error('Failed to generate recommendations:', error);
     } finally {

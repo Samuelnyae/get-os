@@ -43,9 +43,12 @@ export default function OrdersManager({ hotelId } = {}) {
     cacheTime: 10 * 60 * 1000,
   });
 
-  // Real-time order updates with notifications
+  // Real-time order updates with notifications (scoped to hotelId if set)
   useEffect(() => {
     const unsubscribe = base44.entities.Order.subscribe((event) => {
+      // If managing a specific hotel, ignore events from other hotels
+      if (hotelId && event.data?.hotel_id && event.data.hotel_id !== hotelId) return;
+
       if (event.type === 'create') {
         // New order notification - always urgent
         const order = event.data;

@@ -5,8 +5,19 @@ import { motion } from 'framer-motion';
 import { Brain, TrendingUp, AlertCircle, Lightbulb, RefreshCw } from 'lucide-react';
 import LuxuryButton from '../common/LuxuryButton';
 
+const AI_INSIGHTS_CACHE_KEY = 'db_ai_insights_cache';
+const AI_INSIGHTS_TTL = 1000 * 60 * 60; // 1 hour
+
+const loadInsightsCache = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(AI_INSIGHTS_CACHE_KEY) || 'null');
+    if (stored && Date.now() - stored.timestamp < AI_INSIGHTS_TTL) return stored.data;
+  } catch {}
+  return null;
+};
+
 export default function AIInsights() {
-  const [insights, setInsights] = useState(null);
+  const [insights, setInsights] = useState(() => loadInsightsCache());
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { data: orders = [] } = useQuery({
@@ -16,7 +27,7 @@ export default function AIInsights() {
 
   const { data: menuItems = [] } = useQuery({
     queryKey: ['admin-menu-insights'],
-    queryFn: () => base44.entities.MenuItem.list(),
+    queryFn: () => base44.entities.MenuItem.list('-created_date', 200),
   });
 
   const { data: comments = [] } = useQuery({
@@ -138,6 +149,7 @@ Format as JSON:
     });
 
     setInsights(response);
+    localStorage.setItem(AI_INSIGHTS_CACHE_KEY, JSON.stringify({ data: response, timestamp: Date.now() }));
     setIsGenerating(false);
   };
 
