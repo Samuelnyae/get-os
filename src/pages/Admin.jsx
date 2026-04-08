@@ -29,6 +29,7 @@ const LowStockAlerts = React.lazy(() => import('@/components/admin/LowStockAlert
 const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
 const AdvancedAnalytics = React.lazy(() => import('@/components/admin/AdvancedAnalytics'));
 const FeedbackInsights = React.lazy(() => import('@/components/admin/FeedbackInsights'));
+const DataExport = React.lazy(() => import('@/components/admin/DataExport'));
 
 
 export default function Admin() {
@@ -97,6 +98,7 @@ export default function Admin() {
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
     { id: 'feedback-insights', label: 'Feedback Insights', icon: Star },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'export', label: 'Data Export', icon: Package },
   ];
 
   return (
@@ -170,6 +172,7 @@ export default function Admin() {
             {activeTab === 'feedback' && <FeedbackViewer />}
             {activeTab === 'feedback-insights' && <FeedbackInsights />}
             {activeTab === 'notifications' && <DNDSettings />}
+            {activeTab === 'export' && <DataExport />}
           </React.Suspense>
         </motion.div>
       </div>
