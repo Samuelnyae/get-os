@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -24,6 +24,14 @@ export default function OrdersManager({ hotelId } = {}) {
   const [previousOrderCount, setPreviousOrderCount] = useState(0);
   const queryClient = useQueryClient();
   const { sendNotification, permission } = useNotifications();
+  const invalidateTimerRef = useRef(null);
+
+  const debouncedInvalidate = () => {
+    if (invalidateTimerRef.current) clearTimeout(invalidateTimerRef.current);
+    invalidateTimerRef.current = setTimeout(() => {
+      queryClient.invalidateQueries(['admin-orders-list', hotelId]);
+    }, 500);
+  };
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['admin-orders-list', hotelId],
@@ -118,9 +126,12 @@ export default function OrdersManager({ hotelId } = {}) {
         }
       }
       
-      queryClient.invalidateQueries(['admin-orders-list', hotelId]);
+      debouncedInvalidate();
     });
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      if (invalidateTimerRef.current) clearTimeout(invalidateTimerRef.current);
+    };
   }, [queryClient, sendNotification]);
 
   const updateOrderMutation = useMutation({
