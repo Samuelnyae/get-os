@@ -73,7 +73,7 @@ Based on the customer's profile:
 - Preferred categories: ${preferredCategories.join(', ') || 'All'}
 
 Available menu items:
-${menuItems.map(m => `- ${m.name} (${m.category}, $${m.price}) - ${m.description}`).join('\n')}
+${menuItems.map(m => `- ${m.name} (${m.category}, KES ${m.price}) - ${m.description}`).join('\n')}
 
 Please recommend 3-4 menu items that would be perfect for this customer. Consider their tastes, preferences, and dining history. Return ONLY the exact names of the dishes from the menu, one per line.`;
 
