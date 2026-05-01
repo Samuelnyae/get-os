@@ -61,7 +61,7 @@ TODAY'S DATE: ${currentDate}
 
 AVAILABLE MENU ITEMS:
 ${menuItems.map(item => 
-  `- ${item.name} (${item.category}, $${item.price}): ${item.description || 'No description'}, Stock: ${item.stock_count || 0}, Likes: ${item.likes_count || 0}`
+  `- ${item.name} (${item.category}, KES ${item.price}): ${item.description || 'No description'}, Stock: ${item.stock_count || 0}, Likes: ${item.likes_count || 0}`
 ).join('\n')}
 
 POPULAR COMBINATIONS (from order history):
@@ -192,13 +192,13 @@ For each, provide the item IDs, bundle composition, pricing, and compelling mark
             </div>
             <div className="text-right">
               <div className="font-inter text-sm text-white/50 line-through">
-                ${specials.featured.original_price.toFixed(2)}
+                KES {specials.featured.original_price.toFixed(2)}
               </div>
               <div className="font-playfair text-3xl text-[#c9a962]">
-                ${specials.featured.special_price.toFixed(2)}
+                KES {specials.featured.special_price.toFixed(2)}
               </div>
               <div className="font-inter text-xs text-green-400 mt-1">
-                Save ${(specials.featured.original_price - specials.featured.special_price).toFixed(2)}
+                Save KES {(specials.featured.original_price - specials.featured.special_price).toFixed(2)}
               </div>
             </div>
           </div>
@@ -249,15 +249,15 @@ For each, provide the item IDs, bundle composition, pricing, and compelling mark
                   <div className="flex items-end justify-between">
                     <div>
                       <div className="font-inter text-xs text-white/50 line-through">
-                        ${bundle.original_price.toFixed(2)}
+                        KES {bundle.original_price.toFixed(2)}
                       </div>
                       <div className="font-playfair text-2xl text-[#c9a962]">
-                        ${bundle.bundle_price.toFixed(2)}
+                        KES {bundle.bundle_price.toFixed(2)}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-inter text-xs text-green-400">
-                        Save ${bundle.savings.toFixed(2)}
+                        Save KES {bundle.savings.toFixed(2)}
                       </div>
                       <div className="font-inter text-xs text-white/50">
                         {((bundle.savings / bundle.original_price) * 100).toFixed(0)}% off
