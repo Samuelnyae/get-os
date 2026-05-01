@@ -25,18 +25,28 @@ export const buildOrderMessage = (order, status) => {
 };
 
 // Opens WhatsApp for each staff member with a phone number
+// Returns array of {name, url} for any that couldn't be auto-opened
 export const notifyAllStaff = (staffList, order) => {
   const staffWithPhone = staffList.filter(s => s.phone && s.status !== 'offline');
-  if (staffWithPhone.length === 0) return;
+  if (staffWithPhone.length === 0) return [];
   const message = encodeURIComponent(buildOrderMessage(order, 'new'));
-  // Open the first staff member's WhatsApp directly; others are opened with slight delay
-  staffWithPhone.forEach((staff, index) => {
+
+  const links = staffWithPhone.map(staff => {
     const number = staff.phone.replace(/[\s\-\(\)]/g, '').replace(/^\+/, '');
     const cleaned = (number.startsWith('07') || number.startsWith('01')) ? '254' + number.slice(1) : number;
-    setTimeout(() => {
-      window.open(`https://wa.me/${cleaned}?text=${message}`, '_blank');
-    }, index * 600);
+    return { name: staff.name, url: `https://wa.me/${cleaned}?text=${message}` };
   });
+
+  // Open the first staff WhatsApp via location redirect (bypasses popup blockers)
+  // For remaining staff, open with delay (may be blocked by browser — user sees pending links)
+  if (links.length > 0) {
+    window.open(links[0].url, '_blank');
+  }
+  links.slice(1).forEach((link, index) => {
+    setTimeout(() => window.open(link.url, '_blank'), (index + 1) * 800);
+  });
+
+  return links;
 };
 
 export default function WhatsAppNotifier({ order, status = 'confirmed', label, size = 'sm', staffPhone = null }) {
