@@ -40,6 +40,8 @@ export default function Order() {
   });
   const [orderReference, setOrderReference] = useState('');
   const [staffNotifyLinks, setStaffNotifyLinks] = useState([]);
+  const [confirmedCart, setConfirmedCart] = useState([]);
+  const [confirmedTotal, setConfirmedTotal] = useState(0);
 
   // Generate pickup time slots (next 2 hours to closing)
   const generateTimeSlots = () => {
@@ -117,9 +119,9 @@ Digital Bites - Seven Star Dining
     },
     onSuccess: (order) => {
       setOrderReference(order.order_reference);
+      setConfirmedCart([...cart]);
+      setConfirmedTotal(total);
       setStep('confirmation');
-      // Save cart snapshot for receipt before clearing
-      localStorage.setItem('hermanas_cart_last', localStorage.getItem('hermanas_cart') || '[]');
       localStorage.removeItem('hermanas_cart');
       setCart([]);
       window.dispatchEvent(new Event('cartUpdated'));
@@ -234,8 +236,8 @@ Digital Bites - Seven Star Dining
             <OrderReceipt
               orderReference={orderReference}
               customerInfo={customerInfo}
-              cart={cart.length > 0 ? cart : (JSON.parse(localStorage.getItem('hermanas_cart_last') || '[]'))}
-              total={total}
+              cart={confirmedCart}
+              total={confirmedTotal}
               orderType={orderType}
               pickupTime={pickupTime}
               deliveryAddress={deliveryAddress}
