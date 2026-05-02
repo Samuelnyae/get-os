@@ -17,6 +17,7 @@ import LuxuryButton from '../components/common/LuxuryButton';
 import SEOHead from '../components/common/SEOHead';
 import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRateLimiter } from '../components/utils/security';
 import { toast } from 'sonner';
+import OrderReceipt from '../components/order/OrderReceipt';
 
 export default function Order() {
   const [cart, setCart] = useState([]);
@@ -117,6 +118,8 @@ Digital Bites - Seven Star Dining
     onSuccess: (order) => {
       setOrderReference(order.order_reference);
       setStep('confirmation');
+      // Save cart snapshot for receipt before clearing
+      localStorage.setItem('hermanas_cart_last', localStorage.getItem('hermanas_cart') || '[]');
       localStorage.removeItem('hermanas_cart');
       setCart([]);
       window.dispatchEvent(new Event('cartUpdated'));
@@ -216,10 +219,7 @@ Digital Bites - Seven Star Dining
           </motion.div>
           <h2 className="font-playfair text-4xl text-white mb-4">✅ Order Received!</h2>
           <p className="font-inter text-white/60 mb-2">
-            Please proceed to the cashier to complete payment
-          </p>
-          <p className="font-inter text-sm text-[#c9a962] mb-4">
-            {orderType === 'dine_in' ? 'Show this Order ID at the counter' : orderType === 'takeaway' ? `Ready for pickup at ${pickupTime}` : `Delivery to your address at ${pickupTime}`}
+            Download your receipt and present it at the cashier to complete payment
           </p>
           <p className="font-playfair text-3xl text-[#c9a962] mb-8 font-bold tracking-wider">
             {orderReference}
@@ -229,30 +229,17 @@ Digital Bites - Seven Star Dining
               <CheckCircle className="w-5 h-5" />
               <span className="font-inter font-medium">Order Placed Successfully</span>
             </div>
-            
-            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-              <p className="font-inter text-sm text-orange-300 mb-2">⚠️ Payment Required</p>
-              <p className="font-inter text-xs text-orange-200/80">
-                Please visit the cashier counter and show your Order ID to complete payment. Your order will be prepared once payment is confirmed.
-              </p>
-            </div>
 
-            <div className="p-4 rounded-lg bg-[#c9a962]/10 border border-[#c9a962]/20">
-              <p className="font-inter text-xs text-white/50 mb-3">Order Details:</p>
-              <div className="space-y-2 text-sm">
-                <p className="text-white">Order ID: <span className="text-[#c9a962] font-mono font-bold">{orderReference}</span></p>
-                <p className="text-white">Customer: <span className="text-white/70">{customerInfo.name}</span></p>
-                <p className="text-white">Contact: <span className="text-white/70">{customerInfo.phone}</span></p>
-                <p className="text-white">Total: <span className="text-[#c9a962] font-bold">KES {total.toLocaleString()}</span></p>
-                <p className="text-white">Payment: <span className="text-orange-300">Pending at Counter</span></p>
-                {orderType !== 'dine_in' && pickupTime && (
-                  <p className="text-white">{orderType === 'takeaway' ? 'Pickup' : 'Delivery'} Time: <span className="text-[#c9a962] font-bold">{pickupTime}</span></p>
-                )}
-                {orderType === 'delivery' && deliveryAddress && (
-                  <p className="text-white">Address: <span className="text-white/70">{deliveryAddress}</span></p>
-                )}
-              </div>
-            </div>
+            {/* Downloadable Receipt */}
+            <OrderReceipt
+              orderReference={orderReference}
+              customerInfo={customerInfo}
+              cart={cart.length > 0 ? cart : (JSON.parse(localStorage.getItem('hermanas_cart_last') || '[]'))}
+              total={total}
+              orderType={orderType}
+              pickupTime={pickupTime}
+              deliveryAddress={deliveryAddress}
+            />
 
             <div className="flex items-center gap-2 text-[#c9a962]/70 text-xs">
               <Mail className="w-4 h-4" />
