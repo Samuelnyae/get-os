@@ -255,8 +255,8 @@ export default function OrderTracking() {
               )}
             </motion.div>
 
-            {/* Live Delivery Map */}
-            {(trackedOrder.status === 'out_for_delivery' || trackedOrder.status === 'delivered') && (
+            {/* Live Delivery Map — only for delivery orders when out for delivery or delivered */}
+            {trackedOrder.order_type === 'delivery' && (trackedOrder.status === 'out_for_delivery' || trackedOrder.status === 'delivered') && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
