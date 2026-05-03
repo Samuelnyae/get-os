@@ -1,101 +1,122 @@
-import React, { useRef } from 'react';
-import { Download, Printer } from 'lucide-react';
+import React from 'react';
+import { Download } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 
 export default function OrderReceipt({ orderReference, customerInfo, cart, total, orderType, pickupTime, deliveryAddress }) {
-  const receiptRef = useRef(null);
-
   const orderTypeLabel = { dine_in: 'Dine In', takeaway: 'Takeaway', delivery: 'Delivery' }[orderType] || orderType;
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-KE', { year: 'numeric', month: 'long', day: 'numeric' });
   const timeStr = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' });
 
-  const printReceipt = () => {
-    const receiptHTML = receiptRef.current.innerHTML;
-    const win = window.open('', '_blank', 'width=400,height=700');
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Receipt - ${orderReference}</title>
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: 'Courier New', monospace; background: #fff; color: #000; padding: 20px; }
-          .receipt { max-width: 340px; margin: 0 auto; }
-          h1 { font-size: 22px; text-align: center; margin-bottom: 4px; }
-          .tagline { font-size: 11px; text-align: center; color: #555; margin-bottom: 16px; letter-spacing: 2px; text-transform: uppercase; }
-          .divider { border-top: 1px dashed #999; margin: 12px 0; }
-          .row { display: flex; justify-content: space-between; font-size: 13px; margin: 4px 0; }
-          .label { color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-          .value { font-weight: bold; }
-          .ref { font-size: 20px; font-weight: bold; text-align: center; letter-spacing: 3px; margin: 8px 0; }
-          .items-header { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 4px; }
-          .item-row { display: flex; justify-content: space-between; font-size: 13px; margin: 3px 0; }
-          .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-top: 8px; }
-          .footer { text-align: center; font-size: 11px; color: #666; margin-top: 16px; }
-          .badge { background: #000; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
-          @media print { body { padding: 0; } }
-        </style>
-      </head>
-      <body>
-        <div class="receipt">
-          <h1>Digital Bites</h1>
-          <p class="tagline">Seven Star Dining</p>
-          <div class="divider"></div>
+  const downloadPDF = () => {
+    const doc = new jsPDF({ unit: 'mm', format: [80, 200], orientation: 'portrait' });
+    const W = 80;
+    let y = 8;
 
-          <p class="label">Order Reference</p>
-          <p class="ref">${orderReference}</p>
+    const center = (text, size = 10, bold = false) => {
+      doc.setFontSize(size);
+      doc.setFont('courier', bold ? 'bold' : 'normal');
+      doc.text(text, W / 2, y, { align: 'center' });
+      y += size * 0.45;
+    };
 
-          <div class="divider"></div>
+    const row = (left, right, size = 8) => {
+      doc.setFontSize(size);
+      doc.setFont('courier', 'normal');
+      doc.text(left, 6, y);
+      doc.text(right, W - 6, y, { align: 'right' });
+      y += size * 0.45;
+    };
 
-          <div class="row"><span class="label">Date</span><span>${dateStr}</span></div>
-          <div class="row"><span class="label">Time</span><span>${timeStr}</span></div>
-          <div class="row"><span class="label">Customer</span><span>${customerInfo.name}</span></div>
-          <div class="row"><span class="label">Phone</span><span>${customerInfo.phone}</span></div>
-          <div class="row"><span class="label">Order Type</span><span class="badge">${orderTypeLabel}</span></div>
-          ${pickupTime ? `<div class="row"><span class="label">${orderType === 'delivery' ? 'Delivery Time' : 'Pickup Time'}</span><span>${pickupTime}</span></div>` : ''}
-          ${deliveryAddress ? `<div class="row"><span class="label">Address</span><span style="max-width:180px;text-align:right;">${deliveryAddress}</span></div>` : ''}
+    const divider = () => {
+      y += 2;
+      doc.setDrawColor(180);
+      doc.setLineDashPattern([1, 1], 0);
+      doc.line(6, y, W - 6, y);
+      y += 4;
+    };
 
-          <div class="divider"></div>
+    // Header
+    center('Digital Bites', 14, true);
+    y += 1;
+    center('SEVEN STAR DINING', 7);
+    y += 1;
+    divider();
 
-          <p class="items-header">Items Ordered</p>
-          ${cart.map(item => `
-            <div class="item-row">
-              <span>${item.name} x${item.quantity}</span>
-              <span>KES ${(item.price * item.quantity).toLocaleString()}</span>
-            </div>
-          `).join('')}
+    // Reference
+    doc.setFontSize(7);
+    doc.setFont('courier', 'normal');
+    doc.setTextColor(120);
+    doc.text('ORDER REFERENCE', W / 2, y, { align: 'center' });
+    doc.setTextColor(0);
+    y += 4;
+    center(orderReference, 13, true);
+    y += 1;
+    divider();
 
-          <div class="divider"></div>
+    // Details
+    row('Date', dateStr);
+    y += 1;
+    row('Time', timeStr);
+    y += 1;
+    row('Customer', customerInfo.name);
+    y += 1;
+    row('Phone', customerInfo.phone || '-');
+    y += 1;
+    row('Order Type', orderTypeLabel);
+    y += 1;
+    if (pickupTime) { row(orderType === 'delivery' ? 'Delivery Time' : 'Pickup Time', pickupTime); y += 1; }
+    if (deliveryAddress) { row('Address', deliveryAddress.substring(0, 25)); y += 1; }
+    divider();
 
-          <div class="total-row">
-            <span>TOTAL DUE</span>
-            <span>KES ${total.toLocaleString()}</span>
-          </div>
+    // Items
+    doc.setFontSize(7);
+    doc.setFont('courier', 'normal');
+    doc.setTextColor(120);
+    doc.text('ITEMS ORDERED', 6, y);
+    doc.setTextColor(0);
+    y += 4;
 
-          <div class="divider"></div>
+    cart.forEach(item => {
+      row(`${item.name} x${item.quantity}`, `KES ${(item.price * item.quantity).toLocaleString()}`);
+      y += 1;
+    });
 
-          <p class="footer">Please present this receipt at the cashier to complete payment.</p>
-          <p class="footer" style="margin-top:6px;">Thank you for choosing Digital Bites!</p>
-        </div>
-        <script>window.onload = () => { window.print(); }</script>
-      </body>
-      </html>
-    `);
-    win.document.close();
+    divider();
+
+    // Total
+    doc.setFontSize(11);
+    doc.setFont('courier', 'bold');
+    doc.text('TOTAL DUE', 6, y);
+    doc.text(`KES ${total.toLocaleString()}`, W - 6, y, { align: 'right' });
+    y += 6;
+
+    divider();
+
+    // Footer
+    doc.setFontSize(7);
+    doc.setFont('courier', 'normal');
+    doc.setTextColor(100);
+    doc.text('Present this receipt at the cashier', W / 2, y, { align: 'center' });
+    y += 4;
+    doc.text('to complete payment.', W / 2, y, { align: 'center' });
+    y += 4;
+    doc.text('Thank you for choosing Digital Bites!', W / 2, y, { align: 'center' });
+
+    // Resize page height to content
+    doc.internal.pageSize.height = y + 10;
+    doc.save(`receipt-${orderReference}.pdf`);
   };
 
   return (
     <div>
-      {/* Hidden receipt content for reference */}
-      <div ref={receiptRef} style={{ display: 'none' }} />
-
       {/* Download / Print Button */}
       <button
-        onClick={printReceipt}
+        onClick={downloadPDF}
         className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#c9a962] hover:bg-[#e4d5a7] text-[#0a0a0a] font-inter font-semibold text-sm transition-all duration-300 shadow-lg shadow-[#c9a962]/20"
       >
-        <Printer className="w-4 h-4" />
-        Download / Print Receipt
+        <Download className="w-4 h-4" />
+        Download Receipt (PDF)
       </button>
 
       {/* Receipt Preview */}
