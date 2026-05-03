@@ -9,27 +9,41 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
   const timeStr = now.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit' });
 
   const downloadPDF = () => {
-    const doc = new jsPDF({ unit: 'mm', format: [80, 200], orientation: 'portrait' });
+    // Pre-calculate total height needed
+    let estimatedHeight = 8;
+    estimatedHeight += 10; // header
+    estimatedHeight += 20; // reference
+    estimatedHeight += 10 * 5; // 5 detail rows
+    if (pickupTime) estimatedHeight += 10;
+    if (deliveryAddress) estimatedHeight += 10;
+    estimatedHeight += 10; // dividers
+    estimatedHeight += 8 + cart.length * 9; // items
+    estimatedHeight += 20; // total + footer
+    estimatedHeight += 20; // padding
+
     const W = 80;
+    const doc = new jsPDF({ unit: 'mm', format: [W, Math.max(estimatedHeight, 150)], orientation: 'portrait' });
     let y = 8;
 
     const center = (text, size = 10, bold = false) => {
       doc.setFontSize(size);
       doc.setFont('courier', bold ? 'bold' : 'normal');
+      doc.setTextColor(0);
       doc.text(text, W / 2, y, { align: 'center' });
-      y += size * 0.45;
+      y += size * 0.5 + 1;
     };
 
     const row = (left, right, size = 8) => {
       doc.setFontSize(size);
       doc.setFont('courier', 'normal');
+      doc.setTextColor(0);
       doc.text(left, 6, y);
       doc.text(right, W - 6, y, { align: 'right' });
-      y += size * 0.45;
+      y += size * 0.5 + 2;
     };
 
     const divider = () => {
-      y += 2;
+      y += 1;
       doc.setDrawColor(180);
       doc.setLineDashPattern([1, 1], 0);
       doc.line(6, y, W - 6, y);
@@ -38,9 +52,7 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
 
     // Header
     center('Digital Bites', 14, true);
-    y += 1;
     center('SEVEN STAR DINING', 7);
-    y += 1;
     divider();
 
     // Reference
@@ -49,37 +61,30 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
     doc.setTextColor(120);
     doc.text('ORDER REFERENCE', W / 2, y, { align: 'center' });
     doc.setTextColor(0);
-    y += 4;
-    center(orderReference, 13, true);
-    y += 1;
+    y += 5;
+    center(orderReference, 12, true);
     divider();
 
     // Details
     row('Date', dateStr);
-    y += 1;
     row('Time', timeStr);
-    y += 1;
     row('Customer', customerInfo.name);
-    y += 1;
     row('Phone', customerInfo.phone || '-');
-    y += 1;
     row('Order Type', orderTypeLabel);
-    y += 1;
-    if (pickupTime) { row(orderType === 'delivery' ? 'Delivery Time' : 'Pickup Time', pickupTime); y += 1; }
-    if (deliveryAddress) { row('Address', deliveryAddress.substring(0, 25)); y += 1; }
+    if (pickupTime) row(orderType === 'delivery' ? 'Delivery Time' : 'Pickup Time', pickupTime);
+    if (deliveryAddress) row('Address', deliveryAddress.substring(0, 28));
     divider();
 
-    // Items
+    // Items header
     doc.setFontSize(7);
     doc.setFont('courier', 'normal');
     doc.setTextColor(120);
     doc.text('ITEMS ORDERED', 6, y);
     doc.setTextColor(0);
-    y += 4;
+    y += 5;
 
     cart.forEach(item => {
       row(`${item.name} x${item.quantity}`, `KES ${(item.price * item.quantity).toLocaleString()}`);
-      y += 1;
     });
 
     divider();
@@ -87,9 +92,10 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
     // Total
     doc.setFontSize(11);
     doc.setFont('courier', 'bold');
+    doc.setTextColor(0);
     doc.text('TOTAL DUE', 6, y);
     doc.text(`KES ${total.toLocaleString()}`, W - 6, y, { align: 'right' });
-    y += 6;
+    y += 8;
 
     divider();
 
@@ -97,14 +103,10 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
     doc.setFontSize(7);
     doc.setFont('courier', 'normal');
     doc.setTextColor(100);
-    doc.text('Present this receipt at the cashier', W / 2, y, { align: 'center' });
-    y += 4;
-    doc.text('to complete payment.', W / 2, y, { align: 'center' });
-    y += 4;
+    doc.text('Present this receipt at the cashier to complete payment.', W / 2, y, { align: 'center' });
+    y += 5;
     doc.text('Thank you for choosing Digital Bites!', W / 2, y, { align: 'center' });
 
-    // Resize page height to content
-    doc.internal.pageSize.height = y + 10;
     doc.save(`receipt-${orderReference}.pdf`);
   };
 
