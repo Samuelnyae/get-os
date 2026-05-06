@@ -18,8 +18,10 @@ import SEOHead from '../components/common/SEOHead';
 import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRateLimiter } from '../components/utils/security';
 import { toast } from 'sonner';
 import OrderReceipt from '../components/order/OrderReceipt';
+import { useLanguage } from '../lib/LanguageContext';
 
 export default function Order() {
+  const { t } = useLanguage();
   const [cart, setCart] = useState([]);
 
   const { data: allStaff = [] } = useQuery({
@@ -85,6 +87,28 @@ export default function Order() {
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal;
 
+  const { data: inventoryItems = [] } = useQuery({
+    queryKey: ['inventory-for-order'],
+    queryFn: () => base44.entities.Inventory.list(),
+  });
+
+  const deductInventory = async (orderedItems) => {
+    for (const cartItem of orderedItems) {
+      const linked = inventoryItems.filter(inv =>
+        inv.linked_menu_item_ids?.includes(cartItem.menu_item_id)
+      );
+      for (const inv of linked) {
+        const deduction = (inv.deduct_per_order || 1) * cartItem.quantity;
+        const newStock = Math.max(0, (inv.current_stock || 0) - deduction);
+        await base44.entities.Inventory.update(inv.id, { current_stock: newStock });
+        // Alert if low stock after deduction
+        if (newStock <= (inv.low_stock_threshold || 0)) {
+          toast.warning(`Low stock alert: ${inv.name} (${newStock} ${inv.unit} remaining)`);
+        }
+      }
+    }
+  };
+
   const orderMutation = useMutation({
     mutationFn: async (orderData) => {
       try {
@@ -117,7 +141,9 @@ Digital Bites - Seven Star Dining
         throw error;
       }
     },
-    onSuccess: (order) => {
+    onSuccess: async (order) => {
+      // Deduct inventory for ordered items
+      await deductInventory(cart);
       setOrderReference(order.order_reference);
       setConfirmedCart([...cart]);
       setConfirmedTotal(total);
@@ -192,13 +218,11 @@ Digital Bites - Seven Star Dining
       <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
         <div className="max-w-4xl mx-auto text-center py-20">
           <ShoppingCart className="w-20 h-20 text-[#c9a962]/30 mx-auto mb-6" />
-          <h2 className="font-playfair text-3xl text-white mb-4">Your Cart is Empty</h2>
-          <p className="font-inter text-white/50 mb-8">
-            Discover our exquisite menu and add some delicious items
-          </p>
+          <h2 className="font-playfair text-3xl text-white mb-4">{t('cartIsEmpty')}</h2>
+          <p className="font-inter text-white/50 mb-8">{t('cartEmptyDesc')}</p>
           <Link to={createPageUrl('Menu')}>
             <LuxuryButton>
-              Explore Menu <ArrowRight className="inline ml-2 w-4 h-4" />
+              {t('exploreMenu')} <ArrowRight className="inline ml-2 w-4 h-4" />
             </LuxuryButton>
           </Link>
         </div>
@@ -219,17 +243,15 @@ Digital Bites - Seven Star Dining
           >
             <CheckCircle className="w-12 h-12 text-green-400" />
           </motion.div>
-          <h2 className="font-playfair text-4xl text-white mb-4">✅ Order Received!</h2>
-          <p className="font-inter text-white/60 mb-2">
-            Download your receipt and present it at the cashier to complete payment
-          </p>
+          <h2 className="font-playfair text-4xl text-white mb-4">{t('orderReceived')}</h2>
+          <p className="font-inter text-white/60 mb-2">{t('proceedToCashier')}</p>
           <p className="font-playfair text-3xl text-[#c9a962] mb-8 font-bold tracking-wider">
             {orderReference}
           </p>
           <div className="bg-[#1a1a1a] rounded-2xl p-6 mb-8 border border-[#c9a962]/10 text-left space-y-4">
             <div className="flex items-center gap-2 text-green-400">
               <CheckCircle className="w-5 h-5" />
-              <span className="font-inter font-medium">Order Placed Successfully</span>
+              <span className="font-inter font-medium">{t('orderPlacedSuccessfully')}</span>
             </div>
 
             {/* Downloadable Receipt */}
@@ -245,7 +267,7 @@ Digital Bites - Seven Star Dining
 
             <div className="flex items-center gap-2 text-[#c9a962]/70 text-xs">
               <Mail className="w-4 h-4" />
-              <span>Confirmation sent to {customerInfo.email}</span>
+              <span>{t('confirmationSentTo')} {customerInfo.email}</span>
             </div>
 
             {/* Staff notification links (in case browser blocked auto-open) */}
@@ -271,7 +293,7 @@ Digital Bites - Seven Star Dining
 
             {customerInfo.phone && (
               <div className="pt-2">
-                <p className="font-inter text-xs text-white/40 mb-2">Send yourself a WhatsApp reminder:</p>
+                <p className="font-inter text-xs text-white/40 mb-2">{t('whatsappReminder')}</p>
                 <WhatsAppNotifier
                   order={{
                     customer_name: customerInfo.name,
@@ -292,14 +314,10 @@ Digital Bites - Seven Star Dining
           </div>
           <div className="flex gap-3">
             <Link to={createPageUrl('OrderTracking')} className="flex-1">
-              <LuxuryButton className="w-full">
-                Track Order
-              </LuxuryButton>
+              <LuxuryButton className="w-full">{t('trackOrder')}</LuxuryButton>
             </Link>
             <Link to={createPageUrl('Menu')} className="flex-1">
-              <LuxuryButton variant="secondary" className="w-full">
-                Continue Shopping
-              </LuxuryButton>
+              <LuxuryButton variant="secondary" className="w-full">{t('continueShopping')}</LuxuryButton>
             </Link>
           </div>
         </div>
@@ -316,19 +334,19 @@ Digital Bites - Seven Star Dining
       />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
-          subtitle={step === 'cart' ? 'Review Your Selection' : 'Complete Your Order'} 
-          title={step === 'cart' ? 'Your Cart' : 'Checkout'} 
+          subtitle={step === 'cart' ? t('reviewYourSelection') : t('completeYourOrder')} 
+          title={step === 'cart' ? t('yourCart') : t('checkout')} 
         />
 
         {/* Order Type Selector - show on cart and checkout */}
         {step !== 'confirmation' && (
           <div className="mb-8">
-            <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">How would you like to receive your order?</p>
+            <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('howReceiveOrder')}</p>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { id: 'dine_in', label: 'Dine In', icon: Utensils, desc: 'Eat at the restaurant' },
-                { id: 'takeaway', label: 'Takeaway', icon: Package, desc: 'Pick up your order' },
-                { id: 'delivery', label: 'Delivery', icon: MapPin, desc: 'Get it delivered' },
+                { id: 'dine_in', label: t('dineIn'), icon: Utensils, desc: t('dineInDesc') },
+                { id: 'takeaway', label: t('takeaway'), icon: Package, desc: t('takeawayDesc') },
+                { id: 'delivery', label: t('delivery'), icon: MapPin, desc: t('deliveryDesc') },
               ].map((type) => (
                 <button
                   key={type.id}
@@ -417,24 +435,24 @@ Digital Bites - Seven Star Dining
                   <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10">
                     <h3 className="font-playfair text-xl text-white mb-6 flex items-center gap-2">
                       <User className="w-5 h-5 text-[#c9a962]" />
-                      Contact Information
+                      {t('contactInformation')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Full Name *</label>
-                        <Input value={customerInfo.name} onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })} placeholder="Your name" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">{t('fullName')} *</label>
+                        <Input value={customerInfo.name} onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })} placeholder={t('yourName')} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Email *</label>
-                        <Input type="email" value={customerInfo.email} onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })} placeholder="your@email.com" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">{t('email')} *</label>
+                        <Input type="email" value={customerInfo.email} onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })} placeholder={t('yourEmail')} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
                       <div>
-                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Phone *</label>
+                        <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">{t('phone')} *</label>
                         <Input type="tel" value={customerInfo.phone} onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })} placeholder="+254 700 000 000" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                       </div>
                       {orderType === 'dine_in' && (
                         <div>
-                          <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Table Number</label>
+                          <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">{t('tableNumber')}</label>
                           <Input value={customerInfo.address} onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })} placeholder="e.g., Table 5" className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                         </div>
                       )}
@@ -446,7 +464,7 @@ Digital Bites - Seven Star Dining
                         <div>
                           <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
                             <Clock className="inline w-3 h-3 mr-1" />
-                            {orderType === 'takeaway' ? 'Pickup Time *' : 'Delivery Time *'}
+                            {orderType === 'takeaway' ? t('pickupTime') : t('deliveryTime')}
                           </label>
                           <select
                             value={pickupTime}
@@ -461,7 +479,7 @@ Digital Bites - Seven Star Dining
                           <div>
                             <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">
                               <MapPin className="inline w-3 h-3 mr-1" />
-                              Delivery Address *
+                              {t('deliveryAddress')} *
                             </label>
                             <Input value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} placeholder="Street, area, landmark..." className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                           </div>
@@ -470,8 +488,8 @@ Digital Bites - Seven Star Dining
                     )}
 
                     <div className="mt-4">
-                      <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">Special Instructions</label>
-                      <Textarea value={customerInfo.special_instructions} onChange={(e) => setCustomerInfo({ ...customerInfo, special_instructions: e.target.value })} placeholder="Any dietary requirements or special requests..." rows={3} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
+                      <label className="block font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-2">{t('specialInstructions')}</label>
+                      <Textarea value={customerInfo.special_instructions} onChange={(e) => setCustomerInfo({ ...customerInfo, special_instructions: e.target.value })} placeholder={t('specialInstructionsPlaceholder')} rows={3} className="bg-[#0a0a0a] border-[#c9a962]/20 text-white placeholder:text-white/30" />
                     </div>
                   </div>
 
@@ -482,23 +500,12 @@ Digital Bites - Seven Star Dining
                         <CheckCircle className="w-6 h-6 text-[#c9a962]" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-playfair text-xl text-white mb-2">
-                          Pay at Counter
-                        </h3>
-                        <p className="font-inter text-sm text-white/70 mb-3">
-                          After placing your order, please visit our cashier counter to complete your payment. 
-                          Show your Order ID to the staff.
-                        </p>
+                        <h3 className="font-playfair text-xl text-white mb-2">{t('payAtCounter')}</h3>
+                        <p className="font-inter text-sm text-white/70 mb-3">{t('payAtCounterDesc')}</p>
                         <div className="bg-[#c9a962]/10 rounded-lg p-3 border border-[#c9a962]/20">
-                          <p className="font-inter text-xs text-[#c9a962] font-medium">
-                            ✓ Cash accepted
-                          </p>
-                          <p className="font-inter text-xs text-[#c9a962] font-medium">
-                            ✓ Card payments at counter
-                          </p>
-                          <p className="font-inter text-xs text-[#c9a962] font-medium">
-                            ✓ Mobile money at counter
-                          </p>
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">{t('cashAccepted')}</p>
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">{t('cardPayments')}</p>
+                          <p className="font-inter text-xs text-[#c9a962] font-medium">{t('mobileMoney')}</p>
                         </div>
                       </div>
                     </div>
@@ -511,7 +518,7 @@ Digital Bites - Seven Star Dining
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10 sticky top-24">
-              <h3 className="font-playfair text-xl text-white mb-6">Order Summary</h3>
+              <h3 className="font-playfair text-xl text-white mb-6">{t('orderSummary')}</h3>
               
               <div className="space-y-3 mb-6">
                 {cart.map((item, index) => (
@@ -524,7 +531,7 @@ Digital Bites - Seven Star Dining
 
               <div className="border-t border-[#c9a962]/20 pt-4">
                 <div className="flex justify-between pt-3">
-                  <span className="font-playfair text-lg text-white">Total</span>
+                  <span className="font-playfair text-lg text-white">{t('total')}</span>
                   <span className="font-playfair text-2xl text-[#c9a962]">KES {total.toLocaleString()}</span>
                 </div>
               </div>
@@ -532,7 +539,7 @@ Digital Bites - Seven Star Dining
               <div className="mt-6 space-y-3">
                 {step === 'cart' ? (
                   <LuxuryButton onClick={() => setStep('checkout')} className="w-full">
-                    Proceed to Checkout <ArrowRight className="inline ml-2 w-4 h-4" />
+                    {t('proceedToCheckout')} <ArrowRight className="inline ml-2 w-4 h-4" />
                   </LuxuryButton>
                 ) : (
                   <>
@@ -544,17 +551,17 @@ Digital Bites - Seven Star Dining
                       {orderMutation.isPending ? (
                         <>
                           <div className="w-4 h-4 border-2 border-[#0a0a0a]/20 border-t-[#0a0a0a] rounded-full animate-spin mr-2" />
-                          Placing Order...
+                          {t('placingOrder')}
                         </>
                       ) : (
                         <>
                           <CheckCircle className="inline w-4 h-4 mr-2" />
-                          Place Order
+                          {t('placeOrder')}
                         </>
                       )}
                     </LuxuryButton>
                     <LuxuryButton variant="ghost" onClick={() => setStep('cart')} className="w-full">
-                      Back to Cart
+                      {t('backToCart')}
                     </LuxuryButton>
                   </>
                 )}

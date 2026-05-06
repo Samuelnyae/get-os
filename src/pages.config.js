@@ -60,6 +60,7 @@ import Order from './pages/Order';
 import OrderTracking from './pages/OrderTracking';
 import Reservations from './pages/Reservations';
 import TableDining from './pages/TableDining';
+import Inventory from './pages/Inventory';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "OrderTracking": OrderTracking,
     "Reservations": Reservations,
     "TableDining": TableDining,
+    "Inventory": Inventory,
 }
 
 export const pagesConfig = {

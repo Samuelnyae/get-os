@@ -1,0 +1,75 @@
+{
+  "name": "Inventory",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Ingredient or stock item name"
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "kg",
+        "g",
+        "L",
+        "ml",
+        "pieces",
+        "bottles",
+        "packs"
+      ],
+      "description": "Unit of measurement"
+    },
+    "current_stock": {
+      "type": "number",
+      "description": "Current quantity in stock",
+      "default": 0
+    },
+    "low_stock_threshold": {
+      "type": "number",
+      "description": "Alert when stock falls below this level",
+      "default": 10
+    },
+    "linked_menu_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Menu item IDs that use this ingredient",
+      "default": []
+    },
+    "deduct_per_order": {
+      "type": "number",
+      "description": "How much to deduct per single order of a linked menu item",
+      "default": 1
+    },
+    "supplier": {
+      "type": "string",
+      "description": "Supplier name"
+    },
+    "cost_per_unit": {
+      "type": "number",
+      "description": "Cost per unit in KES"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "proteins",
+        "vegetables",
+        "grains",
+        "dairy",
+        "beverages",
+        "spices",
+        "other"
+      ],
+      "default": "other"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "unit",
+    "current_stock"
+  ]
+}

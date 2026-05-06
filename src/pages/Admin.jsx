@@ -93,6 +93,7 @@ export default function Admin() {
     { id: 'reservations', label: 'Reservations', icon: Calendar },
     { id: 'staff', label: 'Staff', icon: User },
     { id: 'stock', label: 'Stock Alerts', icon: Package },
+    { id: 'inventory-tracking', label: 'Inventory Tracking', icon: Package },
     { id: 'menu', label: 'Menu Items', icon: Utensils },
     { id: 'custom', label: 'Custom Requests', icon: Sparkles },
     { id: 'feedback', label: 'Feedback', icon: MessageSquare },
@@ -167,6 +168,11 @@ export default function Admin() {
             {activeTab === 'reservations' && <ReservationsManager />}
             {activeTab === 'staff' && <StaffManager />}
             {activeTab === 'stock' && <LowStockAlerts />}
+            {activeTab === 'inventory-tracking' && (
+              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
+                {React.createElement(React.lazy(() => import('./Inventory')))}
+              </React.Suspense>
+            )}
             {activeTab === 'menu' && <MenuItemsManager />}
             {activeTab === 'custom' && <CustomRequestsManager />}
             {activeTab === 'feedback' && <FeedbackViewer />}
