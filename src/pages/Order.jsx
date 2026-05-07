@@ -87,21 +87,21 @@ export default function Order() {
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal;
 
-  const { data: inventoryItems = [] } = useQuery({
-    queryKey: ['inventory-for-order'],
-    queryFn: () => base44.entities.Inventory.list(),
-  });
-
   const deductInventory = async (orderedItems) => {
+    // Fetch fresh inventory data to avoid stale closure issues
+    const freshInventory = await base44.entities.Inventory.list();
+    const menuItemIds = orderedItems.map(i => i.menu_item_id).filter(Boolean);
+    const relevant = freshInventory.filter(inv =>
+      inv.linked_menu_item_ids?.some(id => menuItemIds.includes(id))
+    );
     for (const cartItem of orderedItems) {
-      const linked = inventoryItems.filter(inv =>
+      const linked = relevant.filter(inv =>
         inv.linked_menu_item_ids?.includes(cartItem.menu_item_id)
       );
       for (const inv of linked) {
         const deduction = (inv.deduct_per_order || 1) * cartItem.quantity;
         const newStock = Math.max(0, (inv.current_stock || 0) - deduction);
         await base44.entities.Inventory.update(inv.id, { current_stock: newStock });
-        // Alert if low stock after deduction
         if (newStock <= (inv.low_stock_threshold || 0)) {
           toast.warning(`Low stock alert: ${inv.name} (${newStock} ${inv.unit} remaining)`);
         }
