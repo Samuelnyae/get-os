@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Plus, Edit, Trash2, X, Check, Upload,
-  Image as ImageIcon, Star, Heart
+  Plus, Edit, Trash2, X, Upload,
+  Image as ImageIcon, Star, Heart, ChevronLeft, ChevronRight, Search
 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,10 +14,15 @@ import LuxuryButton from '../common/LuxuryButton';
 import { toast } from 'sonner';
 import { useNotifications } from '@/components/notifications/NotificationManager';
 
+const PAGE_SIZE = 12;
+
 export default function MenuItemsManager({ hotelId }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -44,33 +49,65 @@ export default function MenuItemsManager({ hotelId }) {
   const queryClient = useQueryClient();
   const { sendNotification } = useNotifications();
 
-  const { data: menuItems = [], isLoading } = useQuery({
-    queryKey: ['admin-menu-items', hotelId],
-    queryFn: () => hotelId
-      ? base44.entities.MenuItem.filter({ hotel_id: hotelId }, '-created_date')
-      : base44.entities.MenuItem.list('-created_date'),
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset page when filter changes
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter]);
+
+  const skip = (currentPage - 1) * PAGE_SIZE;
+
+  const buildFilter = useCallback(() => {
+    const filter = {};
+    if (hotelId) filter.hotel_id = hotelId;
+    if (categoryFilter !== 'all') filter.category = categoryFilter;
+    return filter;
+  }, [hotelId, categoryFilter]);
+
+  const { data: pageResult = { items: [], total: 0 }, isLoading, isFetching } = useQuery({
+    queryKey: ['admin-menu-items', hotelId, categoryFilter, debouncedSearch, currentPage],
+    queryFn: async () => {
+      const filter = buildFilter();
+      // If searching, fetch a larger set server-side and filter locally (API doesn't support text search)
+      if (debouncedSearch) {
+        const all = Object.keys(filter).length
+          ? await base44.entities.MenuItem.filter(filter, '-created_date', 500)
+          : await base44.entities.MenuItem.list('-created_date', 500);
+        const q = debouncedSearch.toLowerCase();
+        const filtered = all.filter(item =>
+          item.name?.toLowerCase().includes(q) ||
+          item.description?.toLowerCase().includes(q)
+        );
+        const start = skip;
+        return { items: filtered.slice(start, start + PAGE_SIZE), total: filtered.length };
+      }
+      // Normal paginated fetch
+      const items = Object.keys(filter).length
+        ? await base44.entities.MenuItem.filter(filter, '-created_date', PAGE_SIZE, skip)
+        : await base44.entities.MenuItem.list('-created_date', PAGE_SIZE, skip);
+      // Fetch total count with a lightweight call
+      const allForCount = Object.keys(filter).length
+        ? await base44.entities.MenuItem.filter(filter, '-created_date', 1000)
+        : await base44.entities.MenuItem.list('-created_date', 1000);
+      return { items, total: allForCount.length };
+    },
+    keepPreviousData: true,
   });
 
-  // Monitor low stock (based on likes/popularity as proxy)
-  useEffect(() => {
-    if (menuItems.length > 0) {
-      const popularItems = menuItems.filter(item => item.likes_count > 50);
-      if (popularItems.length > 0) {
-        popularItems.forEach(item => {
-          sendNotification('⚠️ Popular Item Alert', {
-            body: `${item.name} is very popular! Consider preparing more.`,
-            tag: `popular-${item.id}`,
-            toastOptions: { duration: 5000 },
-          });
-        });
-      }
-    }
-  }, [menuItems.length]);
+  const menuItems = pageResult.items;
+  const totalItems = pageResult.total;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MenuItem.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
+      queryClient.invalidateQueries(['admin-menu-items']);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item created successfully');
@@ -81,7 +118,7 @@ export default function MenuItemsManager({ hotelId }) {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.MenuItem.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
+      queryClient.invalidateQueries(['admin-menu-items']);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item updated successfully');
@@ -92,7 +129,7 @@ export default function MenuItemsManager({ hotelId }) {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.MenuItem.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-menu-items', hotelId]);
+      queryClient.invalidateQueries(['admin-menu-items']);
       queryClient.invalidateQueries(['menu-items']);
       queryClient.invalidateQueries(['featured-menu']);
       toast.success('Menu item deleted successfully');
@@ -229,27 +266,43 @@ export default function MenuItemsManager({ hotelId }) {
     }
   };
 
-  const filteredItems = menuItems.filter(item =>
-    item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Halal', 'Kosher', 'Keto', 'Paleo'];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <Input
-          placeholder="Search menu items..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-md bg-[#1a1a1a] border-[#c9a962]/20 text-white"
-        />
-        <LuxuryButton onClick={() => setIsFormOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Menu Item
-        </LuxuryButton>
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1">
+          <div className="relative max-w-xs w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+            <Input
+              placeholder="Search menu items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 bg-[#1a1a1a] border-[#c9a962]/20 text-white"
+            />
+          </div>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="bg-[#1a1a1a] border border-[#c9a962]/20 text-white rounded-lg px-3 py-2 font-inter text-sm"
+          >
+            <option value="all">All Categories</option>
+            <option value="starters">Starters</option>
+            <option value="main_dishes">Main Dishes</option>
+            <option value="desserts">Desserts</option>
+            <option value="drinks">Drinks</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="font-inter text-xs text-white/40 whitespace-nowrap">
+            {totalItems} items
+          </span>
+          <LuxuryButton onClick={() => setIsFormOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Menu Item
+          </LuxuryButton>
+        </div>
       </div>
 
       {/* Items Grid */}
@@ -258,8 +311,8 @@ export default function MenuItemsManager({ hotelId }) {
           <div className="w-8 h-8 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item) => (
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
+          {menuItems.map((item) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -334,6 +387,49 @@ export default function MenuItemsManager({ hotelId }) {
               </div>
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-4 border-t border-[#c9a962]/10">
+          <span className="font-inter text-xs text-white/40">
+            Page {currentPage} of {totalPages} &mdash; showing {Math.min(skip + 1, totalItems)}–{Math.min(skip + PAGE_SIZE, totalItems)} of {totalItems}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg bg-[#1a1a1a] border border-[#c9a962]/20 text-white/60 hover:text-[#c9a962] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const startPage = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+              const page = startPage + i;
+              if (page > totalPages) return null;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-8 h-8 rounded-lg font-inter text-sm transition-all ${
+                    page === currentPage
+                      ? 'bg-[#c9a962] text-[#0a0a0a] font-semibold'
+                      : 'bg-[#1a1a1a] border border-[#c9a962]/20 text-white/60 hover:text-[#c9a962]'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg bg-[#1a1a1a] border border-[#c9a962]/20 text-white/60 hover:text-[#c9a962] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 
