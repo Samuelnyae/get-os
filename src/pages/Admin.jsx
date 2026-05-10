@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
 LayoutDashboard, Utensils, ShoppingBag, Truck,
-Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2
+Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -30,6 +30,10 @@ const DNDSettings = React.lazy(() => import('@/components/admin/DNDSettings'));
 const AdvancedAnalytics = React.lazy(() => import('@/components/admin/AdvancedAnalytics'));
 const FeedbackInsights = React.lazy(() => import('@/components/admin/FeedbackInsights'));
 const DataExport = React.lazy(() => import('@/components/admin/DataExport'));
+const AIOrderAgent = React.lazy(() => import('@/components/admin/AIOrderAgent'));
+const AIShiftManager = React.lazy(() => import('@/components/admin/AIShiftManager'));
+const PaymentReconciliation = React.lazy(() => import('@/components/admin/PaymentReconciliation'));
+const AIInventoryReorderAgent = React.lazy(() => import('@/components/admin/AIInventoryReorderAgent'));
 
 
 export default function Admin() {
@@ -88,6 +92,11 @@ export default function Admin() {
     { id: 'feedbackai', label: 'AI Feedback', icon: Brain },
     { id: 'tables', label: 'AI Table Mgmt', icon: Calendar },
     { id: 'marketing', label: 'AI Marketing', icon: Mail },
+    { id: 'kds', label: '👨‍🍳 Kitchen Display', icon: Utensils },
+    { id: 'ai-order-agent', label: '🤖 AI Order Agent', icon: Bot },
+    { id: 'shift-manager', label: '🧠 AI Shift Mgr', icon: Brain },
+    { id: 'reconciliation', label: '💰 Reconciliation', icon: LayoutDashboard },
+    { id: 'reorder-agent', label: '📦 Reorder Agent', icon: Package },
     { id: 'driver', label: '🚚 Driver Mode', icon: Truck },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
@@ -164,6 +173,15 @@ export default function Admin() {
                 {React.createElement(React.lazy(() => import('./DriverMode')))}
               </React.Suspense>
             )}
+            {activeTab === 'kds' && (
+              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
+                {React.createElement(React.lazy(() => import('./KDS')))}
+              </React.Suspense>
+            )}
+            {activeTab === 'ai-order-agent' && <AIOrderAgent />}
+            {activeTab === 'shift-manager' && <AIShiftManager />}
+            {activeTab === 'reconciliation' && <PaymentReconciliation />}
+            {activeTab === 'reorder-agent' && <AIInventoryReorderAgent />}
             {activeTab === 'orders' && <OrdersManager />}
             {activeTab === 'reservations' && <ReservationsManager />}
             {activeTab === 'staff' && <StaffManager />}
