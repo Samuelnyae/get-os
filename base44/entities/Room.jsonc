@@ -1,0 +1,99 @@
+{
+  "name": "Room",
+  "type": "object",
+  "properties": {
+    "room_number": {
+      "type": "string",
+      "description": "Room number or identifier"
+    },
+    "room_type": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "deluxe",
+        "suite",
+        "penthouse",
+        "family"
+      ],
+      "default": "standard"
+    },
+    "floor": {
+      "type": "number",
+      "description": "Floor number"
+    },
+    "capacity": {
+      "type": "number",
+      "default": 2,
+      "description": "Max guests"
+    },
+    "price_per_night": {
+      "type": "number",
+      "description": "Rate in KES per night"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "occupied",
+        "reserved",
+        "maintenance",
+        "cleaning"
+      ],
+      "default": "available"
+    },
+    "do_not_disturb": {
+      "type": "boolean",
+      "default": false
+    },
+    "amenities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "current_guest_id": {
+      "type": "string",
+      "description": "ID of current GuestProfile"
+    },
+    "current_booking_id": {
+      "type": "string"
+    },
+    "minibar_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "consumed": {
+            "type": "number",
+            "default": 0
+          }
+        }
+      },
+      "default": []
+    },
+    "hotel_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "room_number",
+    "room_type",
+    "price_per_night"
+  ]
+}

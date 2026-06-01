@@ -1,0 +1,90 @@
+{
+  "name": "RoomBooking",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string"
+    },
+    "room_number": {
+      "type": "string"
+    },
+    "guest_name": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "guest_phone": {
+      "type": "string"
+    },
+    "check_in_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "check_out_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "actual_check_in": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actual_check_out": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "num_guests": {
+      "type": "number",
+      "default": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "checked_in",
+        "checked_out",
+        "cancelled",
+        "no_show"
+      ],
+      "default": "pending"
+    },
+    "total_amount": {
+      "type": "number"
+    },
+    "amount_paid": {
+      "type": "number",
+      "default": 0
+    },
+    "payment_method": {
+      "type": "string"
+    },
+    "special_requests": {
+      "type": "string"
+    },
+    "confirmation_code": {
+      "type": "string"
+    },
+    "hotel_id": {
+      "type": "string"
+    },
+    "room_service_charges": {
+      "type": "number",
+      "default": 0
+    },
+    "minibar_charges": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "room_id",
+    "guest_name",
+    "guest_email",
+    "check_in_date",
+    "check_out_date"
+  ]
+}

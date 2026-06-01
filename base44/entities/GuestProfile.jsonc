@@ -1,0 +1,82 @@
+{
+  "name": "GuestProfile",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "nationality": {
+      "type": "string"
+    },
+    "id_type": {
+      "type": "string",
+      "enum": [
+        "passport",
+        "national_id",
+        "drivers_license"
+      ],
+      "default": "national_id"
+    },
+    "id_number": {
+      "type": "string"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date"
+    },
+    "dietary_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "room_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "allergies": {
+      "type": "string"
+    },
+    "vip_status": {
+      "type": "boolean",
+      "default": false
+    },
+    "loyalty_points": {
+      "type": "number",
+      "default": 0
+    },
+    "total_stays": {
+      "type": "number",
+      "default": 0
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    },
+    "last_stay_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "preferred_room_type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name",
+    "email",
+    "phone"
+  ]
+}
