@@ -14,6 +14,7 @@ import QRCodePage from './pages/QRCode';
 const DriverModePage = lazy(() => import('./pages/DriverMode'));
 const KDSPage = lazy(() => import('./pages/KDS'));
 const HotelManagementPage = lazy(() => import('./pages/HotelManagement'));
+const RoomsPage = lazy(() => import('./pages/Rooms'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -76,6 +77,7 @@ const AuthenticatedApp = () => {
       <Route path="/QRCode" element={<LayoutWrapper currentPageName="QRCode"><QRCodePage /></LayoutWrapper>} />
       <Route path="/KDS" element={<LayoutWrapper currentPageName="KDS"><Suspense fallback={null}><KDSPage /></Suspense></LayoutWrapper>} />
       <Route path="/HotelManagement" element={<LayoutWrapper currentPageName="HotelManagement"><Suspense fallback={null}><HotelManagementPage /></Suspense></LayoutWrapper>} />
+      <Route path="/Rooms" element={<LayoutWrapper currentPageName="Rooms"><Suspense fallback={null}><RoomsPage /></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

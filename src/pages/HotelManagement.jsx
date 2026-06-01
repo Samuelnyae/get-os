@@ -1,5 +1,5 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { BedDouble, Calendar, LogIn, Sparkles, Users, Coffee, ShoppingBag, Moon } from 'lucide-react';
+import { BedDouble, Calendar, LogIn, Sparkles, Users, Coffee, ShoppingBag, Settings } from 'lucide-react';
 
 const RoomStatusBoard = lazy(() => import('@/components/hotel-mgmt/RoomStatusBoard'));
 const BookingCalendar = lazy(() => import('@/components/hotel-mgmt/BookingCalendar'));
@@ -8,15 +8,17 @@ const HousekeepingBoard = lazy(() => import('@/components/hotel-mgmt/Housekeepin
 const GuestCRM = lazy(() => import('@/components/hotel-mgmt/GuestCRM'));
 const MinibarManager = lazy(() => import('@/components/hotel-mgmt/MinibarManager'));
 const RoomServiceOrders = lazy(() => import('@/components/hotel-mgmt/RoomServiceOrders'));
+const RoomManager = lazy(() => import('@/components/hotel-mgmt/RoomManager'));
 
 const TABS = [
-  { id: 'rooms',       label: 'Room Board',    icon: BedDouble,   desc: 'Live room status & DND' },
-  { id: 'bookings',    label: 'Bookings',       icon: Calendar,    desc: 'Availability calendar' },
-  { id: 'checkin',     label: 'Check-In/Out',   icon: LogIn,       desc: 'Guest arrival & departure' },
-  { id: 'housekeeping',label: 'Housekeeping',   icon: Sparkles,    desc: 'Task management' },
-  { id: 'guests',      label: 'Guest CRM',      icon: Users,       desc: 'Guest profiles & preferences' },
-  { id: 'minibar',     label: 'Minibar',        icon: Coffee,      desc: 'Per-room minibar inventory' },
-  { id: 'roomservice', label: 'Room Service',   icon: ShoppingBag, desc: 'Order from menu to room' },
+  { id: 'rooms',       label: 'Room Board',    icon: BedDouble },
+  { id: 'manage',      label: 'Manage Rooms',  icon: Settings },
+  { id: 'bookings',    label: 'Bookings',      icon: Calendar },
+  { id: 'checkin',     label: 'Check-In/Out',  icon: LogIn },
+  { id: 'housekeeping',label: 'Housekeeping',  icon: Sparkles },
+  { id: 'guests',      label: 'Guest CRM',     icon: Users },
+  { id: 'minibar',     label: 'Minibar',       icon: Coffee },
+  { id: 'roomservice', label: 'Room Service',  icon: ShoppingBag },
 ];
 
 const Loader = () => (
@@ -66,6 +68,7 @@ export default function HotelManagement() {
         <div className="bg-[#111] rounded-2xl border border-white/10 p-6 min-h-[500px]">
           <Suspense fallback={<Loader />}>
             {activeTab === 'rooms'        && <RoomStatusBoard />}
+            {activeTab === 'manage'       && <RoomManager />}
             {activeTab === 'bookings'     && <BookingCalendar />}
             {activeTab === 'checkin'      && <CheckInOut />}
             {activeTab === 'housekeeping' && <HousekeepingBoard />}
