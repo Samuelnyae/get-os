@@ -1,0 +1,47 @@
+{
+  "name": "StaffAttendance",
+  "type": "object",
+  "properties": {
+    "staff_id": {
+      "type": "string"
+    },
+    "staff_name": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "clock_in": {
+      "type": "string",
+      "description": "ISO datetime"
+    },
+    "clock_out": {
+      "type": "string",
+      "description": "ISO datetime"
+    },
+    "hours_worked": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "present",
+        "absent",
+        "late",
+        "half_day",
+        "on_leave"
+      ],
+      "default": "present"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "staff_id",
+    "staff_name",
+    "date"
+  ]
+}

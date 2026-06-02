@@ -1,0 +1,70 @@
+{
+  "name": "TrainingModule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "food_safety",
+        "customer_service",
+        "operations",
+        "health_safety",
+        "leadership",
+        "other"
+      ],
+      "default": "other"
+    },
+    "duration_hours": {
+      "type": "number",
+      "default": 1
+    },
+    "assigned_to": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "staff_id": {
+            "type": "string"
+          },
+          "staff_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "in_progress",
+              "completed"
+            ],
+            "default": "not_started"
+          },
+          "completed_at": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_mandatory": {
+      "type": "boolean",
+      "default": false
+    },
+    "resources_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}

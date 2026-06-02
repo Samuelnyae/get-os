@@ -1,0 +1,61 @@
+{
+  "name": "PerformanceReview",
+  "type": "object",
+  "properties": {
+    "staff_id": {
+      "type": "string"
+    },
+    "staff_name": {
+      "type": "string"
+    },
+    "review_period": {
+      "type": "string",
+      "description": "e.g. Q1 2026"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "punctuality_score": {
+      "type": "number",
+      "description": "1-5"
+    },
+    "teamwork_score": {
+      "type": "number",
+      "description": "1-5"
+    },
+    "productivity_score": {
+      "type": "number",
+      "description": "1-5"
+    },
+    "customer_service_score": {
+      "type": "number",
+      "description": "1-5"
+    },
+    "overall_score": {
+      "type": "number"
+    },
+    "strengths": {
+      "type": "string"
+    },
+    "improvements": {
+      "type": "string"
+    },
+    "goals": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted",
+        "acknowledged"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "staff_id",
+    "staff_name",
+    "review_period"
+  ]
+}
