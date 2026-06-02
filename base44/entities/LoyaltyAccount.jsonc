@@ -1,0 +1,78 @@
+{
+  "name": "LoyaltyAccount",
+  "type": "object",
+  "properties": {
+    "guest_id": {
+      "type": "string",
+      "description": "GuestProfile ID"
+    },
+    "guest_name": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "points": {
+      "type": "number",
+      "default": 0
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "default": "bronze"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date"
+    },
+    "anniversary_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_spent": {
+      "type": "number",
+      "default": 0
+    },
+    "total_stays": {
+      "type": "number",
+      "default": 0
+    },
+    "points_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "points": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "earn",
+              "redeem"
+            ]
+          }
+        }
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "guest_name",
+    "guest_email"
+  ]
+}

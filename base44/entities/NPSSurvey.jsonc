@@ -1,0 +1,42 @@
+{
+  "name": "NPSSurvey",
+  "type": "object",
+  "properties": {
+    "guest_name": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "booking_id": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number",
+      "description": "0-10 NPS score"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "detractor",
+        "passive",
+        "promoter"
+      ]
+    },
+    "feedback": {
+      "type": "string"
+    },
+    "room_number": {
+      "type": "string"
+    },
+    "stay_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "guest_name",
+    "guest_email",
+    "score"
+  ]
+}

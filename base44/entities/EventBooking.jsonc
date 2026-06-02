@@ -1,0 +1,87 @@
+{
+  "name": "EventBooking",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "wedding",
+        "conference",
+        "birthday_party",
+        "corporate",
+        "gala",
+        "workshop",
+        "other"
+      ],
+      "default": "conference"
+    },
+    "organizer_name": {
+      "type": "string"
+    },
+    "organizer_email": {
+      "type": "string"
+    },
+    "organizer_phone": {
+      "type": "string"
+    },
+    "event_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "start_time": {
+      "type": "string"
+    },
+    "end_time": {
+      "type": "string"
+    },
+    "guest_count": {
+      "type": "number",
+      "default": 50
+    },
+    "venue": {
+      "type": "string",
+      "description": "Hall or space name"
+    },
+    "catering_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "av_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "decor_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "special_requirements": {
+      "type": "string"
+    },
+    "estimated_budget": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "inquiry",
+        "quoted",
+        "confirmed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "inquiry"
+    },
+    "quoted_amount": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_type",
+    "organizer_name",
+    "organizer_email",
+    "event_date"
+  ]
+}

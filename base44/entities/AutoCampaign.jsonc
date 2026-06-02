@@ -1,0 +1,54 @@
+{
+  "name": "AutoCampaign",
+  "type": "object",
+  "properties": {
+    "campaign_type": {
+      "type": "string",
+      "enum": [
+        "birthday",
+        "anniversary",
+        "loyalty_tier",
+        "post_stay",
+        "win_back"
+      ],
+      "default": "birthday"
+    },
+    "guest_id": {
+      "type": "string"
+    },
+    "guest_name": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "message": {
+      "type": "string"
+    },
+    "offer": {
+      "type": "string",
+      "description": "e.g. 20% off, free dinner"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "sent",
+        "failed"
+      ],
+      "default": "scheduled"
+    },
+    "sent_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "campaign_type",
+    "guest_name",
+    "guest_email"
+  ]
+}

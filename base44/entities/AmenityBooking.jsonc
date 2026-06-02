@@ -1,0 +1,70 @@
+{
+  "name": "AmenityBooking",
+  "type": "object",
+  "properties": {
+    "amenity_type": {
+      "type": "string",
+      "enum": [
+        "spa",
+        "gym",
+        "pool",
+        "sauna",
+        "massage",
+        "facial",
+        "tennis",
+        "golf",
+        "other"
+      ],
+      "default": "spa"
+    },
+    "guest_name": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "guest_phone": {
+      "type": "string"
+    },
+    "room_number": {
+      "type": "string"
+    },
+    "booking_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "booking_time": {
+      "type": "string"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "num_people": {
+      "type": "number",
+      "default": 1
+    },
+    "special_requests": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "amenity_type",
+    "guest_name",
+    "guest_email",
+    "booking_date"
+  ]
+}
