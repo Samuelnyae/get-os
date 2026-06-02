@@ -1,0 +1,18 @@
+{
+  "name": "Like",
+  "type": "object",
+  "properties": {
+    "menu_item_id": {
+      "type": "string",
+      "description": "Reference to the menu item"
+    },
+    "user_identifier": {
+      "type": "string",
+      "description": "User email or session ID"
+    }
+  },
+  "required": [
+    "menu_item_id",
+    "user_identifier"
+  ]
+}

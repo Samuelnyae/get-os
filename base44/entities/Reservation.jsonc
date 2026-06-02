@@ -1,0 +1,68 @@
+{
+  "name": "Reservation",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string",
+      "description": "Name of the person making the reservation"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Email address for confirmation"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Contact phone number"
+    },
+    "party_size": {
+      "type": "number",
+      "description": "Number of guests"
+    },
+    "reservation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of reservation"
+    },
+    "reservation_time": {
+      "type": "string",
+      "description": "Time slot (e.g., 18:00)"
+    },
+    "special_requests": {
+      "type": "string",
+      "description": "Special requests or dietary requirements"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "seated",
+        "completed",
+        "cancelled",
+        "waitlist"
+      ],
+      "default": "pending",
+      "description": "Status of the reservation"
+    },
+    "table_number": {
+      "type": "string",
+      "description": "Assigned table number"
+    },
+    "confirmation_code": {
+      "type": "string",
+      "description": "Unique confirmation code"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes from staff"
+    }
+  },
+  "required": [
+    "customer_name",
+    "customer_email",
+    "customer_phone",
+    "party_size",
+    "reservation_date",
+    "reservation_time"
+  ]
+}

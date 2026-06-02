@@ -1,0 +1,67 @@
+{
+  "name": "DeliveryFeedback",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string"
+    },
+    "order_reference": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "website_rating": {
+      "type": "number",
+      "description": "1-5 rating for website experience"
+    },
+    "food_rating": {
+      "type": "number",
+      "description": "1-5 rating for food quality"
+    },
+    "hotel_rating": {
+      "type": "number",
+      "description": "1-5 rating for hotel ambiance"
+    },
+    "reception_rating": {
+      "type": "number",
+      "description": "1-5 rating for reception/staff"
+    },
+    "service_rating": {
+      "type": "number",
+      "description": "1-5 rating for overall service"
+    },
+    "website_comment": {
+      "type": "string"
+    },
+    "food_comment": {
+      "type": "string"
+    },
+    "hotel_comment": {
+      "type": "string"
+    },
+    "reception_comment": {
+      "type": "string"
+    },
+    "service_comment": {
+      "type": "string"
+    },
+    "overall_comment": {
+      "type": "string"
+    },
+    "ai_insights": {
+      "type": "string",
+      "description": "AI-generated improvement suggestions from this feedback"
+    },
+    "ordered_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "order_id",
+    "customer_email"
+  ]
+}

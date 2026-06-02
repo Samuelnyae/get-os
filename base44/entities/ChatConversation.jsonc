@@ -1,0 +1,39 @@
+{
+  "name": "ChatConversation",
+  "type": "object",
+  "properties": {
+    "user_identifier": {
+      "type": "string",
+      "description": "User email or anonymous session ID"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_identifier"
+  ]
+}

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BedDouble, Coffee, Wrench, Sparkles, Moon, CheckCircle, AlertCircle } from 'lucide-react';
 
+
 const STATUS_CONFIG = {
   available:    { label: 'Available',    color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', dot: 'bg-emerald-400' },
   occupied:     { label: 'Occupied',     color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',         dot: 'bg-blue-400' },
@@ -17,7 +18,7 @@ const TYPE_ICONS = {
   standard: BedDouble, deluxe: BedDouble, suite: Sparkles, penthouse: Sparkles, family: BedDouble
 };
 
-export default function RoomStatusBoard({ onSelectRoom }) {
+export default function RoomStatusBoard({ onSelectRoom, onOpenMinibar }) {
   const qc = useQueryClient();
   const [filter, setFilter] = useState('all');
 
@@ -84,6 +85,12 @@ export default function RoomStatusBoard({ onSelectRoom }) {
                   className={`flex-1 text-xs py-1 rounded-lg border transition-all ${room.do_not_disturb ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' : 'border-white/10 text-white/40 hover:text-amber-400'}`}>
                   <Moon className="w-3 h-3 mx-auto" />
                 </button>
+                {(room.status === 'occupied' || room.status === 'reserved') && onOpenMinibar && (
+                  <button title="Minibar" onClick={() => onOpenMinibar(room)}
+                    className="flex-1 text-xs py-1 rounded-lg border border-[#c9a962]/30 text-[#c9a962] hover:bg-[#c9a962]/10 transition-all">
+                    <Coffee className="w-3 h-3 mx-auto" />
+                  </button>
+                )}
                 {room.status === 'cleaning' && (
                   <button title="Mark Available" onClick={() => updateStatus.mutate({ id: room.id, status: 'available' })}
                     className="flex-1 text-xs py-1 rounded-lg border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all">

@@ -1,0 +1,107 @@
+{
+  "name": "CustomFoodRequest",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "preferred_dish_name": {
+      "type": "string"
+    },
+    "food_category": {
+      "type": "string",
+      "enum": [
+        "vegetarian",
+        "vegan",
+        "non_vegetarian",
+        "seafood",
+        "dessert",
+        "drinks"
+      ]
+    },
+    "ingredients_include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ingredients_exclude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "spice_level": {
+      "type": "string",
+      "enum": [
+        "mild",
+        "medium",
+        "hot"
+      ]
+    },
+    "cooking_style": {
+      "type": "string",
+      "enum": [
+        "grilled",
+        "fried",
+        "steamed",
+        "baked",
+        "chefs_choice"
+      ]
+    },
+    "portion_size": {
+      "type": "string",
+      "enum": [
+        "small",
+        "medium",
+        "large"
+      ]
+    },
+    "dietary_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "budget_range": {
+      "type": "string"
+    },
+    "special_instructions": {
+      "type": "string"
+    },
+    "preferred_time": {
+      "type": "string"
+    },
+    "reference_image_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "quoted",
+        "accepted",
+        "preparing",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "proposed_price": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "customer_name",
+    "customer_email",
+    "customer_phone",
+    "food_category"
+  ]
+}

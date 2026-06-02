@@ -1,0 +1,98 @@
+{
+  "name": "MenuItem",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the dish"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the dish"
+    },
+    "full_description": {
+      "type": "string",
+      "description": "Detailed description of the dish"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price in USD"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "main_dishes",
+        "starters",
+        "desserts",
+        "drinks"
+      ],
+      "description": "Food category"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Main image URL"
+    },
+    "gallery_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional gallery images"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredients"
+    },
+    "spices": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Spices used"
+    },
+    "companions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Suggested side dishes and drinks"
+    },
+    "likes_count": {
+      "type": "number",
+      "default": 0
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "dietary_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Dietary tags like vegetarian, gluten-free, etc."
+    },
+    "stock_count": {
+      "type": "number",
+      "default": 100,
+      "description": "Current stock quantity available"
+    },
+    "low_stock_threshold": {
+      "type": "number",
+      "default": 10,
+      "description": "Alert threshold for low stock"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this item belongs to. Empty = available at all locations."
+    }
+  },
+  "required": [
+    "name",
+    "price",
+    "category"
+  ]
+}

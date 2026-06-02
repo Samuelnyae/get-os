@@ -1,0 +1,27 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "menu_item_id": {
+      "type": "string",
+      "description": "Reference to the menu item"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name of the commenter"
+    },
+    "content": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Rating 1-5 stars"
+    }
+  },
+  "required": [
+    "menu_item_id",
+    "user_name",
+    "content"
+  ]
+}

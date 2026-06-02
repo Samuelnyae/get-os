@@ -29,6 +29,12 @@ const Loader = () => (
 
 export default function HotelManagement() {
   const [activeTab, setActiveTab] = useState('rooms');
+  const [minibarRoom, setMinibarRoom] = useState(null);
+
+  const handleOpenMinibar = (room) => {
+    setMinibarRoom(room);
+    setActiveTab('minibar');
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-6">
@@ -67,13 +73,13 @@ export default function HotelManagement() {
         {/* Tab Content */}
         <div className="bg-[#111] rounded-2xl border border-white/10 p-6 min-h-[500px]">
           <Suspense fallback={<Loader />}>
-            {activeTab === 'rooms'        && <RoomStatusBoard />}
+            {activeTab === 'rooms'        && <RoomStatusBoard onOpenMinibar={handleOpenMinibar} />}
             {activeTab === 'manage'       && <RoomManager />}
             {activeTab === 'bookings'     && <BookingCalendar />}
             {activeTab === 'checkin'      && <CheckInOut />}
             {activeTab === 'housekeeping' && <HousekeepingBoard />}
             {activeTab === 'guests'       && <GuestCRM />}
-            {activeTab === 'minibar'      && <MinibarManager />}
+            {activeTab === 'minibar'      && <MinibarManager preSelectedRoom={minibarRoom} />}
             {activeTab === 'roomservice'  && <RoomServiceOrders />}
           </Suspense>
         </div>

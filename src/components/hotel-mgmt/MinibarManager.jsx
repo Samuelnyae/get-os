@@ -16,9 +16,9 @@ const DEFAULT_MINIBAR = [
   { name: 'Coffee Sachet', quantity: 5, price: 80, consumed: 0 },
 ];
 
-export default function MinibarManager() {
+export default function MinibarManager({ preSelectedRoom = null }) {
   const qc = useQueryClient();
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(preSelectedRoom);
 
   const { data: rooms = [] } = useQuery({ queryKey: ['rooms'], queryFn: () => base44.entities.Room.list() });
 
