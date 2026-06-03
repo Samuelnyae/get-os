@@ -95,6 +95,7 @@ export default function Admin() {
     { id: 'hotel', label: '🏨 Hotel Management', icon: Building2 },
     { id: 'hr', label: '👥 HR & Workforce', icon: User },
     { id: 'guest-exp', label: '❤️ Guest Experience', icon: Star },
+    { id: 'marketing-crm', label: '📣 Marketing & CRM', icon: Mail },
     { id: 'kds', label: '👨‍🍳 Kitchen Display', icon: Utensils },
     { id: 'ai-order-agent', label: '🤖 AI Order Agent', icon: Bot },
     { id: 'shift-manager', label: '🧠 AI Shift Mgr', icon: Brain },
@@ -189,6 +190,11 @@ export default function Admin() {
             {activeTab === 'guest-exp' && (
               <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
                 {React.createElement(React.lazy(() => import('./GuestExperience')))}
+              </React.Suspense>
+            )}
+            {activeTab === 'marketing-crm' && (
+              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
+                {React.createElement(React.lazy(() => import('./Marketing')))}
               </React.Suspense>
             )}
             {activeTab === 'kds' && (

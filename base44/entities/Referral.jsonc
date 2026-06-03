@@ -1,0 +1,46 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "referrer_name": {
+      "type": "string"
+    },
+    "referrer_email": {
+      "type": "string"
+    },
+    "referral_code": {
+      "type": "string"
+    },
+    "referred_name": {
+      "type": "string"
+    },
+    "referred_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "converted",
+        "rewarded"
+      ],
+      "default": "pending"
+    },
+    "reward_type": {
+      "type": "string",
+      "description": "e.g. 10% off, 500 loyalty pts"
+    },
+    "reward_given": {
+      "type": "boolean",
+      "default": false
+    },
+    "converted_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "referrer_name",
+    "referrer_email",
+    "referral_code"
+  ]
+}

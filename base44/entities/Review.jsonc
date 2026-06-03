@@ -1,0 +1,54 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "platform": {
+      "type": "string",
+      "enum": [
+        "google",
+        "tripadvisor",
+        "booking",
+        "yelp",
+        "other"
+      ],
+      "default": "google"
+    },
+    "reviewer_name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number",
+      "description": "1-5 stars"
+    },
+    "review_text": {
+      "type": "string"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "response": {
+      "type": "string"
+    },
+    "responded_at": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "responded",
+        "flagged"
+      ],
+      "default": "new"
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "platform",
+    "reviewer_name",
+    "rating"
+  ]
+}

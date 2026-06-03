@@ -1,0 +1,67 @@
+{
+  "name": "Campaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "email",
+        "sms",
+        "whatsapp"
+      ],
+      "default": "email"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "all_guests",
+        "vip",
+        "loyalty_gold",
+        "post_stay",
+        "custom"
+      ],
+      "default": "all_guests"
+    },
+    "recipient_count": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "sent",
+        "failed"
+      ],
+      "default": "draft"
+    },
+    "scheduled_at": {
+      "type": "string"
+    },
+    "sent_at": {
+      "type": "string"
+    },
+    "open_rate": {
+      "type": "number",
+      "default": 0
+    },
+    "click_rate": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "Coupon",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "discount_type": {
+      "type": "string",
+      "enum": [
+        "percent",
+        "fixed"
+      ],
+      "default": "percent"
+    },
+    "discount_value": {
+      "type": "number"
+    },
+    "min_spend": {
+      "type": "number",
+      "default": 0
+    },
+    "max_uses": {
+      "type": "number",
+      "default": 100
+    },
+    "uses_count": {
+      "type": "number",
+      "default": 0
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date"
+    },
+    "applicable_to": {
+      "type": "string",
+      "enum": [
+        "all",
+        "rooms",
+        "food",
+        "spa",
+        "events"
+      ],
+      "default": "all"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "code",
+    "discount_value"
+  ]
+}

@@ -17,6 +17,7 @@ const HotelManagementPage = lazy(() => import('./pages/HotelManagement'));
 const RoomsPage = lazy(() => import('./pages/Rooms'));
 const HRPage = lazy(() => import('./pages/HR'));
 const GuestExperiencePage = lazy(() => import('./pages/GuestExperience'));
+const MarketingPage = lazy(() => import('./pages/Marketing'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -82,6 +83,7 @@ const AuthenticatedApp = () => {
       <Route path="/Rooms" element={<LayoutWrapper currentPageName="Rooms"><Suspense fallback={null}><RoomsPage /></Suspense></LayoutWrapper>} />
       <Route path="/HR" element={<LayoutWrapper currentPageName="HR"><Suspense fallback={null}><HRPage /></Suspense></LayoutWrapper>} />
       <Route path="/GuestExperience" element={<LayoutWrapper currentPageName="GuestExperience"><Suspense fallback={null}><GuestExperiencePage /></Suspense></LayoutWrapper>} />
+      <Route path="/Marketing" element={<LayoutWrapper currentPageName="Marketing"><Suspense fallback={null}><MarketingPage /></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
