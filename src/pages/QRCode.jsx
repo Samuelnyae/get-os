@@ -7,6 +7,9 @@ import { useLanguage } from '@/lib/LanguageContext';
 const APP_URL = window.location.origin;
 
 const pages = [
+  { label: 'Guest Portal 🏨', path: '/GuestPortal' },
+  { label: 'Event Bookings', path: '/Events' },
+  { label: 'Spa & Amenities', path: '/SpaAmenities' },
   { label: 'Home', path: '/' },
   { label: 'Menu', path: '/Menu' },
   { label: 'Drinks', path: '/Drinks' },

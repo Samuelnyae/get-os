@@ -73,9 +73,9 @@ export default function Layout({ children, currentPageName }) {
     { name: t('reservations'), page: 'Reservations' },
     { name: t('customizeOrder'), page: 'CustomFood' },
     { name: 'Rooms & Suites', page: 'Rooms' },
-    { name: 'Event Bookings', page: 'GuestExperience', hash: 'events' },
-    { name: 'Spa & Amenities', page: 'GuestExperience', hash: 'amenities' },
-    { name: 'Guest Portal', page: 'GuestExperience', hash: 'portal' },
+    { name: 'Event Bookings', page: 'Events' },
+    { name: 'Spa & Amenities', page: 'SpaAmenities' },
+    { name: 'Guest Portal', page: 'GuestPortal' },
   ];
 
   const formatDate = (date) => {
@@ -163,7 +163,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Services Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
-                  ['TableDining', 'Reservations', 'CustomFood', 'Rooms', 'GuestExperience'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
+                  ['TableDining', 'Reservations', 'CustomFood', 'Rooms', 'Events', 'SpaAmenities', 'GuestPortal'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
                 }`}>
                   {t('services')}
                   <ChevronDown className="w-3 h-3" />

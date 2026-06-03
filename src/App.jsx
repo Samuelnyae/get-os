@@ -18,6 +18,9 @@ const RoomsPage = lazy(() => import('./pages/Rooms'));
 const HRPage = lazy(() => import('./pages/HR'));
 const GuestExperiencePage = lazy(() => import('./pages/GuestExperience'));
 const MarketingPage = lazy(() => import('./pages/Marketing'));
+const GuestPortalPage = lazy(() => import('./pages/GuestPortalPage'));
+const EventsPage = lazy(() => import('./pages/Events'));
+const SpaAmenitiesPage = lazy(() => import('./pages/SpaAmenities'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -84,6 +87,9 @@ const AuthenticatedApp = () => {
       <Route path="/HR" element={<LayoutWrapper currentPageName="HR"><Suspense fallback={null}><HRPage /></Suspense></LayoutWrapper>} />
       <Route path="/GuestExperience" element={<LayoutWrapper currentPageName="GuestExperience"><Suspense fallback={null}><GuestExperiencePage /></Suspense></LayoutWrapper>} />
       <Route path="/Marketing" element={<LayoutWrapper currentPageName="Marketing"><Suspense fallback={null}><MarketingPage /></Suspense></LayoutWrapper>} />
+      <Route path="/GuestPortal" element={<LayoutWrapper currentPageName="GuestPortal"><Suspense fallback={null}><GuestPortalPage /></Suspense></LayoutWrapper>} />
+      <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Suspense fallback={null}><EventsPage /></Suspense></LayoutWrapper>} />
+      <Route path="/SpaAmenities" element={<LayoutWrapper currentPageName="SpaAmenities"><Suspense fallback={null}><SpaAmenitiesPage /></Suspense></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
