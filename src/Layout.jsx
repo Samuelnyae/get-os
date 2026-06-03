@@ -63,7 +63,6 @@ export default function Layout({ children, currentPageName }) {
     { name: t('menu'), page: 'Menu' },
     { name: t('drinks'), page: 'Drinks' },
     { name: t('trackOrder'), page: 'OrderTracking' },
-    { name: 'Rooms', page: 'Rooms' },
     { name: t('about'), page: 'About' },
     { name: t('contact'), page: 'Contact' },
     ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }] : []),
@@ -73,6 +72,10 @@ export default function Layout({ children, currentPageName }) {
     { name: t('tableDining'), page: 'TableDining' },
     { name: t('reservations'), page: 'Reservations' },
     { name: t('customizeOrder'), page: 'CustomFood' },
+    { name: 'Rooms & Suites', page: 'Rooms' },
+    { name: 'Event Bookings', page: 'GuestExperience', hash: 'events' },
+    { name: 'Spa & Amenities', page: 'GuestExperience', hash: 'amenities' },
+    { name: 'Guest Portal', page: 'GuestExperience', hash: 'portal' },
   ];
 
   const formatDate = (date) => {
@@ -160,16 +163,16 @@ export default function Layout({ children, currentPageName }) {
               {/* Services Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
-                  ['TableDining', 'Reservations', 'CustomFood'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
+                  ['TableDining', 'Reservations', 'CustomFood', 'Rooms', 'GuestExperience'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
                 }`}>
                   {t('services')}
                   <ChevronDown className="w-3 h-3" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-[#1a1a1a] border-[#c9a962]/20">
                   {servicesLinks.map((link) => (
-                    <DropdownMenuItem key={link.page} asChild>
+                    <DropdownMenuItem key={link.name} asChild>
                       <Link
-                        to={createPageUrl(link.page)}
+                        to={`/${link.page}`}
                         className="font-inter text-sm text-white/80 hover:text-[#c9a962] cursor-pointer"
                       >
                         {link.name}
@@ -250,21 +253,21 @@ export default function Layout({ children, currentPageName }) {
                 ))}
 
                 <div className="pt-2 pb-2">
-                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('services')}</p>
-                  <div className="space-y-3 pl-3">
-                    {servicesLinks.map((link) => (
-                      <Link
-                        key={link.page}
-                        to={createPageUrl(link.page)}
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`block font-inter text-base transition-all ${
-                          currentPageName === link.page ? 'text-[#c9a962]' : 'text-white/70'
-                        }`}
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </div>
+                <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('services')}</p>
+                <div className="space-y-3 pl-3">
+                  {servicesLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={`/${link.page}`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block font-inter text-base transition-all ${
+                        currentPageName === link.page ? 'text-[#c9a962]' : 'text-white/70'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
                 </div>
 
                 <div className="pt-4 border-t border-[#c9a962]/20">
