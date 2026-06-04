@@ -1,0 +1,64 @@
+{
+  "name": "WasteLog",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string"
+    },
+    "waste_type": {
+      "type": "string",
+      "enum": [
+        "food_spoilage",
+        "food_preparation",
+        "food_plate",
+        "beverage_spill",
+        "beverage_expired",
+        "packaging",
+        "cleaning",
+        "other"
+      ],
+      "default": "food_spoilage"
+    },
+    "quantity": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string",
+      "default": "kg"
+    },
+    "cost_per_unit": {
+      "type": "number"
+    },
+    "total_cost": {
+      "type": "number"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "staff_member": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "kitchen",
+        "bar",
+        "housekeeping",
+        "maintenance",
+        "restaurant",
+        "other"
+      ],
+      "default": "kitchen"
+    },
+    "waste_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "item_name",
+    "waste_type",
+    "quantity",
+    "waste_date"
+  ]
+}

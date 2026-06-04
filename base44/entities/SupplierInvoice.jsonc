@@ -1,0 +1,62 @@
+{
+  "name": "SupplierInvoice",
+  "type": "object",
+  "properties": {
+    "invoice_number": {
+      "type": "string"
+    },
+    "supplier_id": {
+      "type": "string"
+    },
+    "supplier_name": {
+      "type": "string"
+    },
+    "po_id": {
+      "type": "string"
+    },
+    "po_number": {
+      "type": "string"
+    },
+    "grn_id": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected",
+        "paid",
+        "overdue"
+      ],
+      "default": "pending_review"
+    },
+    "match_status": {
+      "type": "string",
+      "enum": [
+        "matched",
+        "discrepancy",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "discrepancy_notes": {
+      "type": "string"
+    },
+    "paid_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "invoice_number",
+    "supplier_name",
+    "amount"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "name": "GoodsReceivedNote",
+  "type": "object",
+  "properties": {
+    "po_id": {
+      "type": "string"
+    },
+    "po_number": {
+      "type": "string"
+    },
+    "supplier_id": {
+      "type": "string"
+    },
+    "supplier_name": {
+      "type": "string"
+    },
+    "received_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "received_by": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_name": {
+            "type": "string"
+          },
+          "quantity_ordered": {
+            "type": "number"
+          },
+          "quantity_received": {
+            "type": "number"
+          },
+          "quantity_rejected": {
+            "type": "number"
+          },
+          "rejection_reason": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "complete",
+        "partial",
+        "rejected"
+      ],
+      "default": "complete"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "delivery_note_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "po_id",
+    "supplier_name",
+    "received_date"
+  ]
+}

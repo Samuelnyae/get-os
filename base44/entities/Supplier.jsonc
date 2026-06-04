@@ -1,0 +1,63 @@
+{
+  "name": "Supplier",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string"
+    },
+    "contact_person": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "tax_pin": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "food",
+        "beverage",
+        "cleaning",
+        "furniture",
+        "linen",
+        "maintenance",
+        "other"
+      ],
+      "default": "food"
+    },
+    "payment_terms": {
+      "type": "string",
+      "default": "Net 30"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "archived"
+      ],
+      "default": "active"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "company_name",
+    "contact_person",
+    "phone",
+    "email"
+  ]
+}

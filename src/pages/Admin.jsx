@@ -6,6 +6,7 @@ import {
 LayoutDashboard, Utensils, ShoppingBag, Truck,
 Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign, Users, Leaf
 } from 'lucide-react';
+// Truck is already imported above
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SectionHeader from '@/components/common/SectionHeader';
@@ -40,6 +41,7 @@ const MenuProfitability = React.lazy(() => import('@/components/admin/MenuProfit
 const CustomerLifetimeValue = React.lazy(() => import('@/components/admin/CustomerLifetimeValue'));
 const CompetitorBenchmark = React.lazy(() => import('@/components/admin/CompetitorBenchmark'));
 const SustainabilityReport = React.lazy(() => import('@/components/admin/SustainabilityReport'));
+const SupplyChain = React.lazy(() => import('./SupplyChain'));
 
 
 export default function Admin() {
@@ -97,6 +99,7 @@ export default function Admin() {
     { id: 'clv', label: '👤 Customer CLV', icon: Users },
     { id: 'competitor', label: '🏆 Competitor Benchmark', icon: Star },
     { id: 'sustainability', label: '🌿 Sustainability', icon: Leaf },
+    { id: 'supply-chain', label: '🚚 Supply Chain', icon: Truck },
     { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
@@ -183,6 +186,7 @@ export default function Admin() {
             {activeTab === 'clv' && <CustomerLifetimeValue />}
             {activeTab === 'competitor' && <CompetitorBenchmark />}
             {activeTab === 'sustainability' && <SustainabilityReport />}
+            {activeTab === 'supply-chain' && <SupplyChain />}
             {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
             {activeTab === 'fulfillment' && <AIOrderFulfillment />}
