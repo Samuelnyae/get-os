@@ -1,0 +1,72 @@
+{
+  "name": "WhatsAppMessage",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "reservation_confirm",
+        "order_confirm",
+        "order_update",
+        "delivery",
+        "loyalty",
+        "promotion",
+        "support",
+        "campaign",
+        "inbound"
+      ]
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "outbound",
+        "inbound"
+      ],
+      "default": "outbound"
+    },
+    "message_body": {
+      "type": "string"
+    },
+    "template_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "delivered",
+        "read",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "sent_at": {
+      "type": "string"
+    },
+    "reference_id": {
+      "type": "string"
+    },
+    "reference_type": {
+      "type": "string",
+      "enum": [
+        "reservation",
+        "order",
+        "loyalty",
+        "campaign",
+        "support"
+      ]
+    }
+  },
+  "required": [
+    "customer_phone",
+    "message_type",
+    "message_body"
+  ]
+}

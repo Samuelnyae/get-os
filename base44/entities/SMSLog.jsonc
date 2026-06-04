@@ -1,0 +1,54 @@
+{
+  "name": "SMSLog",
+  "type": "object",
+  "properties": {
+    "phone": {
+      "type": "string"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "reservation",
+        "order",
+        "loyalty",
+        "promotion",
+        "alert",
+        "campaign"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "delivered",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "provider": {
+      "type": "string",
+      "default": "twilio"
+    },
+    "sent_at": {
+      "type": "string"
+    },
+    "cost": {
+      "type": "number",
+      "default": 0
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "phone",
+    "message"
+  ]
+}

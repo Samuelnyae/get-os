@@ -1,0 +1,57 @@
+{
+  "name": "Integration",
+  "type": "object",
+  "properties": {
+    "integration_name": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "whatsapp",
+        "uber_eats",
+        "jumia_food",
+        "google_calendar",
+        "quickbooks",
+        "xero",
+        "mpesa",
+        "twilio",
+        "stripe",
+        "paypal",
+        "other"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error",
+        "pending"
+      ],
+      "default": "inactive"
+    },
+    "api_key": {
+      "type": "string"
+    },
+    "api_secret": {
+      "type": "string"
+    },
+    "webhook_url": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object"
+    },
+    "last_sync": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "integration_name",
+    "provider"
+  ]
+}

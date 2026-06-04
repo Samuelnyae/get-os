@@ -1,0 +1,51 @@
+{
+  "name": "AccountingSyncLog",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": [
+        "quickbooks",
+        "xero"
+      ]
+    },
+    "sync_type": {
+      "type": "string",
+      "enum": [
+        "sales",
+        "refunds",
+        "taxes",
+        "invoices",
+        "full"
+      ]
+    },
+    "sync_date": {
+      "type": "string"
+    },
+    "records_synced": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "partial",
+        "failed",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "error_details": {
+      "type": "string"
+    },
+    "amount_synced": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "provider",
+    "sync_type"
+  ]
+}

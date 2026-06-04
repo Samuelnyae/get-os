@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
 LayoutDashboard, Utensils, ShoppingBag, Truck,
-Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign, Users, Leaf
+Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign, Users, Leaf, Zap
 } from 'lucide-react';
-// Truck is already imported above
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SectionHeader from '@/components/common/SectionHeader';
@@ -42,6 +41,7 @@ const CustomerLifetimeValue = React.lazy(() => import('@/components/admin/Custom
 const CompetitorBenchmark = React.lazy(() => import('@/components/admin/CompetitorBenchmark'));
 const SustainabilityReport = React.lazy(() => import('@/components/admin/SustainabilityReport'));
 const SupplyChain = React.lazy(() => import('./SupplyChain'));
+const Integrations = React.lazy(() => import('./Integrations'));
 
 
 export default function Admin() {
@@ -100,6 +100,7 @@ export default function Admin() {
     { id: 'competitor', label: '🏆 Competitor Benchmark', icon: Star },
     { id: 'sustainability', label: '🌿 Sustainability', icon: Leaf },
     { id: 'supply-chain', label: '🚚 Supply Chain', icon: Truck },
+    { id: 'integrations', label: '⚡ Integrations', icon: Zap },
     { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
@@ -187,6 +188,7 @@ export default function Admin() {
             {activeTab === 'competitor' && <CompetitorBenchmark />}
             {activeTab === 'sustainability' && <SustainabilityReport />}
             {activeTab === 'supply-chain' && <SupplyChain />}
+            {activeTab === 'integrations' && <Integrations />}
             {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
             {activeTab === 'fulfillment' && <AIOrderFulfillment />}

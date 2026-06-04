@@ -1,0 +1,65 @@
+{
+  "name": "MpesaTransaction",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "payment_type": {
+      "type": "string",
+      "enum": [
+        "stk_push",
+        "paybill",
+        "till",
+        "b2c_refund"
+      ],
+      "default": "stk_push"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "success",
+        "failed",
+        "cancelled",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "reference": {
+      "type": "string"
+    },
+    "reference_type": {
+      "type": "string",
+      "enum": [
+        "order",
+        "reservation",
+        "room",
+        "event",
+        "other"
+      ]
+    },
+    "mpesa_receipt": {
+      "type": "string"
+    },
+    "result_desc": {
+      "type": "string"
+    },
+    "transaction_date": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "phone",
+    "amount"
+  ]
+}
