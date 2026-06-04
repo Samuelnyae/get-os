@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
 LayoutDashboard, Utensils, ShoppingBag, Truck,
-Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign
+Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign, Users, Leaf
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -34,6 +34,12 @@ const AIOrderAgent = React.lazy(() => import('@/components/admin/AIOrderAgent'))
 const AIShiftManager = React.lazy(() => import('@/components/admin/AIShiftManager'));
 const PaymentReconciliation = React.lazy(() => import('@/components/admin/PaymentReconciliation'));
 const AIInventoryReorderAgent = React.lazy(() => import('@/components/admin/AIInventoryReorderAgent'));
+const AIRevenueForecast = React.lazy(() => import('@/components/admin/AIRevenueForecast'));
+const DemandHeatmap = React.lazy(() => import('@/components/admin/DemandHeatmap'));
+const MenuProfitability = React.lazy(() => import('@/components/admin/MenuProfitability'));
+const CustomerLifetimeValue = React.lazy(() => import('@/components/admin/CustomerLifetimeValue'));
+const CompetitorBenchmark = React.lazy(() => import('@/components/admin/CompetitorBenchmark'));
+const SustainabilityReport = React.lazy(() => import('@/components/admin/SustainabilityReport'));
 
 
 export default function Admin() {
@@ -85,6 +91,12 @@ export default function Admin() {
   const tabs = [
 
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'revenue-forecast', label: '📈 Revenue Forecast', icon: TrendingUp },
+    { id: 'demand-heatmap', label: '🔥 Demand Heatmap', icon: BarChart3 },
+    { id: 'menu-profitability', label: '💰 Menu Profitability', icon: DollarSign },
+    { id: 'clv', label: '👤 Customer CLV', icon: Users },
+    { id: 'competitor', label: '🏆 Competitor Benchmark', icon: Star },
+    { id: 'sustainability', label: '🌿 Sustainability', icon: Leaf },
     { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
     { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
@@ -165,6 +177,12 @@ export default function Admin() {
           }>
 
             {activeTab === 'dashboard' && <DashboardStats />}
+            {activeTab === 'revenue-forecast' && <AIRevenueForecast />}
+            {activeTab === 'demand-heatmap' && <DemandHeatmap />}
+            {activeTab === 'menu-profitability' && <MenuProfitability />}
+            {activeTab === 'clv' && <CustomerLifetimeValue />}
+            {activeTab === 'competitor' && <CompetitorBenchmark />}
+            {activeTab === 'sustainability' && <SustainabilityReport />}
             {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
             {activeTab === 'fulfillment' && <AIOrderFulfillment />}
