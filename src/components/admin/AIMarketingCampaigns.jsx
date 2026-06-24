@@ -92,7 +92,7 @@ export default function AIMarketingCampaigns() {
     try {
       const analysis = analyzeCustomerData();
 
-      const prompt = `You are a marketing expert for a luxury restaurant "Hermanas Bites". Analyze this customer data and generate 4 personalized email marketing campaigns.
+      const prompt = `You are a marketing expert for a luxury restaurant "Get OS". Analyze this customer data and generate 4 personalized email marketing campaigns.
 
 Customer Data:
 - Total Customers: ${analysis.totalCustomers}
@@ -191,7 +191,7 @@ Make emails feel personal and luxurious, matching the seven-star dining experien
     for (const email of recipients) {
       try {
         await base44.integrations.Core.SendEmail({
-          from_name: 'Hermanas Bites',
+          from_name: 'Get OS',
           to: email,
           subject: campaign.subject,
           body: campaign.body,

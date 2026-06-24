@@ -76,7 +76,7 @@ export default function AIInventoryManagement() {
                            ['March', 'April', 'May'].includes(currentMonth) ? 'Spring' :
                            ['June', 'July', 'August'].includes(currentMonth) ? 'Summer' : 'Fall';
 
-      const prompt = `You are an inventory management expert for "Hermanas Bites" luxury restaurant. Analyze the order history and predict ingredient demand for the next 7 days.
+      const prompt = `You are an inventory management expert for "Get OS" luxury restaurant. Analyze the order history and predict ingredient demand for the next 7 days.
 
 Current Month: ${currentMonth}
 Current Season: ${currentSeason}
@@ -167,7 +167,7 @@ Consider:
     try {
       const analysis = analyzeInventoryData();
 
-      const prompt = `As an inventory optimization expert, create a stock level optimization plan for Hermanas Bites.
+      const prompt = `As an inventory optimization expert, create a stock level optimization plan for Get OS.
 
 Current Inventory:
 ${menuItems.map(item => 

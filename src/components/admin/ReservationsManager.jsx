@@ -49,7 +49,7 @@ export default function ReservationsManager() {
       try {
         await base44.integrations.Core.SendEmail({
           to: reservation.customer_email,
-          subject: `Hermanas Bites - Reservation Confirmed`,
+          subject: `Get OS - Reservation Confirmed`,
           body: `
 Dear ${reservation.customer_name},
 
@@ -65,7 +65,7 @@ ${reservation.table_number ? `- Table: ${reservation.table_number}` : ''}
 We look forward to welcoming you!
 
 Best regards,
-Hermanas Bites
+Get OS
           `
         });
       } catch (error) {

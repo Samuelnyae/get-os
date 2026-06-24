@@ -55,7 +55,7 @@ export default function DailySpecials() {
         day: 'numeric' 
       });
 
-      const prompt = `You are the head chef at "Hermanas Bites" designing today's specials and bundle offers.
+      const prompt = `You are the head chef at "Get OS" designing today's specials and bundle offers.
 
 TODAY'S DATE: ${currentDate}
 

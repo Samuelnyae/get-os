@@ -227,8 +227,8 @@ Get OS - Seven Star Dining
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <SEOHead 
         title="Table Reservations - Book Your Table Online"
-        description="Reserve your table at Hermanas Bites. Easy online booking for luxury dining experience. Book now for fine dining, special occasions, and unforgettable meals."
-        keywords="Hermanas Bites reservations, book table online, restaurant reservations, table booking, reserve table, dining reservations"
+        description="Reserve your table at Get OS. Easy online booking for luxury dining experience. Book now for fine dining, special occasions, and unforgettable meals."
+        keywords="Get OS reservations, book table online, restaurant reservations, table booking, reserve table, dining reservations"
       />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 

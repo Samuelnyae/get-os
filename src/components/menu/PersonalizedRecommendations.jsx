@@ -76,7 +76,7 @@ export default function PersonalizedRecommendations({ cartItems = [] }) {
       const cartItemNames = cartItems.map(item => item.name);
       const recentlyViewedNames = viewedItems.slice(0, 10);
 
-      const prompt = `You are an AI personalization engine for "Hermanas Bites" luxury restaurant. Analyze customer behavior and provide highly personalized menu recommendations.
+      const prompt = `You are an AI personalization engine for "Get OS" luxury restaurant. Analyze customer behavior and provide highly personalized menu recommendations.
 
 CUSTOMER PROFILE:
 Order History: ${userOrders.length} orders

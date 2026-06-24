@@ -56,7 +56,7 @@ export default function AIMenuSuggestions({ currentItemId, cartItems = [] }) {
       };
 
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an AI sommelier and food pairing expert for Hermanas Bites, a luxury restaurant.
+        prompt: `You are an AI sommelier and food pairing expert for Get OS, a luxury restaurant.
 
 Context:
 - Customer's past orders: ${context.pastOrders.length > 0 ? context.pastOrders.join(', ') : 'No past orders'}

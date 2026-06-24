@@ -53,7 +53,7 @@ export default function FeedbackInsights() {
       };
 
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are the AI improvement advisor for Hermanas Bites luxury restaurant. Analyze the following aggregated customer feedback data and generate a comprehensive improvement report.
+        prompt: `You are the AI improvement advisor for Get OS luxury restaurant. Analyze the following aggregated customer feedback data and generate a comprehensive improvement report.
 
 FEEDBACK SUMMARY (${summary.total} responses):
 Average Ratings:

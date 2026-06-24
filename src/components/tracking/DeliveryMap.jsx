@@ -224,7 +224,7 @@ export default function DeliveryMap({ order }) {
 
           {/* Restaurant pin */}
           <Marker position={RESTAURANT_COORDS} icon={restaurantIcon}>
-            <Popup><span className="font-inter text-xs font-semibold">🍽️ Hermanas Bites</span></Popup>
+            <Popup><span className="font-inter text-xs font-semibold">🍽️ Get OS</span></Popup>
           </Marker>
 
           {/* Customer pin */}

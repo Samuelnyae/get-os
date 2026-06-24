@@ -64,7 +64,7 @@ export default function AIRecommendations() {
         customRequests.map(r => r.food_category).filter(Boolean)
       )];
 
-      const prompt = `You are a luxury restaurant AI sommelier for Hermanas Bites, a seven-star dining establishment.
+      const prompt = `You are a luxury restaurant AI sommelier for Get OS, a seven-star dining establishment.
 
 Based on the customer's profile:
 - Previously ordered: ${orderedItems.join(', ') || 'None yet'}

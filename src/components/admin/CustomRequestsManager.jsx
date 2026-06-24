@@ -62,7 +62,7 @@ export default function CustomRequestsManager() {
     // Send email to customer
     base44.integrations.Core.SendEmail({
       to: request.customer_email,
-      subject: 'Hermanas Bites - Custom Dish Quote',
+      subject: 'Get OS - Custom Dish Quote',
       body: `
 Dear ${request.customer_name},
 
@@ -75,7 +75,7 @@ Proposed Price: $${proposedPrice}
 Our chef has reviewed your specifications and is ready to create this unique culinary experience for you. Please reply to confirm your acceptance.
 
 Best regards,
-Hermanas Bites - Seven Star Dining
+Get OS - Seven Star Dining
       `
     });
   };

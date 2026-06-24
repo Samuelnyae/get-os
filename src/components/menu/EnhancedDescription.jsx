@@ -16,7 +16,7 @@ export default function EnhancedDescription({ item, onUpdate }) {
     setIsGenerating(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a luxury food writer for Hermanas Bites, a seven-star restaurant.
+        prompt: `You are a luxury food writer for Get OS, a seven-star restaurant.
 
 Dish Name: ${item.name}
 Category: ${item.category}

@@ -93,7 +93,7 @@ export default function DeliveryFeedbackWidget({ order }) {
 
       // Generate AI insights in background (non-blocking)
       base44.integrations.Core.InvokeLLM({
-        prompt: `Restaurant improvement AI for Hermanas Bites. Customer feedback:
+        prompt: `Restaurant improvement AI for Get OS. Customer feedback:
 ORDER ITEMS: ${order.items?.map(i => i.name).join(', ') || 'N/A'}
 RATINGS: Website ${ratings.website}/5, Food ${ratings.food}/5, Hotel ${ratings.hotel}/5, Reception ${ratings.reception}/5, Service ${ratings.service}/5
 COMMENTS: ${Object.values(comments).filter(Boolean).join(' | ')}
@@ -273,7 +273,7 @@ Provide concise actionable improvement suggestions.`,
                   </div>
                   <h4 className="font-playfair text-2xl text-white mb-2">Thank You!</h4>
                   <p className="font-inter text-sm text-white/60">
-                    Your feedback has been received and will help us make Hermanas Bites even better for you.
+                    Your feedback has been received and will help us make Get OS even better for you.
                   </p>
                 </motion.div>
               )}

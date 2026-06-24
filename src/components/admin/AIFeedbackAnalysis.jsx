@@ -71,7 +71,7 @@ export default function AIFeedbackAnalysis() {
         }
       });
 
-      const prompt = `You are a customer experience analyst for "Hermanas Bites" luxury restaurant. Analyze customer feedback and provide comprehensive insights.
+      const prompt = `You are a customer experience analyst for "Get OS" luxury restaurant. Analyze customer feedback and provide comprehensive insights.
 
 FEEDBACK DATA:
 Total Comments: ${comments.length}
