@@ -76,6 +76,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Event Bookings', page: 'Events' },
     { name: 'Spa & Amenities', page: 'SpaAmenities' },
     { name: 'Guest Portal', page: 'GuestPortal' },
+    { name: 'Supplier Marketplace', page: 'SupplierMarketplace' },
   ];
 
   const formatDate = (date) => {

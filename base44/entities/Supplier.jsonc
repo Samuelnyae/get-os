@@ -40,6 +40,7 @@
     "status": {
       "type": "string",
       "enum": [
+        "pending",
         "active",
         "suspended",
         "archived"
@@ -52,6 +53,18 @@
     },
     "notes": {
       "type": "string"
+    },
+    "marketplace_registered": {
+      "type": "boolean",
+      "default": false
+    },
+    "registration_source": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "marketplace"
+      ],
+      "default": "admin"
     }
   },
   "required": [

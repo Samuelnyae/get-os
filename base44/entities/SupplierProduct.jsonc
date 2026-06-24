@@ -1,0 +1,70 @@
+{
+  "name": "SupplierProduct",
+  "type": "object",
+  "properties": {
+    "supplier_id": {
+      "type": "string"
+    },
+    "supplier_name": {
+      "type": "string"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "food",
+        "beverage",
+        "cleaning",
+        "furniture",
+        "linen",
+        "maintenance",
+        "other"
+      ],
+      "default": "food"
+    },
+    "unit": {
+      "type": "string",
+      "default": "kg"
+    },
+    "unit_price": {
+      "type": "number",
+      "default": 0
+    },
+    "min_order_qty": {
+      "type": "number",
+      "default": 1
+    },
+    "stock_available": {
+      "type": "number",
+      "default": 0
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "active",
+        "out_of_stock",
+        "discontinued"
+      ],
+      "default": "pending_review"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "supplier_id",
+    "supplier_name",
+    "product_name",
+    "unit_price"
+  ]
+}

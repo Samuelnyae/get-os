@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Users, FileText, PackageCheck, Receipt, Trash2 } from 'lucide-react';
+import { Truck, Users, FileText, PackageCheck, Receipt, Trash2, Store } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SupplierDirectory = React.lazy(() => import('@/components/supply-chain/SupplierDirectory'));
@@ -7,9 +7,11 @@ const PurchaseOrders = React.lazy(() => import('@/components/supply-chain/Purcha
 const GoodsReceived = React.lazy(() => import('@/components/supply-chain/GoodsReceived'));
 const InvoiceMatching = React.lazy(() => import('@/components/supply-chain/InvoiceMatching'));
 const WasteTracker = React.lazy(() => import('@/components/supply-chain/WasteTracker'));
+const SupplierMarketplaceAdmin = React.lazy(() => import('@/components/supply-chain/SupplierMarketplaceAdmin'));
 
 const TABS = [
   { id: 'suppliers', label: 'Supplier Directory', icon: Users },
+  { id: 'marketplace', label: 'Supplier Marketplace', icon: Store },
   { id: 'pos', label: 'Purchase Orders', icon: FileText },
   { id: 'grn', label: 'Goods Received', icon: PackageCheck },
   { id: 'invoices', label: 'Invoice Matching', icon: Receipt },
@@ -57,6 +59,7 @@ export default function SupplyChain() {
           </div>
         }>
           {activeTab === 'suppliers' && <SupplierDirectory />}
+          {activeTab === 'marketplace' && <SupplierMarketplaceAdmin />}
           {activeTab === 'pos' && <PurchaseOrders />}
           {activeTab === 'grn' && <GoodsReceived />}
           {activeTab === 'invoices' && <InvoiceMatching />}
