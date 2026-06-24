@@ -91,8 +91,8 @@ export default function Reservations() {
         await base44.integrations.Core.SendEmail({
           to: reservationData.customer_email,
           subject: status === 'waitlist' 
-            ? `Hermanas Bites - Waitlist Confirmation #${code}`
-            : `Hermanas Bites - Reservation Confirmation #${code}`,
+            ? `Get OS - Waitlist Confirmation #${code}`
+            : `Get OS - Reservation Confirmation #${code}`,
           body: `
 Dear ${reservationData.customer_name},
 
@@ -116,7 +116,7 @@ ${status === 'pending'
 We look forward to serving you!
 
 Best regards,
-Hermanas Bites - Seven Star Dining
+Get OS - Seven Star Dining
           `
         });
       } catch (emailError) {

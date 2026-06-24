@@ -90,7 +90,7 @@ export default function AIInsights() {
         return acc;
       }, {});
 
-    const prompt = `You are a restaurant business analyst AI for Hermanas Bites, a seven-star luxury dining establishment.
+    const prompt = `You are a restaurant business analyst AI for Get OS, a seven-star luxury dining establishment.
 
 Based on the following data:
 - Total Revenue: KES ${totalRevenue.toLocaleString()}

@@ -51,7 +51,7 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
     };
 
     // Header
-    center('Digital Bites', 14, true);
+    center('Get OS', 14, true);
     center('SEVEN STAR DINING', 7);
     divider();
 
@@ -105,7 +105,7 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
     doc.setTextColor(100);
     doc.text('Present this receipt at the cashier to complete payment.', W / 2, y, { align: 'center' });
     y += 5;
-    doc.text('Thank you for choosing Digital Bites!', W / 2, y, { align: 'center' });
+    doc.text('Thank you for choosing Get OS!', W / 2, y, { align: 'center' });
 
     doc.save(`receipt-${orderReference}.pdf`);
   };
@@ -124,7 +124,7 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
       {/* Receipt Preview */}
       <div className="mt-4 bg-white text-black rounded-xl p-5 font-mono text-xs border border-[#c9a962]/20">
         <div className="text-center mb-3">
-          <p className="text-lg font-bold">Digital Bites</p>
+          <p className="text-lg font-bold">Get OS</p>
           <p className="text-[10px] tracking-widest text-gray-500 uppercase">Seven Star Dining</p>
         </div>
         <div className="border-t border-dashed border-gray-300 my-3" />
@@ -174,7 +174,7 @@ export default function OrderReceipt({ orderReference, customerInfo, cart, total
 
         <div className="border-t border-dashed border-gray-300 my-3" />
         <p className="text-[10px] text-gray-400 text-center">Present this receipt at the cashier to complete payment.</p>
-        <p className="text-[10px] text-gray-400 text-center mt-1">Thank you for choosing Digital Bites!</p>
+        <p className="text-[10px] text-gray-400 text-center mt-1">Thank you for choosing Get OS!</p>
       </div>
     </div>
   );

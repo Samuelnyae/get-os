@@ -36,17 +36,17 @@ export default function Contact() {
       // Send confirmation email to customer
       await base44.integrations.Core.SendEmail({
         to: formData.email,
-        subject: `Hermanas Bites - We Received Your Message`,
+        subject: `Get OS - We Received Your Message`,
         body: `
 Dear ${formData.name},
 
-Thank you for contacting Hermanas Bites! We have received your message and will get back to you within 24 hours.
+Thank you for contacting Get OS! We have received your message and will get back to you within 24 hours.
 
 Your Message:
 ${formData.message}
 
 Best regards,
-Hermanas Bites - Seven Star Dining
+Get OS - Seven Star Dining
         `
       });
 

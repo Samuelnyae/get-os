@@ -10,37 +10,37 @@ export default function SEOHead({
   useEffect(() => {
     // Enhanced title with brand name
     document.title = title 
-      ? `${title} | Hermanas Bites` 
-      : 'Hermanas Bites | Seven Star Luxury Restaurant & Fine Dining Experience';
+      ? `${title} | Get OS` 
+      : 'Get OS | Seven Star Luxury Restaurant & Fine Dining Experience';
     
     // Enhanced default description
-    const finalDescription = description || 'Hermanas Bites - Premier seven-star luxury restaurant. Experience world-class gourmet cuisine, AI-powered personalized service, elegant ambiance, online ordering, table reservations, and custom menu creations. Order now for delivery or dine-in.';
+    const finalDescription = description || 'Get OS - Premier seven-star luxury restaurant. Experience world-class gourmet cuisine, AI-powered personalized service, elegant ambiance, online ordering, table reservations, and custom menu creations. Order now for delivery or dine-in.';
     
     // Enhanced keywords
-    const finalKeywords = keywords || 'Hermanas Bites, hermanas, bites, hermanas bites restaurant, luxury restaurant, seven star dining, fine dining, gourmet food, best restaurant, restaurant near me, food delivery, online food order, table reservations, custom food, AI restaurant, elegant dining, premium restaurant';
+    const finalKeywords = keywords || 'Get OS, get os, get os restaurant, luxury restaurant, seven star dining, fine dining, gourmet food, best restaurant, restaurant near me, food delivery, online food order, table reservations, custom food, AI restaurant, elegant dining, premium restaurant';
     
     // Set or update meta tags
     const metaTags = {
       'description': finalDescription,
       'keywords': finalKeywords,
-      'author': 'Hermanas Bites',
+      'author': 'Get OS',
       'robots': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
       'googlebot': 'index, follow',
       'bingbot': 'index, follow',
-      'og:title': title || 'Hermanas Bites - Seven Star Luxury Restaurant',
+      'og:title': title || 'Get OS - Seven Star Luxury Restaurant',
       'og:description': finalDescription,
       'og:image': image,
       'og:image:width': '1200',
       'og:image:height': '630',
       'og:type': type,
-      'og:site_name': 'Hermanas Bites',
+      'og:site_name': 'Get OS',
       'og:locale': 'en_US',
       'twitter:card': 'summary_large_image',
-      'twitter:site': '@HermanasBites',
-      'twitter:title': title || 'Hermanas Bites - Seven Star Luxury Restaurant',
+      'twitter:site': '@GetOS',
+      'twitter:title': title || 'Get OS - Seven Star Luxury Restaurant',
       'twitter:description': finalDescription,
       'twitter:image': image,
-      'twitter:image:alt': 'Hermanas Bites - Luxury Dining',
+      'twitter:image:alt': 'Get OS - Luxury Dining',
     };
 
     // Apply meta tags
@@ -71,8 +71,8 @@ export default function SEOHead({
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "Restaurant",
-      "name": "Hermanas Bites",
-      "alternateName": "Hermanas Bites Restaurant",
+      "name": "Get OS",
+      "alternateName": "Get OS Restaurant",
       "description": finalDescription,
       "url": window.location.origin,
       "image": [image],

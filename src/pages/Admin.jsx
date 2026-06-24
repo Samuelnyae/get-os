@@ -143,7 +143,7 @@ export default function Admin() {
               </div>
               <div>
                 <h1 className="font-playfair text-3xl text-white">Admin Panel</h1>
-                <p className="font-inter text-sm text-white/50">Hermanas Bites Management</p>
+                <p className="font-inter text-sm text-white/50">Get OS Management</p>
               </div>
             </div>
           </div>

@@ -29,7 +29,7 @@ export default function OrderTracking() {
     preparing: { title: '👨‍🍳 Being Prepared', body: 'Our chefs are preparing your meal!', icon: '👨‍🍳' },
     ready: { title: '✨ Order Ready!', body: 'Your order is ready for pickup/delivery.', icon: '✨' },
     out_for_delivery: { title: '🚚 Out for Delivery', body: 'Your order is on its way!', icon: '🚚' },
-    delivered: { title: '🎉 Order Delivered!', body: 'Enjoy your meal from Hermanas Bites!', icon: '🎉' },
+    delivered: { title: '🎉 Order Delivered!', body: 'Enjoy your meal from Get OS!', icon: '🎉' },
   };
 
   const handleStatusChange = (newOrder) => {

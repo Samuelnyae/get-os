@@ -153,7 +153,7 @@ export default function SupplierMarketplace() {
             </div>
             <h1 className="font-playfair text-4xl md:text-5xl gold-gradient mb-4">Supplier Marketplace</h1>
             <p className="font-inter text-white/60 max-w-2xl mx-auto text-sm leading-relaxed">
-              Register as a supplier, list your products, and connect with Digital Bites procurement.
+              Register as a supplier, list your products, and connect with Get OS procurement.
               Browse the active supplier catalog and submit your offerings for review.
             </p>
           </motion.div>

@@ -139,10 +139,10 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c9a962] to-[#e4d5a7] flex items-center justify-center">
-                <span className="font-playfair text-xl text-[#0a0a0a] font-bold">DB</span>
+                <span className="font-playfair text-xl text-[#0a0a0a] font-bold">GO</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-playfair text-xl font-semibold gold-gradient">Digital Bites</h1>
+                <h1 className="font-playfair text-xl font-semibold gold-gradient">Get OS</h1>
                 <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Seven Star Dining</p>
               </div>
             </Link>
@@ -292,7 +292,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-start">
             {/* Brand */}
             <div className="md:col-span-2">
-              <h2 className="font-playfair text-3xl gold-gradient mb-4">Digital Bites</h2>
+              <h2 className="font-playfair text-3xl gold-gradient mb-4">Get OS</h2>
               <p className="font-cormorant text-lg text-white/60 leading-relaxed max-w-md">
                 {t('footerTagline')}
               </p>
@@ -320,7 +320,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-[#c9a962]/20 mt-12 pt-8 text-center">
             <p className="font-inter text-xs text-white/40">
-              © {new Date().getFullYear()} Digital Bites. Seven Star Luxury Dining Experience. {t('allRightsReserved')}
+              © {new Date().getFullYear()} Get OS. Seven Star Luxury Dining Experience. {t('allRightsReserved')}
             </p>
           </div>
         </div>

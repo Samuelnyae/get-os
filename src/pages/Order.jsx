@@ -119,14 +119,14 @@ export default function Order() {
         try {
           await base44.integrations.Core.SendEmail({
             to: orderData.customer_email,
-            subject: `Digital Bites - Order Confirmation #${orderData.order_reference}`,
+            subject: `Get OS - Order Confirmation #${orderData.order_reference}`,
             body: `
 Dear ${orderData.customer_name},
 
-Thank you for your order at Digital Bites!
+Thank you for your order at Get OS!
 ...
 Best regards,
-Digital Bites - Seven Star Dining
+Get OS - Seven Star Dining
             `
           });
           toast.success('Order confirmation email sent!');
@@ -329,8 +329,8 @@ Digital Bites - Seven Star Dining
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <SEOHead 
         title="Order Now - Online Food Ordering & Delivery"
-        description="Order gourmet food online from Digital Bites. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
-        keywords="Digital Bites order, order food online, food delivery, online ordering, checkout, place order, gourmet delivery"
+        description="Order gourmet food online from Get OS. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
+        keywords="Get OS order, order food online, food delivery, online ordering, checkout, place order, gourmet delivery"
       />
       <div className="max-w-6xl mx-auto">
         <SectionHeader 
