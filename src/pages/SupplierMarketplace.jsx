@@ -65,7 +65,7 @@ export default function SupplierMarketplace() {
   const registerSupplier = useMutation({
     mutationFn: (data) => base44.entities.Supplier.create({
       ...data,
-      status: 'pending',
+      status: 'active',
       marketplace_registered: true,
       registration_source: 'marketplace',
     }),
@@ -74,7 +74,7 @@ export default function SupplierMarketplace() {
       setMySupplierId(rec.id);
       setShowSupplierForm(false);
       setSupplierForm(EMPTY_SUPPLIER);
-      setSubmitMsg({ type: 'success', text: 'Registration submitted! Your application is pending admin approval.' });
+      setSubmitMsg({ type: 'success', text: 'Registration complete! Your supplier account is active. You can now list products.' });
       qc.invalidateQueries(['marketplace_suppliers']);
       setTab('myproducts');
     },
@@ -303,8 +303,7 @@ export default function SupplierMarketplace() {
             {mySupplier.status !== 'active' && (
               <div className="flex items-center gap-2 p-4 rounded-xl bg-orange-400/10 border border-orange-400/20 text-orange-400 font-inter text-sm">
                 <Clock className="w-4 h-4" />
-                Your supplier account is {mySupplier.status === 'pending' ? 'pending admin approval' : mySupplier.status}.
-                You can list products now, but they'll only appear in the marketplace once approved.
+                Your supplier account is currently {mySupplier.status}. Please contact the administrator.
               </div>
             )}
             <div className="flex items-center justify-between">

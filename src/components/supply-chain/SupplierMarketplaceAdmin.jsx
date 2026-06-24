@@ -49,7 +49,6 @@ export default function SupplierMarketplaceAdmin() {
   });
 
   const marketplaceSuppliers = suppliers.filter(s => s.marketplace_registered);
-  const pendingSuppliers = marketplaceSuppliers.filter(s => s.status === 'pending');
   const pendingProducts = products.filter(p => p.status === 'pending_review');
 
   const filteredProducts = products.filter(p => {
@@ -65,7 +64,7 @@ export default function SupplierMarketplaceAdmin() {
         <div>
           <h3 className="font-inter text-white font-semibold text-lg">Supplier Marketplace</h3>
           <p className="text-white/40 font-inter text-xs mt-0.5">
-            {marketplaceSuppliers.length} marketplace suppliers · {pendingSuppliers.length} pending approval · {pendingProducts.length} products pending review
+            {marketplaceSuppliers.length} marketplace suppliers · {pendingProducts.length} products pending review
           </p>
         </div>
       </div>
@@ -76,7 +75,7 @@ export default function SupplierMarketplaceAdmin() {
           { id: 'overview', label: 'Overview', icon: Store },
           { id: 'suppliers', label: `Suppliers (${marketplaceSuppliers.length})`, icon: Store },
           { id: 'products', label: `Products (${products.length})`, icon: Package },
-          { id: 'pending', label: `Pending Approvals (${pendingSuppliers.length + pendingProducts.length})`, icon: Clock },
+          { id: 'pending', label: `Pending Products (${pendingProducts.length})`, icon: Clock },
         ].map(t => (
           <button key={t.id} onClick={() => setView(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-inter text-sm transition-all ${view === t.id ? 'bg-[#c9a962] text-[#0a0a0a] font-semibold' : 'bg-[#1a1a1a] text-white/60 border border-[#c9a962]/10'}`}>
@@ -90,7 +89,7 @@ export default function SupplierMarketplaceAdmin() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Marketplace Suppliers', value: marketplaceSuppliers.length, icon: Store, color: 'text-[#c9a962]' },
-            { label: 'Pending Approval', value: pendingSuppliers.length, icon: Clock, color: 'text-orange-400' },
+            { label: 'Active Suppliers', value: marketplaceSuppliers.filter(s => s.status === 'active').length, icon: Check, color: 'text-green-400' },
             { label: 'Products Listed', value: products.length, icon: Package, color: 'text-green-400' },
             { label: 'Pending Review', value: pendingProducts.length, icon: AlertCircle, color: 'text-orange-400' },
           ].map((s, i) => (
@@ -123,12 +122,6 @@ export default function SupplierMarketplaceAdmin() {
                   <p className="text-white/60 font-inter text-xs">📦 {productCount} products listed</p>
                 </div>
                 <div className="flex gap-2 pt-3 border-t border-white/5">
-                  {s.status === 'pending' && (
-                    <button onClick={() => updateSupplier.mutate({ id: s.id, data: { status: 'active' } })}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-green-400/10 hover:bg-green-400/20 rounded-lg text-green-400 transition-all">
-                      <Check className="w-3 h-3" /><span className="font-inter text-xs">Approve</span>
-                    </button>
-                  )}
                   {s.status === 'active' && (
                     <button onClick={() => updateSupplier.mutate({ id: s.id, data: { status: 'suspended' } })}
                       className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-400/10 hover:bg-red-400/20 rounded-lg text-red-400 transition-all">
@@ -211,40 +204,9 @@ export default function SupplierMarketplaceAdmin() {
         </div>
       )}
 
-      {/* Pending Approvals */}
+      {/* Pending Products */}
       {view === 'pending' && (
         <div className="space-y-6">
-          {/* Pending Suppliers */}
-          <div>
-            <h4 className="font-inter text-white font-semibold text-sm mb-3">Pending Supplier Registrations</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {pendingSuppliers.map(s => (
-                <div key={s.id} className="bg-[#1a1a1a] border border-orange-400/20 rounded-xl p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="text-white font-inter font-semibold text-sm">{s.company_name}</p>
-                      <p className="text-white/50 font-inter text-xs">{s.contact_person} · {s.email}</p>
-                    </div>
-                    <span className="font-inter text-xs px-2 py-0.5 rounded-full text-orange-400 bg-orange-400/10">Pending</span>
-                  </div>
-                  <p className="text-white/40 font-inter text-xs mb-3">📞 {s.phone} · 📦 {s.category}</p>
-                  <div className="flex gap-2">
-                    <button onClick={() => updateSupplier.mutate({ id: s.id, data: { status: 'active' } })}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-green-400/10 hover:bg-green-400/20 rounded-lg text-green-400 transition-all">
-                      <Check className="w-3 h-3" /><span className="font-inter text-xs">Approve</span>
-                    </button>
-                    <button onClick={() => updateSupplier.mutate({ id: s.id, data: { status: 'archived' } })}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-400/10 hover:bg-red-400/20 rounded-lg text-red-400 transition-all">
-                      <X className="w-3 h-3" /><span className="font-inter text-xs">Reject</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {pendingSuppliers.length === 0 && <p className="text-white/30 font-inter text-sm">No pending supplier registrations.</p>}
-            </div>
-          </div>
-
-          {/* Pending Products */}
           <div>
             <h4 className="font-inter text-white font-semibold text-sm mb-3">Pending Product Reviews</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
