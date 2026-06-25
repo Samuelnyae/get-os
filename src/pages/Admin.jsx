@@ -42,6 +42,7 @@ const CompetitorBenchmark = React.lazy(() => import('@/components/admin/Competit
 const SustainabilityReport = React.lazy(() => import('@/components/admin/SustainabilityReport'));
 const SupplyChain = React.lazy(() => import('./SupplyChain'));
 const Integrations = React.lazy(() => import('./Integrations'));
+const EventBookingsAdmin = React.lazy(() => import('@/components/admin/EventBookingsAdmin'));
 
 
 export default function Admin() {
@@ -120,6 +121,7 @@ export default function Admin() {
     { id: 'driver', label: '🚚 Driver Mode', icon: Truck },
     { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: Calendar },
+    { id: 'event-bookings', label: '📅 Event Bookings', icon: Calendar },
     { id: 'staff', label: 'Staff', icon: User },
     { id: 'stock', label: 'Stock Alerts', icon: Package },
     { id: 'inventory-tracking', label: 'Inventory Tracking', icon: Package },
@@ -232,6 +234,7 @@ export default function Admin() {
             {activeTab === 'reorder-agent' && <AIInventoryReorderAgent />}
             {activeTab === 'orders' && <OrdersManager />}
             {activeTab === 'reservations' && <ReservationsManager />}
+            {activeTab === 'event-bookings' && <EventBookingsAdmin />}
             {activeTab === 'staff' && <StaffManager />}
             {activeTab === 'stock' && <LowStockAlerts />}
             {activeTab === 'inventory-tracking' && (
