@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Users, FileText, PackageCheck, Receipt, Trash2, Store } from 'lucide-react';
+import { Truck, Users, FileText, PackageCheck, Receipt, Trash2, Store, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SupplierDirectory = React.lazy(() => import('@/components/supply-chain/SupplierDirectory'));
@@ -8,6 +8,7 @@ const GoodsReceived = React.lazy(() => import('@/components/supply-chain/GoodsRe
 const InvoiceMatching = React.lazy(() => import('@/components/supply-chain/InvoiceMatching'));
 const WasteTracker = React.lazy(() => import('@/components/supply-chain/WasteTracker'));
 const SupplierMarketplaceAdmin = React.lazy(() => import('@/components/supply-chain/SupplierMarketplaceAdmin'));
+const VendorPerformanceDashboard = React.lazy(() => import('@/components/supply-chain/VendorPerformanceDashboard'));
 
 const TABS = [
   { id: 'suppliers', label: 'Supplier Directory', icon: Users },
@@ -16,6 +17,7 @@ const TABS = [
   { id: 'grn', label: 'Goods Received', icon: PackageCheck },
   { id: 'invoices', label: 'Invoice Matching', icon: Receipt },
   { id: 'waste', label: 'Waste Tracking', icon: Trash2 },
+  { id: 'performance', label: 'Vendor Performance', icon: BarChart3 },
 ];
 
 export default function SupplyChain() {
@@ -64,6 +66,7 @@ export default function SupplyChain() {
           {activeTab === 'grn' && <GoodsReceived />}
           {activeTab === 'invoices' && <InvoiceMatching />}
           {activeTab === 'waste' && <WasteTracker />}
+          {activeTab === 'performance' && <VendorPerformanceDashboard />}
         </React.Suspense>
       </motion.div>
     </div>
