@@ -71,6 +71,7 @@ export default function Layout({ children, currentPageName }) {
   const servicesLinks = [
     { name: t('tableDining'), page: 'TableDining' },
     { name: t('reservations'), page: 'Reservations' },
+    { name: t('trackOrder'), page: 'OrderTracking' },
     { name: t('customizeOrder'), page: 'CustomFood' },
     { name: 'Rooms & Suites', page: 'Rooms' },
     { name: 'Event Bookings', page: 'Events' },
