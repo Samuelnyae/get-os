@@ -1,0 +1,42 @@
+{
+  "name": "SupplierReview",
+  "type": "object",
+  "properties": {
+    "supplier_id": {
+      "type": "string"
+    },
+    "supplier_name": {
+      "type": "string"
+    },
+    "reviewer_name": {
+      "type": "string"
+    },
+    "reviewer_email": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number",
+      "description": "1-5 stars"
+    },
+    "review_text": {
+      "type": "string"
+    },
+    "order_ref": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "flagged",
+        "hidden"
+      ],
+      "default": "published"
+    }
+  },
+  "required": [
+    "supplier_id",
+    "reviewer_name",
+    "rating"
+  ]
+}

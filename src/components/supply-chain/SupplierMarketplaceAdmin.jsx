@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import {
-  Store, Package, Check, X, Clock, Star, Search, Box, Trash2, Award, AlertCircle
+  Store, Package, Check, X, Clock, Star, Search, Box, Trash2, Award, AlertCircle, FileText, ShoppingBag, Percent
 } from 'lucide-react';
 
 const CATEGORIES = ['food', 'beverage', 'cleaning', 'furniture', 'linen', 'maintenance', 'other'];
@@ -34,6 +34,18 @@ export default function SupplierMarketplaceAdmin() {
     queryKey: ['supplier_products'],
     queryFn: () => base44.entities.SupplierProduct.list('-created_date', 200),
   });
+  const { data: procurementOrders = [] } = useQuery({
+    queryKey: ['procurement_orders'],
+    queryFn: () => base44.entities.MarketplaceProcurementOrder.list('-created_date', 100),
+  });
+  const { data: rfqs = [] } = useQuery({
+    queryKey: ['rfqs'],
+    queryFn: () => base44.entities.RFQ.list('-created_date', 100),
+  });
+  const { data: rfqQuotes = [] } = useQuery({
+    queryKey: ['rfq_quotes'],
+    queryFn: () => base44.entities.RFQQuote.list('-created_date', 200),
+  });
 
   const updateSupplier = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Supplier.update(id, data),
@@ -50,6 +62,8 @@ export default function SupplierMarketplaceAdmin() {
 
   const marketplaceSuppliers = suppliers.filter(s => s.marketplace_registered);
   const pendingProducts = products.filter(p => p.status === 'pending_review');
+  const totalCommission = procurementOrders.reduce((s, o) => s + (o.commission_total || 0), 0);
+  const totalOrderValue = procurementOrders.reduce((s, o) => s + (o.total_amount || 0), 0);
 
   const filteredProducts = products.filter(p => {
     const matchSearch = p.product_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -76,6 +90,8 @@ export default function SupplierMarketplaceAdmin() {
           { id: 'suppliers', label: `Suppliers (${marketplaceSuppliers.length})`, icon: Store },
           { id: 'products', label: `Products (${products.length})`, icon: Package },
           { id: 'pending', label: `Pending Products (${pendingProducts.length})`, icon: Clock },
+          { id: 'orders', label: `Procurement Orders (${procurementOrders.length})`, icon: ShoppingBag },
+          { id: 'rfqs', label: `RFQs (${rfqs.length})`, icon: FileText },
         ].map(t => (
           <button key={t.id} onClick={() => setView(t.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-inter text-sm transition-all ${view === t.id ? 'bg-[#c9a962] text-[#0a0a0a] font-semibold' : 'bg-[#1a1a1a] text-white/60 border border-[#c9a962]/10'}`}>
@@ -92,6 +108,10 @@ export default function SupplierMarketplaceAdmin() {
             { label: 'Active Suppliers', value: marketplaceSuppliers.filter(s => s.status === 'active').length, icon: Check, color: 'text-green-400' },
             { label: 'Products Listed', value: products.length, icon: Package, color: 'text-green-400' },
             { label: 'Pending Review', value: pendingProducts.length, icon: AlertCircle, color: 'text-orange-400' },
+            { label: 'Procurement Orders', value: procurementOrders.length, icon: ShoppingBag, color: 'text-blue-400' },
+            { label: 'Total Order Value', value: 'KSh ' + Number(totalOrderValue).toLocaleString(), icon: ShoppingBag, color: 'text-green-400' },
+            { label: 'Commission Earned', value: 'KSh ' + Number(totalCommission).toLocaleString(), icon: Percent, color: 'text-[#c9a962]' },
+            { label: 'Active RFQs', value: rfqs.filter(r => r.status === 'open' || r.status === 'quoted').length, icon: FileText, color: 'text-orange-400' },
           ].map((s, i) => (
             <div key={i} className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
               <s.icon className={`w-5 h-5 ${s.color} mb-2`} />
@@ -232,6 +252,99 @@ export default function SupplierMarketplaceAdmin() {
               ))}
               {pendingProducts.length === 0 && <p className="text-white/30 font-inter text-sm">No pending product reviews.</p>}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Procurement Orders */}
+      {view === 'orders' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
+              <ShoppingBag className="w-5 h-5 text-blue-400 mb-2" />
+              <p className="font-playfair text-2xl text-white">{procurementOrders.length}</p>
+              <p className="font-inter text-[10px] text-white/40 uppercase tracking-wider">Total Orders</p>
+            </div>
+            <div className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
+              <ShoppingBag className="w-5 h-5 text-green-400 mb-2" />
+              <p className="font-playfair text-2xl text-white">KSh {Number(totalOrderValue).toLocaleString()}</p>
+              <p className="font-inter text-[10px] text-white/40 uppercase tracking-wider">Order Value</p>
+            </div>
+            <div className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
+              <Percent className="w-5 h-5 text-[#c9a962] mb-2" />
+              <p className="font-playfair text-2xl text-white">KSh {Number(totalCommission).toLocaleString()}</p>
+              <p className="font-inter text-[10px] text-white/40 uppercase tracking-wider">Commission Earned</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {procurementOrders.map(o => (
+              <div key={o.id} className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="font-inter text-white font-semibold text-sm">{o.buyer_name}</p>
+                    <p className="font-inter text-xs text-white/40">{o.buyer_email} · {o.items?.length || 0} items · {o.vendor_splits?.length || 0} vendors</p>
+                  </div>
+                  <span className={`font-inter text-[10px] px-2 py-0.5 rounded-full ${o.status === 'pending' ? 'text-orange-400 bg-orange-400/10' : o.status === 'confirmed' || o.status === 'processing' ? 'text-blue-400 bg-blue-400/10' : o.status === 'delivered' ? 'text-green-400 bg-green-400/10' : 'text-white/30 bg-white/5'}`}>{o.status}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="bg-[#0f0f0f] rounded-lg p-3">
+                    <p className="font-inter text-[10px] text-white/40 uppercase mb-1">Vendor Splits</p>
+                    {o.vendor_splits?.map((v, i) => (
+                      <div key={i} className="flex justify-between font-inter text-xs py-0.5">
+                        <span className="text-white/60">{v.supplier_name}</span>
+                        <span className="text-white">KSh {Number(v.subtotal).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-[#0f0f0f] rounded-lg p-3">
+                    <p className="font-inter text-[10px] text-white/40 uppercase mb-1">Commission</p>
+                    <p className="font-playfair text-lg text-[#c9a962]">KSh {Number(o.commission_total || 0).toLocaleString()}</p>
+                    <p className="font-inter text-[10px] text-white/40">{o.commission_rate}% rate</p>
+                  </div>
+                  <div className="bg-[#0f0f0f] rounded-lg p-3">
+                    <p className="font-inter text-[10px] text-white/40 uppercase mb-1">Total</p>
+                    <p className="font-playfair text-lg text-white">KSh {Number(o.total_amount || 0).toLocaleString()}</p>
+                    <p className="font-inter text-[10px] text-green-400">Payouts: KSh {Number(o.total_payout || 0).toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {procurementOrders.length === 0 && <p className="text-white/30 font-inter text-sm py-8 text-center">No procurement orders yet.</p>}
+          </div>
+        </div>
+      )}
+
+      {/* RFQs */}
+      {view === 'rfqs' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {rfqs.map(rfq => {
+              const quotes = rfqQuotes.filter(q => q.rfq_id === rfq.id);
+              return (
+                <div key={rfq.id} className="bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-inter text-white font-semibold text-sm">{rfq.product_name}</p>
+                      <p className="font-inter text-xs text-white/40">{rfq.quantity} {rfq.unit} · {rfq.category}</p>
+                    </div>
+                    <span className={`font-inter text-[10px] px-2 py-0.5 rounded-full ${rfq.status === 'open' ? 'text-orange-400 bg-orange-400/10' : rfq.status === 'quoted' ? 'text-blue-400 bg-blue-400/10' : rfq.status === 'accepted' ? 'text-green-400 bg-green-400/10' : 'text-white/30 bg-white/5'}`}>{rfq.status}</span>
+                  </div>
+                  <p className="font-inter text-xs text-white/50 mb-1">👤 {rfq.buyer_name} ({rfq.buyer_email})</p>
+                  {rfq.product_description && <p className="font-inter text-xs text-white/40 mb-2">{rfq.product_description}</p>}
+                  <div className="pt-2 border-t border-white/5">
+                    <p className="font-inter text-[10px] text-white/40 uppercase mb-1">Quotes ({quotes.length})</p>
+                    {quotes.map(q => (
+                      <div key={q.id} className="flex justify-between font-inter text-xs py-0.5">
+                        <span className="text-white/60">{q.supplier_name}</span>
+                        <span className="text-[#c9a962]">KSh {Number(q.quoted_unit_price).toLocaleString()}</span>
+                      </div>
+                    ))}
+                    {quotes.length === 0 && <p className="font-inter text-[10px] text-white/30">No quotes yet.</p>}
+                  </div>
+                </div>
+              );
+            })}
+            {rfqs.length === 0 && <p className="text-white/30 font-inter text-sm py-8 text-center col-span-3">No RFQs submitted yet.</p>}
           </div>
         </div>
       )}

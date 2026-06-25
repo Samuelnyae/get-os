@@ -1,0 +1,72 @@
+{
+  "name": "RFQ",
+  "type": "object",
+  "properties": {
+    "buyer_name": {
+      "type": "string"
+    },
+    "buyer_email": {
+      "type": "string"
+    },
+    "buyer_phone": {
+      "type": "string"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "product_description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "food",
+        "beverage",
+        "cleaning",
+        "furniture",
+        "linen",
+        "maintenance",
+        "other"
+      ],
+      "default": "food"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    },
+    "unit": {
+      "type": "string",
+      "default": "kg"
+    },
+    "target_supplier_id": {
+      "type": "string"
+    },
+    "target_supplier_name": {
+      "type": "string"
+    },
+    "delivery_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "quoted",
+        "accepted",
+        "closed",
+        "cancelled"
+      ],
+      "default": "open"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "buyer_name",
+    "buyer_email",
+    "product_name",
+    "quantity"
+  ]
+}

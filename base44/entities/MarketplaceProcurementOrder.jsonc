@@ -1,0 +1,115 @@
+{
+  "name": "MarketplaceProcurementOrder",
+  "type": "object",
+  "properties": {
+    "buyer_name": {
+      "type": "string"
+    },
+    "buyer_email": {
+      "type": "string"
+    },
+    "buyer_phone": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "supplier_id": {
+            "type": "string"
+          },
+          "supplier_name": {
+            "type": "string"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "line_total": {
+            "type": "number"
+          }
+        }
+      },
+      "default": []
+    },
+    "vendor_splits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "supplier_id": {
+            "type": "string"
+          },
+          "supplier_name": {
+            "type": "string"
+          },
+          "item_count": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "commission_rate": {
+            "type": "number"
+          },
+          "commission_amount": {
+            "type": "number"
+          },
+          "net_payout": {
+            "type": "number"
+          }
+        }
+      },
+      "default": []
+    },
+    "total_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "commission_rate": {
+      "type": "number",
+      "default": 10
+    },
+    "commission_total": {
+      "type": "number",
+      "default": 0
+    },
+    "total_payout": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "processing",
+        "delivered",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "delivery_address": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "buyer_name",
+    "items"
+  ]
+}

@@ -51,6 +51,11 @@
       "type": "number",
       "default": 0
     },
+    "commission_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Per-vendor commission override; 0 = use platform default"
+    },
     "notes": {
       "type": "string"
     },

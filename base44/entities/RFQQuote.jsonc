@@ -1,0 +1,54 @@
+{
+  "name": "RFQQuote",
+  "type": "object",
+  "properties": {
+    "rfq_id": {
+      "type": "string"
+    },
+    "rfq_product_name": {
+      "type": "string"
+    },
+    "supplier_id": {
+      "type": "string"
+    },
+    "supplier_name": {
+      "type": "string"
+    },
+    "quoted_unit_price": {
+      "type": "number",
+      "default": 0
+    },
+    "unit": {
+      "type": "string",
+      "default": "kg"
+    },
+    "delivery_timeframe": {
+      "type": "string"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date"
+    },
+    "terms": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "accepted",
+        "rejected"
+      ],
+      "default": "submitted"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "rfq_id",
+    "supplier_id",
+    "supplier_name",
+    "quoted_unit_price"
+  ]
+}

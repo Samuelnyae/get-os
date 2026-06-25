@@ -35,6 +35,24 @@
       "type": "number",
       "default": 0
     },
+    "tier_pricing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "min_qty": {
+            "type": "number"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
     "min_order_qty": {
       "type": "number",
       "default": 1
