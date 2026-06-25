@@ -44,6 +44,7 @@ const SupplyChain = React.lazy(() => import('./SupplyChain'));
 const Integrations = React.lazy(() => import('./Integrations'));
 const EventBookingsAdmin = React.lazy(() => import('@/components/admin/EventBookingsAdmin'));
 const AmenityBookingsAdmin = React.lazy(() => import('@/components/admin/AmenityBookingsAdmin'));
+const VendorPerformanceDashboard = React.lazy(() => import('@/components/admin/VendorPerformanceDashboard'));
 
 
 export default function Admin() {
@@ -102,6 +103,7 @@ export default function Admin() {
     { id: 'competitor', label: '🏆 Competitor Benchmark', icon: Star },
     { id: 'sustainability', label: '🌿 Sustainability', icon: Leaf },
     { id: 'supply-chain', label: '🚚 Supply Chain', icon: Truck },
+    { id: 'vendor-performance', label: '📊 Vendor Performance', icon: BarChart3 },
     { id: 'integrations', label: '⚡ Integrations', icon: Zap },
     { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
     { id: 'insights', label: 'AI Insights', icon: BarChart3 },
@@ -192,6 +194,7 @@ export default function Admin() {
             {activeTab === 'competitor' && <CompetitorBenchmark />}
             {activeTab === 'sustainability' && <SustainabilityReport />}
             {activeTab === 'supply-chain' && <SupplyChain />}
+            {activeTab === 'vendor-performance' && <VendorPerformanceDashboard />}
             {activeTab === 'integrations' && <Integrations />}
             {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'insights' && <AIInsights />}
