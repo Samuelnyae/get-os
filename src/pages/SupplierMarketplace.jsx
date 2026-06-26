@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Store, Package, Plus, Search, X, Check, Clock, LogOut, Edit, Trash2, Box,
-  ShoppingCart, FileText, BarChart3
+  ShoppingCart, FileText, BarChart3, Upload, Loader2
 } from 'lucide-react';
 import { CATEGORIES, CAT_EMOJI, addToCart, getCart, formatKSh } from '@/lib/marketplace';
 import MarketplaceCart from '@/components/marketplace/MarketplaceCart';
@@ -47,6 +47,7 @@ export default function SupplierMarketplace() {
   const [submitMsg, setSubmitMsg] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', phone: '' });
+  const [uploadingImage, setUploadingImage] = useState(false);
   const qc = useQueryClient();
 
   useEffect(() => {
@@ -132,6 +133,21 @@ export default function SupplierMarketplace() {
 
   const handleTargetRFQ = () => {
     setTab('rfq');
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setProductForm(p => ({ ...p, image_url: file_url }));
+      setSubmitMsg({ type: 'success', text: 'Image uploaded.' });
+    } catch {
+      setSubmitMsg({ type: 'error', text: 'Image upload failed. Try a URL instead.' });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const filteredProducts = products.filter(p => {
@@ -487,9 +503,24 @@ export default function SupplierMarketplace() {
                     className="w-full bg-[#0a0a0a] border border-[#c9a962]/20 text-white rounded-lg px-3 py-2 font-inter text-sm" />
                 </div>
                 <div className="col-span-2">
-                  <label className="font-inter text-xs text-white/50 mb-1 block">Image URL (optional)</label>
-                  <input value={productForm.image_url} onChange={e => setProductForm(p => ({ ...p, image_url: e.target.value }))} placeholder="https://..."
-                    className="w-full bg-[#0a0a0a] border border-[#c9a962]/20 text-white rounded-lg px-3 py-2 font-inter text-sm" />
+                  <label className="font-inter text-xs text-white/50 mb-1 block">Product Image</label>
+                  <div className="flex items-center gap-3">
+                    <label className={`flex items-center gap-2 px-3 py-2 bg-[#c9a962]/10 border border-[#c9a962]/30 text-[#c9a962] rounded-lg font-inter text-sm cursor-pointer hover:bg-[#c9a962]/20 ${uploadingImage ? 'opacity-50 pointer-events-none' : ''}`}>
+                      {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      {uploadingImage ? 'Uploading...' : 'Upload Image'}
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
+                    </label>
+                    <input value={productForm.image_url} onChange={e => setProductForm(p => ({ ...p, image_url: e.target.value }))} placeholder="...or paste image URL"
+                      className="flex-1 bg-[#0a0a0a] border border-[#c9a962]/20 text-white rounded-lg px-3 py-2 font-inter text-sm" />
+                  </div>
+                  {productForm.image_url && (
+                    <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-[#c9a962]/20">
+                      <img src={productForm.image_url} alt="Preview" className="w-full h-full object-cover" />
+                      <button onClick={() => setProductForm(p => ({ ...p, image_url: '' }))} className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center">
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Tier Pricing Editor */}
