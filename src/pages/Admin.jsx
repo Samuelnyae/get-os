@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { 
-LayoutDashboard, Utensils, ShoppingBag, Truck,
-Sparkles, MessageSquare, BarChart3, Shield, AlertCircle, User, Package, Calendar, Mail, Bot, TrendingUp, Brain, Bell, Star, Building2, DollarSign, Users, Leaf, Zap
-} from 'lucide-react';
+import { Shield, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import SectionHeader from '@/components/common/SectionHeader';
 import LuxuryButton from '@/components/common/LuxuryButton';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 
 // Lazy load heavy admin components
 const MenuItemsManager = React.lazy(() => import('@/components/admin/MenuItemsManager'));
@@ -46,9 +42,17 @@ const EventBookingsAdmin = React.lazy(() => import('@/components/admin/EventBook
 const AmenityBookingsAdmin = React.lazy(() => import('@/components/admin/AmenityBookingsAdmin'));
 const VendorPerformanceDashboard = React.lazy(() => import('@/components/admin/VendorPerformanceDashboard'));
 
+const LazyFallback = () => (
+  <div className="flex justify-center py-12">
+    <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+  </div>
+);
+
+const lazyPage = (importFn) => React.lazy(importFn);
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -93,169 +97,135 @@ export default function Admin() {
     );
   }
 
-  const tabs = [
-
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'revenue-forecast', label: '📈 Revenue Forecast', icon: TrendingUp },
-    { id: 'demand-heatmap', label: '🔥 Demand Heatmap', icon: BarChart3 },
-    { id: 'menu-profitability', label: '💰 Menu Profitability', icon: DollarSign },
-    { id: 'clv', label: '👤 Customer CLV', icon: Users },
-    { id: 'competitor', label: '🏆 Competitor Benchmark', icon: Star },
-    { id: 'sustainability', label: '🌿 Sustainability', icon: Leaf },
-    { id: 'supply-chain', label: '🚚 Supply Chain', icon: Truck },
-    { id: 'vendor-performance', label: '📊 Vendor Performance', icon: BarChart3 },
-    { id: 'integrations', label: '⚡ Integrations', icon: Zap },
-    { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
-    { id: 'insights', label: 'AI Insights', icon: BarChart3 },
-    { id: 'fulfillment', label: 'AI Fulfillment', icon: Bot },
-    { id: 'inventory', label: 'AI Inventory', icon: TrendingUp },
-    { id: 'feedbackai', label: 'AI Feedback', icon: Brain },
-    { id: 'tables', label: 'AI Table Mgmt', icon: Calendar },
-    { id: 'marketing', label: 'AI Marketing', icon: Mail },
-    { id: 'hotel', label: '🏨 Hotel Management', icon: Building2 },
-    { id: 'hr', label: '👥 HR & Workforce', icon: User },
-    { id: 'guest-exp', label: '❤️ Guest Experience', icon: Star },
-    { id: 'marketing-crm', label: '📣 Marketing & CRM', icon: Mail },
-    { id: 'kds', label: '👨‍🍳 Kitchen Display', icon: Utensils },
-    { id: 'ai-order-agent', label: '🤖 AI Order Agent', icon: Bot },
-    { id: 'shift-manager', label: '🧠 AI Shift Mgr', icon: Brain },
-    { id: 'reconciliation', label: '💰 Reconciliation', icon: LayoutDashboard },
-    { id: 'reorder-agent', label: '📦 Reorder Agent', icon: Package },
-    { id: 'driver', label: '🚚 Driver Mode', icon: Truck },
-    { id: 'orders', label: 'Order Queue', icon: ShoppingBag },
-    { id: 'reservations', label: 'Reservations', icon: Calendar },
-    { id: 'event-bookings', label: '📅 Event Bookings', icon: Calendar },
-    { id: 'amenity-bookings', label: '🛁 Spa & Amenities', icon: Sparkles },
-    { id: 'staff', label: 'Staff', icon: User },
-    { id: 'stock', label: 'Stock Alerts', icon: Package },
-    { id: 'inventory-tracking', label: 'Inventory Tracking', icon: Package },
-    { id: 'menu', label: 'Menu Items', icon: Utensils },
-    { id: 'custom', label: 'Custom Requests', icon: Sparkles },
-    { id: 'feedback', label: 'Feedback', icon: MessageSquare },
-    { id: 'feedback-insights', label: 'Feedback Insights', icon: Star },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'export', label: 'Data Export', icon: Package },
-  ];
+  const handleSelect = (id) => {
+    setActiveTab(id);
+    setSidebarOpen(false);
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+    <div className="min-h-screen bg-[#0a0a0a] py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-[#c9a962]" />
-              </div>
-              <div>
-                <h1 className="font-playfair text-3xl text-white">Admin Panel</h1>
-                <p className="font-inter text-sm text-white/50">Get OS Management</p>
-              </div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-[#c9a962]" />
+            </div>
+            <div>
+              <h1 className="font-playfair text-3xl text-white">Hospitality OS</h1>
+              <p className="font-inter text-sm text-white/50">Management Dashboard</p>
             </div>
           </div>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden px-4 py-2 rounded-lg bg-[#1a1a1a] border border-[#c9a962]/20 text-white/70 font-inter text-sm"
+          >
+            Modules
+          </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-[#c9a962]/10 pb-4">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-inter text-sm transition-all ${
-                activeTab === tab.id
-                  ? 'bg-[#c9a962] text-[#0a0a0a]'
-                  : 'bg-[#1a1a1a] text-white/70 border border-[#c9a962]/10 hover:border-[#c9a962]/30'
-              }`}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <React.Suspense fallback={
-            <div className="flex justify-center py-12">
-              <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
+        <div className="flex gap-6">
+          {/* Sidebar — desktop */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <div className="sticky top-24 bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-3 max-h-[calc(100vh-7rem)] overflow-y-auto">
+              <AdminSidebar activeTab={activeTab} setActiveTab={handleSelect} />
             </div>
-          }>
+          </aside>
 
-            {activeTab === 'dashboard' && <DashboardStats />}
-            {activeTab === 'revenue-forecast' && <AIRevenueForecast />}
-            {activeTab === 'demand-heatmap' && <DemandHeatmap />}
-            {activeTab === 'menu-profitability' && <MenuProfitability />}
-            {activeTab === 'clv' && <CustomerLifetimeValue />}
-            {activeTab === 'competitor' && <CompetitorBenchmark />}
-            {activeTab === 'sustainability' && <SustainabilityReport />}
-            {activeTab === 'supply-chain' && <SupplyChain />}
-            {activeTab === 'vendor-performance' && <VendorPerformanceDashboard />}
-            {activeTab === 'integrations' && <Integrations />}
-            {activeTab === 'analytics' && <AdvancedAnalytics />}
-            {activeTab === 'insights' && <AIInsights />}
-            {activeTab === 'fulfillment' && <AIOrderFulfillment />}
-            {activeTab === 'inventory' && <AIInventoryManagement />}
-            {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
-            {activeTab === 'tables' && <AITableManagement />}
-            {activeTab === 'marketing' && <AIMarketingCampaigns />}
-            {activeTab === 'driver' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./DriverMode')))}
+          {/* Sidebar — mobile overlay */}
+          {sidebarOpen && (
+            <div className="lg:hidden fixed inset-0 z-50 bg-black/60" onClick={() => setSidebarOpen(false)}>
+              <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#1a1a1a] border-r border-[#c9a962]/20 p-4 overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="font-playfair text-lg text-[#c9a962]">Modules</span>
+                  <button onClick={() => setSidebarOpen(false)} className="text-white/50">✕</button>
+                </div>
+                <AdminSidebar activeTab={activeTab} setActiveTab={handleSelect} />
+              </div>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <React.Suspense fallback={<LazyFallback />}>
+                {activeTab === 'dashboard' && <DashboardStats />}
+                {activeTab === 'revenue-forecast' && <AIRevenueForecast />}
+                {activeTab === 'demand-heatmap' && <DemandHeatmap />}
+                {activeTab === 'menu-profitability' && <MenuProfitability />}
+                {activeTab === 'clv' && <CustomerLifetimeValue />}
+                {activeTab === 'competitor' && <CompetitorBenchmark />}
+                {activeTab === 'sustainability' && <SustainabilityReport />}
+                {activeTab === 'supply-chain' && <SupplyChain />}
+                {activeTab === 'vendor-performance' && <VendorPerformanceDashboard />}
+                {activeTab === 'integrations' && <Integrations />}
+                {activeTab === 'analytics' && <AdvancedAnalytics />}
+                {activeTab === 'insights' && <AIInsights />}
+                {activeTab === 'fulfillment' && <AIOrderFulfillment />}
+                {activeTab === 'inventory' && <AIInventoryManagement />}
+                {activeTab === 'feedbackai' && <AIFeedbackAnalysis />}
+                {activeTab === 'tables' && <AITableManagement />}
+                {activeTab === 'marketing' && <AIMarketingCampaigns />}
+                {activeTab === 'driver' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./DriverMode')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'hotel' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./HotelManagement')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'hr' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./HR')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'guest-exp' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./GuestExperience')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'marketing-crm' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./Marketing')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'kds' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./KDS')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'ai-order-agent' && <AIOrderAgent />}
+                {activeTab === 'shift-manager' && <AIShiftManager />}
+                {activeTab === 'reconciliation' && <PaymentReconciliation />}
+                {activeTab === 'reorder-agent' && <AIInventoryReorderAgent />}
+                {activeTab === 'orders' && <OrdersManager />}
+                {activeTab === 'reservations' && <ReservationsManager />}
+                {activeTab === 'event-bookings' && <EventBookingsAdmin />}
+                {activeTab === 'amenity-bookings' && <AmenityBookingsAdmin />}
+                {activeTab === 'staff' && <StaffManager />}
+                {activeTab === 'stock' && <LowStockAlerts />}
+                {activeTab === 'inventory-tracking' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./Inventory')))}
+                  </React.Suspense>
+                )}
+                {activeTab === 'menu' && <MenuItemsManager />}
+                {activeTab === 'custom' && <CustomRequestsManager />}
+                {activeTab === 'feedback' && <FeedbackViewer />}
+                {activeTab === 'feedback-insights' && <FeedbackInsights />}
+                {activeTab === 'notifications' && <DNDSettings />}
+                {activeTab === 'export' && <DataExport />}
               </React.Suspense>
-            )}
-            {activeTab === 'hotel' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./HotelManagement')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'hr' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./HR')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'guest-exp' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./GuestExperience')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'marketing-crm' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./Marketing')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'kds' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./KDS')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'ai-order-agent' && <AIOrderAgent />}
-            {activeTab === 'shift-manager' && <AIShiftManager />}
-            {activeTab === 'reconciliation' && <PaymentReconciliation />}
-            {activeTab === 'reorder-agent' && <AIInventoryReorderAgent />}
-            {activeTab === 'orders' && <OrdersManager />}
-            {activeTab === 'reservations' && <ReservationsManager />}
-            {activeTab === 'event-bookings' && <EventBookingsAdmin />}
-            {activeTab === 'amenity-bookings' && <AmenityBookingsAdmin />}
-            {activeTab === 'staff' && <StaffManager />}
-            {activeTab === 'stock' && <LowStockAlerts />}
-            {activeTab === 'inventory-tracking' && (
-              <React.Suspense fallback={<div className="flex justify-center py-12"><div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>}>
-                {React.createElement(React.lazy(() => import('./Inventory')))}
-              </React.Suspense>
-            )}
-            {activeTab === 'menu' && <MenuItemsManager />}
-            {activeTab === 'custom' && <CustomRequestsManager />}
-            {activeTab === 'feedback' && <FeedbackViewer />}
-            {activeTab === 'feedback-insights' && <FeedbackInsights />}
-            {activeTab === 'notifications' && <DNDSettings />}
-            {activeTab === 'export' && <DataExport />}
-          </React.Suspense>
-        </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );
