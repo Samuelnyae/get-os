@@ -44,7 +44,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
-const ProtectedApp = () => {
+const AppLayout = () => {
   const { needsOnboarding } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,42 +55,7 @@ const ProtectedApp = () => {
     }
   }, [needsOnboarding, location.pathname, navigate]);
 
-  return (
-    <ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />}>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
-          }
-        />
-      ))}
-
-      <Route path="/DriverMode" element={<LayoutWrapper currentPageName="DriverMode"><Suspense fallback={null}><DriverModePage /></Suspense></LayoutWrapper>} />
-      <Route path="/QRCode" element={<LayoutWrapper currentPageName="QRCode"><QRCodePage /></LayoutWrapper>} />
-      <Route path="/KDS" element={<LayoutWrapper currentPageName="KDS"><Suspense fallback={null}><KDSPage /></Suspense></LayoutWrapper>} />
-      <Route path="/HotelManagement" element={<LayoutWrapper currentPageName="HotelManagement"><Suspense fallback={null}><HotelManagementPage /></Suspense></LayoutWrapper>} />
-      <Route path="/Rooms" element={<LayoutWrapper currentPageName="Rooms"><Suspense fallback={null}><RoomsPage /></Suspense></LayoutWrapper>} />
-      <Route path="/HR" element={<LayoutWrapper currentPageName="HR"><Suspense fallback={null}><HRPage /></Suspense></LayoutWrapper>} />
-      <Route path="/GuestExperience" element={<LayoutWrapper currentPageName="GuestExperience"><Suspense fallback={null}><GuestExperiencePage /></Suspense></LayoutWrapper>} />
-      <Route path="/Marketing" element={<LayoutWrapper currentPageName="Marketing"><Suspense fallback={null}><MarketingPage /></Suspense></LayoutWrapper>} />
-      <Route path="/GuestPortal" element={<LayoutWrapper currentPageName="GuestPortal"><Suspense fallback={null}><GuestPortalPage /></Suspense></LayoutWrapper>} />
-      <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Suspense fallback={null}><EventsPage /></Suspense></LayoutWrapper>} />
-      <Route path="/SpaAmenities" element={<LayoutWrapper currentPageName="SpaAmenities"><Suspense fallback={null}><SpaAmenitiesPage /></Suspense></LayoutWrapper>} />
-      <Route path="/SupplierMarketplace" element={<LayoutWrapper currentPageName="SupplierMarketplace"><Suspense fallback={null}><SupplierMarketplacePage /></Suspense></LayoutWrapper>} />
-      <Route path="/SuperAdmin" element={<LayoutWrapper currentPageName="SuperAdmin"><Suspense fallback={null}><SuperAdminPage /></Suspense></LayoutWrapper>} />
-      <Route path="/onboarding" element={<Suspense fallback={null}><TenantOnboardingPage /></Suspense>} />
-      <Route path="/Billing" element={<LayoutWrapper currentPageName="Billing"><Suspense fallback={null}><BillingPage /></Suspense></LayoutWrapper>} />
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />;
 };
 
 const AuthenticatedApp = () => {
@@ -113,8 +78,40 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* All app routes gated by ProtectedRoute */}
-      <Route element={<ProtectedApp />}>
+      {/* All app routes gated by ProtectedRoute (layout route) */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        } />
+        {Object.entries(Pages).map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        ))}
+
+        <Route path="/DriverMode" element={<LayoutWrapper currentPageName="DriverMode"><Suspense fallback={null}><DriverModePage /></Suspense></LayoutWrapper>} />
+        <Route path="/QRCode" element={<LayoutWrapper currentPageName="QRCode"><QRCodePage /></LayoutWrapper>} />
+        <Route path="/KDS" element={<LayoutWrapper currentPageName="KDS"><Suspense fallback={null}><KDSPage /></Suspense></LayoutWrapper>} />
+        <Route path="/HotelManagement" element={<LayoutWrapper currentPageName="HotelManagement"><Suspense fallback={null}><HotelManagementPage /></Suspense></LayoutWrapper>} />
+        <Route path="/Rooms" element={<LayoutWrapper currentPageName="Rooms"><Suspense fallback={null}><RoomsPage /></Suspense></LayoutWrapper>} />
+        <Route path="/HR" element={<LayoutWrapper currentPageName="HR"><Suspense fallback={null}><HRPage /></Suspense></LayoutWrapper>} />
+        <Route path="/GuestExperience" element={<LayoutWrapper currentPageName="GuestExperience"><Suspense fallback={null}><GuestExperiencePage /></Suspense></LayoutWrapper>} />
+        <Route path="/Marketing" element={<LayoutWrapper currentPageName="Marketing"><Suspense fallback={null}><MarketingPage /></Suspense></LayoutWrapper>} />
+        <Route path="/GuestPortal" element={<LayoutWrapper currentPageName="GuestPortal"><Suspense fallback={null}><GuestPortalPage /></Suspense></LayoutWrapper>} />
+        <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Suspense fallback={null}><EventsPage /></Suspense></LayoutWrapper>} />
+        <Route path="/SpaAmenities" element={<LayoutWrapper currentPageName="SpaAmenities"><Suspense fallback={null}><SpaAmenitiesPage /></Suspense></LayoutWrapper>} />
+        <Route path="/SupplierMarketplace" element={<LayoutWrapper currentPageName="SupplierMarketplace"><Suspense fallback={null}><SupplierMarketplacePage /></Suspense></LayoutWrapper>} />
+        <Route path="/SuperAdmin" element={<LayoutWrapper currentPageName="SuperAdmin"><Suspense fallback={null}><SuperAdminPage /></Suspense></LayoutWrapper>} />
+        <Route path="/onboarding" element={<Suspense fallback={null}><TenantOnboardingPage /></Suspense>} />
+        <Route path="/Billing" element={<LayoutWrapper currentPageName="Billing"><Suspense fallback={null}><BillingPage /></Suspense></LayoutWrapper>} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
