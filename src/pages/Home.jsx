@@ -16,19 +16,27 @@ import FinalCTASection from '@/components/landing/FinalCTASection';
 
 export default function Home() {
   return (
-    <div className="bg-[#0a0a0a]">
+    <div className="bg-[#0a0a0a]" id="home">
       <HeroSection />
       <TrustedBySection />
-      <WhyChooseSection />
-      <ModulesGridSection />
-      <DashboardShowcaseSection />
-      <HospitalityAISection />
-      <HowItWorksSection />
-      <IndustriesSection />
+      <div id="features">
+        <WhyChooseSection />
+        <ModulesGridSection />
+      </div>
+      <div id="solutions">
+        <DashboardShowcaseSection />
+        <HospitalityAISection />
+        <HowItWorksSection />
+      </div>
+      <div id="industries">
+        <IndustriesSection />
+      </div>
       <AnalyticsSection />
       <IntegrationsSection />
       <TestimonialsSection />
-      <PricingSection />
+      <div id="pricing">
+        <PricingSection />
+      </div>
       <FAQSection />
       <FinalCTASection />
     </div>

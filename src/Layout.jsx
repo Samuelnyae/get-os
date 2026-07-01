@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Chatbot from '@/components/chatbot/Chatbot';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import MarketingNav from '@/components/landing/MarketingNav';
 import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Layout({ children, currentPageName }) {
@@ -140,6 +141,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Navigation */}
+      {isLandingPage ? <MarketingNav /> : (
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'glass-effect shadow-2xl' : 'bg-transparent'
       }`}>
@@ -311,6 +313,7 @@ export default function Layout({ children, currentPageName }) {
           )}
         </AnimatePresence>
       </nav>
+      )}
 
       {/* Main Content */}
       <main className="pt-20">
