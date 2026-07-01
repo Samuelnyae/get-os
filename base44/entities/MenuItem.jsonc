@@ -3,24 +3,19 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this menu item belongs to"
+      "type": "string"
     },
     "name": {
-      "type": "string",
-      "description": "Name of the dish"
+      "type": "string"
     },
     "description": {
-      "type": "string",
-      "description": "Short description of the dish"
+      "type": "string"
     },
     "full_description": {
-      "type": "string",
-      "description": "Detailed description of the dish"
+      "type": "string"
     },
     "price": {
-      "type": "number",
-      "description": "Price in USD"
+      "type": "number"
     },
     "category": {
       "type": "string",
@@ -29,40 +24,34 @@
         "starters",
         "desserts",
         "drinks"
-      ],
-      "description": "Food category"
+      ]
     },
     "image_url": {
-      "type": "string",
-      "description": "Main image URL"
+      "type": "string"
     },
     "gallery_images": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Additional gallery images"
+      }
     },
     "ingredients": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "List of ingredients"
+      }
     },
     "spices": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Spices used"
+      }
     },
     "companions": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Suggested side dishes and drinks"
+      }
     },
     "likes_count": {
       "type": "number",
@@ -76,27 +65,62 @@
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Dietary tags like vegetarian, gluten-free, etc."
+      }
     },
     "stock_count": {
       "type": "number",
-      "default": 100,
-      "description": "Current stock quantity available"
+      "default": 100
     },
     "low_stock_threshold": {
       "type": "number",
-      "default": 10,
-      "description": "Alert threshold for low stock"
+      "default": 10
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this item belongs to. Empty = available at all locations."
+      "type": "string"
     }
   },
   "required": [
     "name",
     "price",
     "category"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

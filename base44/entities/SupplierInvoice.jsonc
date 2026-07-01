@@ -3,12 +3,10 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this invoice belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch"
+      "type": "string"
     },
     "invoice_number": {
       "type": "string"
@@ -66,5 +64,44 @@
     "invoice_number",
     "supplier_name",
     "amount"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

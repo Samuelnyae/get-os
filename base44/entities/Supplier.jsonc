@@ -53,8 +53,7 @@
     },
     "commission_rate": {
       "type": "number",
-      "default": 0,
-      "description": "Per-vendor commission override; 0 = use platform default"
+      "default": 0
     },
     "notes": {
       "type": "string"
@@ -77,5 +76,19 @@
     "contact_person",
     "phone",
     "email"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    }
+  }
 }

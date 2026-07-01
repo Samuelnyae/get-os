@@ -3,16 +3,13 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this staff member belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this staff member is assigned to"
+      "type": "string"
     },
     "name": {
-      "type": "string",
-      "description": "Staff member name"
+      "type": "string"
     },
     "role": {
       "type": "string",
@@ -21,8 +18,7 @@
         "kitchen_assistant",
         "delivery",
         "manager"
-      ],
-      "description": "Staff role"
+      ]
     },
     "status": {
       "type": "string",
@@ -31,24 +27,60 @@
         "busy",
         "offline"
       ],
-      "default": "available",
-      "description": "Current availability status"
+      "default": "available"
     },
     "phone": {
-      "type": "string",
-      "description": "Staff WhatsApp phone number (e.g. 0712345678 or +254712345678)"
+      "type": "string"
     },
     "current_orders": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Array of order IDs currently assigned"
+      "default": []
     }
   },
   "required": [
     "name",
     "role"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

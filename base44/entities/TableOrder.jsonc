@@ -3,20 +3,16 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this table order belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this table order belongs to"
+      "type": "string"
     },
     "table_number": {
-      "type": "string",
-      "description": "Table number or group ID"
+      "type": "string"
     },
     "session_code": {
-      "type": "string",
-      "description": "Unique code for joining this order"
+      "type": "string"
     },
     "items": {
       "type": "array",
@@ -36,12 +32,10 @@
             "type": "number"
           },
           "added_by": {
-            "type": "string",
-            "description": "Name of person who added this item"
+            "type": "string"
           },
           "added_by_id": {
-            "type": "string",
-            "description": "Unique ID of person who added this"
+            "type": "string"
           }
         }
       },
@@ -87,5 +81,44 @@
   "required": [
     "table_number",
     "session_code"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

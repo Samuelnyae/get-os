@@ -84,5 +84,19 @@
     "supplier_name",
     "product_name",
     "unit_price"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    }
+  }
 }

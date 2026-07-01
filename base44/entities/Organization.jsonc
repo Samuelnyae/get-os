@@ -3,12 +3,10 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string",
-      "description": "Business or group name e.g. 'Fine Breeze Group'"
+      "type": "string"
     },
     "slug": {
-      "type": "string",
-      "description": "URL-friendly identifier e.g. 'fine-breeze-group'"
+      "type": "string"
     },
     "industry": {
       "type": "string",
@@ -75,7 +73,6 @@
     },
     "features": {
       "type": "object",
-      "description": "Feature flags per tenant e.g. {pos: true, hotel: true, spa: false, ai: true}",
       "default": {}
     },
     "stripe_customer_id": {
@@ -86,13 +83,11 @@
     },
     "mrr": {
       "type": "number",
-      "default": 0,
-      "description": "Monthly recurring revenue in KSh"
+      "default": 0
     },
     "max_branches": {
       "type": "number",
-      "default": 1,
-      "description": "Max branches allowed for this plan (1 for starter, 3 for professional, unlimited for enterprise)"
+      "default": 1
     },
     "is_active": {
       "type": "boolean",
@@ -117,10 +112,33 @@
     "plan",
     "status"
   ],
-  "permissions": {
-    "allow_read": true,
-    "allow_create": false,
-    "allow_update": false,
-    "allow_delete": false
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "platform_admin"
+      }
+    }
   }
 }

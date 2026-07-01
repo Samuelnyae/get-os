@@ -3,16 +3,13 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this room belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this room belongs to"
+      "type": "string"
     },
     "room_number": {
-      "type": "string",
-      "description": "Room number or identifier"
+      "type": "string"
     },
     "room_type": {
       "type": "string",
@@ -26,17 +23,14 @@
       "default": "standard"
     },
     "floor": {
-      "type": "number",
-      "description": "Floor number"
+      "type": "number"
     },
     "capacity": {
       "type": "number",
-      "default": 2,
-      "description": "Max guests"
+      "default": 2
     },
     "price_per_night": {
-      "type": "number",
-      "description": "Rate in KES per night"
+      "type": "number"
     },
     "status": {
       "type": "string",
@@ -67,8 +61,7 @@
       "type": "string"
     },
     "current_guest_id": {
-      "type": "string",
-      "description": "ID of current GuestProfile"
+      "type": "string"
     },
     "current_booking_id": {
       "type": "string"
@@ -100,5 +93,44 @@
     "room_number",
     "room_type",
     "price_per_night"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

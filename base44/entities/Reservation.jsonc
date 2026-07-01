@@ -3,41 +3,32 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this reservation belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this reservation belongs to"
+      "type": "string"
     },
     "customer_name": {
-      "type": "string",
-      "description": "Name of the person making the reservation"
+      "type": "string"
     },
     "customer_email": {
-      "type": "string",
-      "description": "Email address for confirmation"
+      "type": "string"
     },
     "customer_phone": {
-      "type": "string",
-      "description": "Contact phone number"
+      "type": "string"
     },
     "party_size": {
-      "type": "number",
-      "description": "Number of guests"
+      "type": "number"
     },
     "reservation_date": {
       "type": "string",
-      "format": "date",
-      "description": "Date of reservation"
+      "format": "date"
     },
     "reservation_time": {
-      "type": "string",
-      "description": "Time slot (e.g., 18:00)"
+      "type": "string"
     },
     "special_requests": {
-      "type": "string",
-      "description": "Special requests or dietary requirements"
+      "type": "string"
     },
     "status": {
       "type": "string",
@@ -49,20 +40,16 @@
         "cancelled",
         "waitlist"
       ],
-      "default": "pending",
-      "description": "Status of the reservation"
+      "default": "pending"
     },
     "table_number": {
-      "type": "string",
-      "description": "Assigned table number"
+      "type": "string"
     },
     "confirmation_code": {
-      "type": "string",
-      "description": "Unique confirmation code"
+      "type": "string"
     },
     "notes": {
-      "type": "string",
-      "description": "Internal notes from staff"
+      "type": "string"
     }
   },
   "required": [
@@ -72,5 +59,44 @@
     "party_size",
     "reservation_date",
     "reservation_time"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

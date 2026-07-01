@@ -3,16 +3,13 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this inventory belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this inventory belongs to"
+      "type": "string"
     },
     "name": {
-      "type": "string",
-      "description": "Ingredient or stock item name"
+      "type": "string"
     },
     "unit": {
       "type": "string",
@@ -24,17 +21,14 @@
         "pieces",
         "bottles",
         "packs"
-      ],
-      "description": "Unit of measurement"
+      ]
     },
     "current_stock": {
       "type": "number",
-      "description": "Current quantity in stock",
       "default": 0
     },
     "low_stock_threshold": {
       "type": "number",
-      "description": "Alert when stock falls below this level",
       "default": 10
     },
     "linked_menu_item_ids": {
@@ -42,21 +36,17 @@
       "items": {
         "type": "string"
       },
-      "description": "Menu item IDs that use this ingredient",
       "default": []
     },
     "deduct_per_order": {
       "type": "number",
-      "description": "How much to deduct per single order of a linked menu item",
       "default": 1
     },
     "supplier": {
-      "type": "string",
-      "description": "Supplier name"
+      "type": "string"
     },
     "cost_per_unit": {
-      "type": "number",
-      "description": "Cost per unit in KES"
+      "type": "number"
     },
     "category": {
       "type": "string",
@@ -79,5 +69,44 @@
     "name",
     "unit",
     "current_stock"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

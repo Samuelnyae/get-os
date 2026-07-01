@@ -22,12 +22,10 @@
       "default": "user"
     },
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this user belongs to. Null for platform_admin."
+      "type": "string"
     },
     "branch_id": {
-      "type": "string",
-      "description": "Specific branch this user is assigned to. Null means all branches in the org (e.g. owner/manager)."
+      "type": "string"
     },
     "phone": {
       "type": "string"
@@ -38,6 +36,48 @@
     "is_active": {
       "type": "boolean",
       "default": true
+    }
+  },
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "data.id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.id": "{{user.id}}"
+        },
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }

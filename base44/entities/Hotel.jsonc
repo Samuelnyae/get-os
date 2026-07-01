@@ -3,20 +3,16 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this branch belongs to"
+      "type": "string"
     },
     "organization_name": {
-      "type": "string",
-      "description": "Denormalized org name for display"
+      "type": "string"
     },
     "name": {
-      "type": "string",
-      "description": "Branch name e.g. 'Nairobi Branch'"
+      "type": "string"
     },
     "slug": {
-      "type": "string",
-      "description": "URL-friendly identifier e.g. 'nairobi-west'"
+      "type": "string"
     },
     "branch_type": {
       "type": "string",
@@ -27,12 +23,10 @@
       "default": "main"
     },
     "location": {
-      "type": "string",
-      "description": "City or district"
+      "type": "string"
     },
     "address": {
-      "type": "string",
-      "description": "Full street address"
+      "type": "string"
     },
     "phone": {
       "type": "string"
@@ -41,31 +35,26 @@
       "type": "string"
     },
     "whatsapp_number": {
-      "type": "string",
-      "description": "WhatsApp number in international format e.g. 254700000000 (no + or spaces)"
+      "type": "string"
     },
     "description": {
       "type": "string"
     },
     "image_url": {
-      "type": "string",
-      "description": "Hero/cover image"
+      "type": "string"
     },
     "logo_url": {
-      "type": "string",
-      "description": "Hotel logo image URL shown in navbar"
+      "type": "string"
     },
     "owner_email": {
-      "type": "string",
-      "description": "Email of the user who manages this hotel"
+      "type": "string"
     },
     "is_active": {
       "type": "boolean",
       "default": true
     },
     "opening_hours": {
-      "type": "string",
-      "description": "e.g. Mon-Sun 8am-10pm"
+      "type": "string"
     },
     "latitude": {
       "type": "number"
@@ -94,5 +83,44 @@
     "name",
     "slug",
     "location"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

@@ -3,12 +3,10 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this feedback belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch"
+      "type": "string"
     },
     "order_id": {
       "type": "string"
@@ -20,24 +18,19 @@
       "type": "string"
     },
     "website_rating": {
-      "type": "number",
-      "description": "1-5 rating for website experience"
+      "type": "number"
     },
     "food_rating": {
-      "type": "number",
-      "description": "1-5 rating for food quality"
+      "type": "number"
     },
     "hotel_rating": {
-      "type": "number",
-      "description": "1-5 rating for hotel ambiance"
+      "type": "number"
     },
     "reception_rating": {
-      "type": "number",
-      "description": "1-5 rating for reception/staff"
+      "type": "number"
     },
     "service_rating": {
-      "type": "number",
-      "description": "1-5 rating for overall service"
+      "type": "number"
     },
     "website_comment": {
       "type": "string"
@@ -58,8 +51,7 @@
       "type": "string"
     },
     "ai_insights": {
-      "type": "string",
-      "description": "AI-generated improvement suggestions from this feedback"
+      "type": "string"
     },
     "ordered_items": {
       "type": "array",
@@ -71,5 +63,44 @@
   "required": [
     "order_id",
     "customer_email"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

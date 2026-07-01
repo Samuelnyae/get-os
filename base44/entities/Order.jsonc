@@ -3,12 +3,10 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this order belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch this order belongs to"
+      "type": "string"
     },
     "customer_name": {
       "type": "string"
@@ -20,8 +18,7 @@
       "type": "string"
     },
     "table_room_number": {
-      "type": "string",
-      "description": "Table number or room number for in-hotel orders"
+      "type": "string"
     },
     "order_type": {
       "type": "string",
@@ -30,20 +27,16 @@
         "takeaway",
         "delivery"
       ],
-      "default": "dine_in",
-      "description": "How the customer wants to receive their order"
+      "default": "dine_in"
     },
     "pickup_time": {
-      "type": "string",
-      "description": "Scheduled pickup/delivery time e.g. '19:30'"
+      "type": "string"
     },
     "pickup_date": {
-      "type": "string",
-      "description": "Date for scheduled pickup/delivery"
+      "type": "string"
     },
     "delivery_address": {
-      "type": "string",
-      "description": "Delivery address for delivery orders"
+      "type": "string"
     },
     "items": {
       "type": "array",
@@ -111,16 +104,13 @@
       "format": "date-time"
     },
     "driver_lat": {
-      "type": "number",
-      "description": "Real-time driver latitude from GPS"
+      "type": "number"
     },
     "driver_lng": {
-      "type": "number",
-      "description": "Real-time driver longitude from GPS"
+      "type": "number"
     },
     "driver_updated_at": {
-      "type": "string",
-      "description": "ISO timestamp of last driver GPS update"
+      "type": "string"
     },
     "status_history": {
       "type": "array",
@@ -146,5 +136,44 @@
     "customer_email",
     "items",
     "total_amount"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

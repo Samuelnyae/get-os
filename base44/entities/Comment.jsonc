@@ -3,33 +3,66 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this comment belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch"
+      "type": "string"
     },
     "menu_item_id": {
-      "type": "string",
-      "description": "Reference to the menu item"
+      "type": "string"
     },
     "user_name": {
-      "type": "string",
-      "description": "Name of the commenter"
+      "type": "string"
     },
     "content": {
-      "type": "string",
-      "description": "Comment text"
+      "type": "string"
     },
     "rating": {
-      "type": "number",
-      "description": "Rating 1-5 stars"
+      "type": "number"
     }
   },
   "required": [
     "menu_item_id",
     "user_name",
     "content"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }

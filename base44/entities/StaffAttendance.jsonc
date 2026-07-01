@@ -3,12 +3,10 @@
   "type": "object",
   "properties": {
     "organization_id": {
-      "type": "string",
-      "description": "The tenant (Organization) this attendance record belongs to"
+      "type": "string"
     },
     "hotel_id": {
-      "type": "string",
-      "description": "ID of the hotel/branch"
+      "type": "string"
     },
     "staff_id": {
       "type": "string"
@@ -21,12 +19,10 @@
       "format": "date"
     },
     "clock_in": {
-      "type": "string",
-      "description": "ISO datetime"
+      "type": "string"
     },
     "clock_out": {
-      "type": "string",
-      "description": "ISO datetime"
+      "type": "string"
     },
     "hours_worked": {
       "type": "number",
@@ -51,5 +47,44 @@
     "staff_id",
     "staff_name",
     "date"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.organization_id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
+    }
+  }
 }
