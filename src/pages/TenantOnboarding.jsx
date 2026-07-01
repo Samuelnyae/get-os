@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useAuth } from '@/lib/AuthContext';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { BUSINESS_TYPES, ONBOARDING_STEPS } from '@/components/onboarding/onboardingConfig';
@@ -19,8 +19,7 @@ import FinishStep from '@/components/onboarding/FinishStep';
 
 export default function TenantOnboarding() {
   const navigate = useNavigate();
-  const { checkAppState } = useAuth();
-  const [step, setStep] = useState(1);
+const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
@@ -98,10 +97,9 @@ export default function TenantOnboarding() {
           organization_id: response.data.organization.id,
           branch_id: response.data.branches[0].id
         });
-        await checkAppState();
         setLoading(false);
-        // Auto-redirect to dashboard after showing success screen
-        setTimeout(() => navigate('/Admin'), 2500);
+        // Hard redirect so the app fully reinitializes with fresh user data
+        setTimeout(() => { window.location.href = '/Admin'; }, 2500);
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);

@@ -49,7 +49,7 @@ export default function FinishStep({ loading, error, onComplete }) {
             ))}
           </div>
 
-          <button onClick={() => navigate('/Admin')}
+          <button onClick={() => { window.location.href = '/Admin'; }}
             className="bg-[#c9a962] text-[#0a0a0a] font-inter font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2 hover:bg-[#e4d5a7] transition-colors">
             Go to Dashboard <ArrowRight className="w-4 h-4" />
           </button>
