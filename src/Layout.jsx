@@ -21,6 +21,7 @@ export default function Layout({ children, currentPageName }) {
   const [cartCount, setCartCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -40,8 +41,11 @@ export default function Layout({ children, currentPageName }) {
         const user = await base44.auth.me();
         setIsAdmin(user?.role === 'admin' || user?.role === 'owner' || user?.role === 'platform_admin');
         setIsPlatformAdmin(user?.role === 'platform_admin');
+        const hasOrg = user?.data?.organization_id || user?.organization_id;
+        setIsOnboarded(!!hasOrg);
       } catch {
         setIsAdmin(false);
+        setIsOnboarded(false);
       }
     };
     checkAdmin();
@@ -66,7 +70,7 @@ export default function Layout({ children, currentPageName }) {
     { name: t('drinks'), page: 'Drinks' },
     { name: t('about'), page: 'About' },
     { name: t('contact'), page: 'Contact' },
-    ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }, { name: 'Billing', page: 'Billing' }] : []),
+    ...(isAdmin && isOnboarded ? [{ name: t('dashboard'), page: 'Admin' }, { name: 'Billing', page: 'Billing' }] : []),
     ...(isPlatformAdmin ? [{ name: 'Super Admin', page: 'SuperAdmin' }] : []),
   ];
 
@@ -164,7 +168,8 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               ))}
 
-              {/* Services Dropdown */}
+              {/* Services Dropdown — only after onboarding */}
+              {isOnboarded && (
               <DropdownMenu>
                 <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
                   ['TableDining', 'Reservations', 'CustomFood', 'Rooms', 'Events', 'SpaAmenities', 'GuestPortal'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
@@ -185,6 +190,7 @@ export default function Layout({ children, currentPageName }) {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+              )}
             </div>
 
             {/* Right Section */}
@@ -209,7 +215,8 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               )}
 
-              {/* Cart */}
+              {/* Cart — only after onboarding */}
+              {isOnboarded ? (
               <Link 
                 to={createPageUrl('Order')} 
                 className="relative p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300"
@@ -221,6 +228,14 @@ export default function Layout({ children, currentPageName }) {
                   </span>
                 )}
               </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="hidden sm:block px-5 py-2 rounded-full bg-gradient-to-r from-[#c9a962] to-[#e4d5a7] text-[#0a0a0a] font-inter text-sm font-medium hover:opacity-90 transition-all"
+                >
+                  Login
+                </Link>
+              )}
 
               {/* Mobile Menu Toggle */}
               <button
@@ -256,6 +271,7 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 ))}
 
+                {isOnboarded && (
                 <div className="pt-2 pb-2">
                 <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('services')}</p>
                 <div className="space-y-3 pl-3">
@@ -273,6 +289,16 @@ export default function Layout({ children, currentPageName }) {
                   ))}
                 </div>
                 </div>
+                )}
+                {!isOnboarded && (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block font-inter text-base text-[#c9a962] transition-all"
+                  >
+                    Login
+                  </Link>
+                )}
 
                 <div className="pt-4 border-t border-[#c9a962]/20">
                   <p className="text-xs text-[#c9a962]/70">{formatDate(currentTime)}</p>
