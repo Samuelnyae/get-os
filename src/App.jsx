@@ -47,13 +47,10 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 const AppLayout = () => {
   const { needsOnboarding } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (needsOnboarding && location.pathname !== '/onboarding') {
-      navigate('/onboarding');
-    }
-  }, [needsOnboarding, location.pathname, navigate]);
+  if (needsOnboarding && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
 
   return <ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />;
 };
