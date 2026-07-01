@@ -64,14 +64,16 @@ export default function Layout({ children, currentPageName }) {
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
 
+  const isLandingPage = currentPageName === 'Home';
+
   const mainNavLinks = [
     { name: t('home'), page: 'Home' },
     { name: t('menu'), page: 'Menu' },
     { name: t('drinks'), page: 'Drinks' },
     { name: t('about'), page: 'About' },
     { name: t('contact'), page: 'Contact' },
-    ...(isAdmin && isOnboarded ? [{ name: t('dashboard'), page: 'Admin' }, { name: 'Billing', page: 'Billing' }] : []),
-    ...(isPlatformAdmin ? [{ name: 'Super Admin', page: 'SuperAdmin' }] : []),
+    ...(isAdmin && isOnboarded && !isLandingPage ? [{ name: t('dashboard'), page: 'Admin' }, { name: 'Billing', page: 'Billing' }] : []),
+    ...(isPlatformAdmin && !isLandingPage ? [{ name: 'Super Admin', page: 'SuperAdmin' }] : []),
   ];
 
   const servicesLinks = [
@@ -168,8 +170,8 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               ))}
 
-              {/* Services Dropdown — only after onboarding */}
-              {isOnboarded && (
+              {/* Services Dropdown — only on system pages */}
+              {!isLandingPage && (
               <DropdownMenu>
                 <DropdownMenuTrigger className={`font-inter text-sm tracking-wide transition-all duration-300 hover:text-[#c9a962] flex items-center gap-1 ${
                   ['TableDining', 'Reservations', 'CustomFood', 'Rooms', 'Events', 'SpaAmenities', 'GuestPortal'].includes(currentPageName) ? 'text-[#c9a962]' : 'text-white/80'
@@ -215,8 +217,8 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               )}
 
-              {/* Cart — only after onboarding */}
-              {isOnboarded ? (
+              {/* Cart — only on system pages */}
+              {!isLandingPage ? (
               <Link 
                 to={createPageUrl('Order')} 
                 className="relative p-2 rounded-full luxury-border hover:bg-[#c9a962]/10 transition-all duration-300"
@@ -233,7 +235,7 @@ export default function Layout({ children, currentPageName }) {
                   to="/login"
                   className="hidden sm:block px-5 py-2 rounded-full bg-gradient-to-r from-[#c9a962] to-[#e4d5a7] text-[#0a0a0a] font-inter text-sm font-medium hover:opacity-90 transition-all"
                 >
-                  Login
+                  Get Started
                 </Link>
               )}
 
@@ -271,7 +273,7 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 ))}
 
-                {isOnboarded && (
+                {!isLandingPage && (
                 <div className="pt-2 pb-2">
                 <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-3">{t('services')}</p>
                 <div className="space-y-3 pl-3">
@@ -290,13 +292,13 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 </div>
                 )}
-                {!isOnboarded && (
+                {isLandingPage && (
                   <Link
                     to="/login"
                     onClick={() => setIsMenuOpen(false)}
                     className="block font-inter text-base text-[#c9a962] transition-all"
                   >
-                    Login
+                    Get Started
                   </Link>
                 )}
 
