@@ -74,6 +74,11 @@ export default function TenantOnboarding() {
         hotel_email: hotelData.hotel_email || user?.email
       });
       if (response.data?.success) {
+        // Refresh the cached user session so me() returns the new organization_id
+        await base44.auth.updateMe({
+          organization_id: response.data.organization.id,
+          branch_id: response.data.hotel.id
+        });
         setStep(4);
       } else {
         setError(response.data?.error || 'Something went wrong');
