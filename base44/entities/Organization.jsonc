@@ -25,7 +25,9 @@
         "bakery",
         "night_club",
         "food_court",
-        "coffee_shop"
+        "coffee_shop",
+        "event_venue",
+        "other"
       ],
       "default": "restaurant"
     },
@@ -67,9 +69,37 @@
     "address": {
       "type": "string"
     },
+    "city": {
+      "type": "string"
+    },
     "country": {
       "type": "string",
       "default": "Kenya"
+    },
+    "timezone": {
+      "type": "string",
+      "default": "Africa/Nairobi"
+    },
+    "currency": {
+      "type": "string",
+      "default": "KES"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "enabled_modules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "ai_modules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
     "features": {
       "type": "object",
@@ -131,9 +161,16 @@
       ]
     },
     "update": {
-      "user_condition": {
-        "role": "platform_admin"
-      }
+      "$or": [
+        {
+          "data.id": "{{user.data.organization_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
     },
     "delete": {
       "user_condition": {
