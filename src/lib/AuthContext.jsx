@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   useEffect(() => {
     checkAppState();
@@ -94,6 +95,7 @@ export const AuthProvider = ({ children }) => {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
+      setNeedsOnboarding(!currentUser?.data?.organization_id && currentUser?.role !== 'platform_admin');
       setIsLoadingAuth(false);
     } catch (error) {
       console.error('User auth check failed:', error);
@@ -136,6 +138,7 @@ export const AuthProvider = ({ children }) => {
       isLoadingPublicSettings,
       authError,
       appPublicSettings,
+      needsOnboarding,
       logout,
       navigateToLogin,
       checkAppState
