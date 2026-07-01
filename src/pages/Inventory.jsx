@@ -120,7 +120,7 @@ export default function Inventory() {
             <h1 className="font-playfair text-3xl md:text-4xl" style={{ background: 'linear-gradient(135deg, #c9a962 0%, #e4d5a7 50%, #c9a962 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Inventory Management
             </h1>
-            <p className="font-inter text-white/50 text-sm mt-1">Track stock levels and link ingredients to menu items</p>
+            <p className="font-inter text-white/50 text-sm mt-1">Track stock levels, set minimum thresholds, and link ingredients to menu items. Automated email alerts are sent to the manager whenever stock falls below its threshold.</p>
           </div>
           <button
             onClick={() => openForm()}
