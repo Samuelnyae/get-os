@@ -71,12 +71,17 @@ Deno.serve(async (req) => {
     }
 
     // Assign user as owner of this org
-    await base44.asServiceRole.entities.User.update(user.id, {
-      role: 'owner',
-      organization_id: org.id,
-      branch_id: createdBranches[0].id,
-      is_active: true
-    });
+    try {
+      await base44.asServiceRole.entities.User.update(user.id, {
+        role: 'owner',
+        organization_id: org.id,
+        branch_id: createdBranches[0].id,
+        is_active: true
+      });
+      console.log(`User ${user.id} updated with organization_id=${org.id}, branch_id=${createdBranches[0].id}`);
+    } catch (userUpdateErr) {
+      console.error('Failed to update user with organization_id:', userUpdateErr);
+    }
 
     // Invite team members (non-blocking — failures are logged but don't fail onboarding)
     const inviteResults = [];

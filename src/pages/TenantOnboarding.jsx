@@ -53,7 +53,7 @@ const [step, setStep] = useState(1);
         const me = await base44.auth.me();
         setUser(me);
         if (me?.role === 'platform_admin') { navigate('/SuperAdmin'); return; }
-        if (me?.data?.organization_id) { navigate('/Admin'); return; }
+        if (me?.data?.organization_id || me?.organization_id) { navigate('/Admin'); return; }
       } catch {
         base44.auth.redirectToLogin('/onboarding');
       } finally {
@@ -93,13 +93,39 @@ const [step, setStep] = useState(1);
         team_invites: data.team_invites.filter(i => i.email.trim()),
       });
       if (response.data?.success) {
-        await base44.auth.updateMe({
-          organization_id: response.data.organization.id,
-          branch_id: response.data.branches[0].id
-        });
+        const orgId = response.data.organization.id;
+        const branchId = response.data.branches[0].id;
+
+        // Persist organization_id on the auth user profile so me() returns it after reload
+        let verified = false;
+        try {
+          await base44.auth.updateMe({ organization_id: orgId, branch_id: branchId });
+          // Verify the data actually persisted before redirecting
+          const freshMe = await base44.auth.me();
+          verified = !!(freshMe?.data?.organization_id || freshMe?.organization_id);
+        } catch (updateErr) {
+          console.error('updateMe failed:', updateErr);
+        }
+
+        if (!verified) {
+          // Retry once — the backend already updated the User entity, but the auth token may need a refresh
+          try {
+            await base44.auth.updateMe({ organization_id: orgId, branch_id: branchId });
+            const retryMe = await base44.auth.me();
+            verified = !!(retryMe?.data?.organization_id || retryMe?.organization_id);
+          } catch (retryErr) {
+            console.error('updateMe retry failed:', retryErr);
+          }
+        }
+
         setLoading(false);
-        // Hard redirect so the app fully reinitializes with fresh user data
-        setTimeout(() => { window.location.href = '/Admin'; }, 2500);
+
+        if (verified) {
+          // Hard redirect so the app fully reinitializes with fresh user data
+          setTimeout(() => { window.location.href = '/Admin'; }, 2500);
+        } else {
+          setError('Your workspace was created, but we could not verify your session. Please refresh the page or log in again.');
+        }
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);

@@ -95,7 +95,8 @@ export const AuthProvider = ({ children }) => {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
-      setNeedsOnboarding(!currentUser?.data?.organization_id && currentUser?.role !== 'platform_admin');
+      const hasOrg = currentUser?.data?.organization_id || currentUser?.organization_id;
+      setNeedsOnboarding(!hasOrg && currentUser?.role !== 'platform_admin');
       setIsLoadingAuth(false);
     } catch (error) {
       console.error('User auth check failed:', error);
