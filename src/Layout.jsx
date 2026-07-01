@@ -66,7 +66,7 @@ export default function Layout({ children, currentPageName }) {
     { name: t('drinks'), page: 'Drinks' },
     { name: t('about'), page: 'About' },
     { name: t('contact'), page: 'Contact' },
-    ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }] : []),
+    ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }, { name: 'Billing', page: 'Billing' }] : []),
     ...(isPlatformAdmin ? [{ name: 'Super Admin', page: 'SuperAdmin' }] : []),
   ];
 
