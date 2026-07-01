@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import LuxuryButton from '@/components/common/LuxuryButton';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import SetupChecklist from '@/components/onboarding/SetupChecklist';
 
 // Lazy load heavy admin components
 const MenuItemsManager = React.lazy(() => import('@/components/admin/MenuItemsManager'));
@@ -154,7 +155,12 @@ export default function Admin() {
               transition={{ duration: 0.3 }}
             >
               <React.Suspense fallback={<LazyFallback />}>
-                {activeTab === 'dashboard' && <DashboardStats />}
+                {activeTab === 'dashboard' && (
+                  <>
+                    <SetupChecklist />
+                    <DashboardStats />
+                  </>
+                )}
                 {activeTab === 'revenue-forecast' && <AIRevenueForecast />}
                 {activeTab === 'demand-heatmap' && <DemandHeatmap />}
                 {activeTab === 'menu-profitability' && <MenuProfitability />}
