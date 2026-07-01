@@ -2,6 +2,14 @@
   "name": "RFQQuote",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this quote belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "rfq_id": {
       "type": "string"
     },

@@ -2,6 +2,13 @@
   "name": "HousekeepingTask",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this task belongs to"
+    },
+    "hotel_id": {
+      "type": "string"
+    },
     "room_id": {
       "type": "string"
     },
@@ -54,9 +61,6 @@
     "completed_at": {
       "type": "string",
       "format": "date-time"
-    },
-    "hotel_id": {
-      "type": "string"
     }
   },
   "required": [

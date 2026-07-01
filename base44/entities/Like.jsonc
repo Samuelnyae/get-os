@@ -2,6 +2,14 @@
   "name": "Like",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this like belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "menu_item_id": {
       "type": "string",
       "description": "Reference to the menu item"

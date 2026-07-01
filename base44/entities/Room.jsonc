@@ -2,6 +2,14 @@
   "name": "Room",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this room belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this room belongs to"
+    },
     "room_number": {
       "type": "string",
       "description": "Room number or identifier"
@@ -86,9 +94,6 @@
         }
       },
       "default": []
-    },
-    "hotel_id": {
-      "type": "string"
     }
   },
   "required": [

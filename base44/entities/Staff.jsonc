@@ -2,6 +2,14 @@
   "name": "Staff",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this staff member belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this staff member is assigned to"
+    },
     "name": {
       "type": "string",
       "description": "Staff member name"

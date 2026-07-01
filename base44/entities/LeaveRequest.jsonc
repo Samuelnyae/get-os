@@ -2,6 +2,14 @@
   "name": "LeaveRequest",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this leave request belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "staff_id": {
       "type": "string"
     },

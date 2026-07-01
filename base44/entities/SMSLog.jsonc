@@ -2,6 +2,14 @@
   "name": "SMSLog",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this SMS belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "phone": {
       "type": "string"
     },

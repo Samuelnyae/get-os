@@ -2,6 +2,14 @@
   "name": "Integration",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this integration belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "integration_name": {
       "type": "string"
     },

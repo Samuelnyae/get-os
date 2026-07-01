@@ -2,6 +2,14 @@
   "name": "MpesaTransaction",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this transaction belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "transaction_id": {
       "type": "string"
     },

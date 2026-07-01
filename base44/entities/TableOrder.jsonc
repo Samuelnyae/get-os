@@ -2,6 +2,14 @@
   "name": "TableOrder",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this table order belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this table order belongs to"
+    },
     "table_number": {
       "type": "string",
       "description": "Table number or group ID"

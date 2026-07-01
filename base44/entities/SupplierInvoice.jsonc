@@ -2,6 +2,14 @@
   "name": "SupplierInvoice",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this invoice belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "invoice_number": {
       "type": "string"
     },

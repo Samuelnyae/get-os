@@ -2,6 +2,14 @@
   "name": "Shift",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this shift belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this shift belongs to"
+    },
     "staff_id": {
       "type": "string"
     },

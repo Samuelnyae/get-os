@@ -2,6 +2,14 @@
   "name": "ChatConversation",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this conversation belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "user_identifier": {
       "type": "string",
       "description": "User email or anonymous session ID"

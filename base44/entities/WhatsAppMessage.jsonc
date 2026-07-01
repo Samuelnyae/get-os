@@ -2,6 +2,14 @@
   "name": "WhatsAppMessage",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this message belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch"
+    },
     "customer_name": {
       "type": "string"
     },

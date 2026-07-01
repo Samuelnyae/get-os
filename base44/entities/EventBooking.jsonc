@@ -2,6 +2,14 @@
   "name": "EventBooking",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this event belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch hosting this event"
+    },
     "event_type": {
       "type": "string",
       "enum": [
