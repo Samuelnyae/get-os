@@ -64,15 +64,13 @@ export default function TenantOnboarding() {
     checkUser();
   }, []);
 
-  // Auto-select modules when industry is chosen
+  // Auto-select modules whenever the business type changes
   useEffect(() => {
-    if (step === 2 || step === 7) {
-      const businessType = BUSINESS_TYPES.find(t => t.value === data.industry);
-      if (businessType && data.enabled_modules.length === 0) {
-        update({ enabled_modules: businessType.modules });
-      }
+    const businessType = BUSINESS_TYPES.find(t => t.value === data.industry);
+    if (businessType) {
+      update({ enabled_modules: businessType.modules });
     }
-  }, [data.industry, step]);
+  }, [data.industry]);
 
   const handleSubmit = async () => {
     setLoading(true);
