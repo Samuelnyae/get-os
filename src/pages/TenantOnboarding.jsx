@@ -41,8 +41,15 @@ export default function TenantOnboarding() {
       try {
         const me = await base44.auth.me();
         setUser(me);
+        // Platform admins don't onboard — send to the platform dashboard
+        if (me?.role === 'platform_admin') {
+          navigate('/SuperAdmin');
+          return;
+        }
+        // Already onboarded — send to their workspace
         if (me?.data?.organization_id) {
-          navigate('/');
+          navigate('/Admin');
+          return;
         }
       } catch {
         base44.auth.redirectToLogin('/onboarding');
@@ -83,6 +90,7 @@ export default function TenantOnboarding() {
         });
         // Re-evaluate AuthContext so needsOnboarding becomes false in-memory
         await checkAppState();
+        // Route based on ecosystem role after onboarding
         setStep(4);
       } else {
         setError(response.data?.error || 'Something went wrong');
@@ -301,7 +309,7 @@ export default function TenantOnboarding() {
                 </motion.div>
                 <h1 className="font-playfair text-3xl gold-gradient mb-2">You're Live!</h1>
                 <p className="font-inter text-sm text-white/50 mb-8">Your workspace is ready. Your 14-day trial starts now.</p>
-                <button onClick={() => navigate('/Admin')} className="bg-[#c9a962] text-[#0a0a0a] font-inter font-medium px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-[#e4d5a7] transition-colors">
+                <button onClick={() => navigate(user?.role === 'platform_admin' ? '/SuperAdmin' : '/Admin')} className="bg-[#c9a962] text-[#0a0a0a] font-inter font-medium px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-[#e4d5a7] transition-colors">
                   Go to Dashboard <ArrowRight className="w-4 h-4" />
                 </button>
               </motion.div>
