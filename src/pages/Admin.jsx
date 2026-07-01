@@ -78,7 +78,7 @@ export default function Admin() {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== 'admin' && user.role !== 'owner' && user.role !== 'platform_admin')) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
         <div className="max-w-md text-center">

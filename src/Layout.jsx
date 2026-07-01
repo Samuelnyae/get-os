@@ -38,7 +38,7 @@ export default function Layout({ children, currentPageName }) {
     const checkAdmin = async () => {
       try {
         const user = await base44.auth.me();
-        setIsAdmin(user?.role === 'admin' || user?.role === 'platform_admin');
+        setIsAdmin(user?.role === 'admin' || user?.role === 'owner' || user?.role === 'platform_admin');
         setIsPlatformAdmin(user?.role === 'platform_admin');
       } catch {
         setIsAdmin(false);
