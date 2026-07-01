@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Check, ArrowRight, Rocket, Loader2 } from 'lucide-react';
+import { Check, ArrowRight, Rocket, Loader2, AlertTriangle, PartyPopper } from 'lucide-react';
 
 export default function FinishStep({ loading, error, onComplete }) {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function FinishStep({ loading, error, onComplete }) {
       {error ? (
         <>
           <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl">⚠️</span>
+            <AlertTriangle className="w-8 h-8 text-red-400" />
           </div>
           <h1 className="font-playfair text-3xl text-white mb-2">Setup Failed</h1>
           <p className="font-inter text-sm text-white/50 mb-8">{error}</p>
@@ -32,7 +32,7 @@ export default function FinishStep({ loading, error, onComplete }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
             className="w-20 h-20 rounded-full bg-[#c9a962]/15 flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl">🎉</span>
+            <PartyPopper className="w-10 h-10 text-[#c9a962]" />
           </motion.div>
           <h1 className="font-playfair text-4xl gold-gradient mb-2">Welcome!</h1>
           <p className="font-inter text-white/50 text-lg mb-8">Your workspace is ready. Let's get your business running.</p>

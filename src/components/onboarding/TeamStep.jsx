@@ -35,7 +35,7 @@ export default function TeamStep({ data, update, onNext, onBack }) {
             <div className="flex items-center gap-2">
               <select value={invite.role} onChange={(e) => updateInvite(idx, 'role', e.target.value)}
                 className="bg-[#0a0a0a] luxury-border rounded-lg px-3 py-2 font-inter text-sm text-white focus:outline-none focus:border-[#c9a962]">
-                {STAFF_ROLES.map(r => <option key={r.value} value={r.value} className="bg-[#1a1a1a]">{r.icon} {r.label}</option>)}
+                {STAFF_ROLES.map(r => <option key={r.value} value={r.value} className="bg-[#1a1a1a]">{r.label}</option>)}
               </select>
               <button onClick={() => removeInvite(idx)} className="text-white/40 hover:text-red-400 transition-colors p-1">
                 <Trash2 className="w-4 h-4" />

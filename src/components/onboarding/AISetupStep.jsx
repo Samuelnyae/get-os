@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check, Sparkles } from 'lucide-react';
 import { AI_MODULES } from './onboardingConfig';
+import OnboardingIcon from './OnboardingIcon';
 
 export default function AISetupStep({ data, update, onNext, onBack }) {
   const toggleAI = (value) => {
@@ -41,7 +42,7 @@ export default function AISetupStep({ data, update, onNext, onBack }) {
                 selected ? 'bg-[#c9a962]/15 border-2 border-[#c9a962]' : 'luxury-border border border-[#c9a962]/20 hover:bg-white/5'
               }`}>
               <div className="flex items-start gap-3">
-                <div className="text-2xl">{mod.icon}</div>
+                <OnboardingIcon name={mod.icon} className="w-6 h-6 text-[#c9a962] shrink-0" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-inter text-sm text-white font-medium">{mod.label}</p>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, Upload, FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Upload, FileText, Loader2, Check } from 'lucide-react';
 import { IMPORT_TYPES } from './onboardingConfig';
+import OnboardingIcon from './OnboardingIcon';
 import { base44 } from '@/api/base44Client';
 
 export default function ImportStep({ data, update, onNext, onBack }) {
@@ -31,9 +32,9 @@ export default function ImportStep({ data, update, onNext, onBack }) {
             <div key={imp.value}
               className={`p-4 rounded-xl transition-all ${hasFile ? 'bg-[#c9a962]/10 border border-[#c9a962]/40' : 'luxury-border border border-[#c9a962]/20'}`}>
               <div className="flex items-center gap-3 mb-3">
-                <div className="text-2xl">{imp.icon}</div>
+                <OnboardingIcon name={imp.icon} className="w-6 h-6 text-[#c9a962] shrink-0" />
                 <p className="font-inter text-sm text-white font-medium">{imp.label}</p>
-                {hasFile && <span className="ml-auto text-xs text-[#c9a962]">✓ Uploaded</span>}
+                {hasFile && <span className="ml-auto text-xs text-[#c9a962] flex items-center gap-1"><Check className="w-3 h-3" /> Uploaded</span>}
               </div>
               <label className="flex items-center justify-center gap-2 py-2 rounded-lg luxury-border cursor-pointer hover:bg-white/5 transition-colors">
                 {uploading === imp.value ? (

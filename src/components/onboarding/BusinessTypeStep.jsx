@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { BUSINESS_TYPES } from './onboardingConfig';
+import OnboardingIcon from './OnboardingIcon';
 
 export default function BusinessTypeStep({ data, update, onNext, onBack }) {
   return (
@@ -22,7 +23,7 @@ export default function BusinessTypeStep({ data, update, onNext, onBack }) {
                 <Check className="w-3 h-3 text-[#0a0a0a]" />
               </div>
             )}
-            <div className="text-3xl mb-2">{type.icon}</div>
+            <div className="flex justify-center mb-2"><OnboardingIcon name={type.icon} className="w-7 h-7 text-[#c9a962]" /></div>
             <p className="font-inter text-sm text-white font-medium">{type.label}</p>
           </button>
         ))}
