@@ -1,0 +1,126 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Business or group name e.g. 'Fine Breeze Group'"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier e.g. 'fine-breeze-group'"
+    },
+    "industry": {
+      "type": "string",
+      "enum": [
+        "hotel",
+        "restaurant",
+        "cafe",
+        "bar",
+        "resort",
+        "lodge",
+        "guest_house",
+        "hostel",
+        "conference_center",
+        "catering",
+        "fast_food",
+        "bakery",
+        "night_club",
+        "food_court",
+        "coffee_shop"
+      ],
+      "default": "restaurant"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "starter",
+        "professional",
+        "enterprise"
+      ],
+      "default": "starter"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "trial",
+        "active",
+        "suspended",
+        "cancelled"
+      ],
+      "default": "trial"
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "owner_email": {
+      "type": "string"
+    },
+    "owner_user_id": {
+      "type": "string"
+    },
+    "billing_email": {
+      "type": "string"
+    },
+    "contact_phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string",
+      "default": "Kenya"
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature flags per tenant e.g. {pos: true, hotel: true, spa: false, ai: true}",
+      "default": {}
+    },
+    "stripe_customer_id": {
+      "type": "string"
+    },
+    "stripe_subscription_id": {
+      "type": "string"
+    },
+    "mrr": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly recurring revenue in KSh"
+    },
+    "max_branches": {
+      "type": "number",
+      "default": 1,
+      "description": "Max branches allowed for this plan (1 for starter, 3 for professional, unlimited for enterprise)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "onboarded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "suspended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "industry",
+    "plan",
+    "status"
+  ],
+  "permissions": {
+    "allow_read": true,
+    "allow_create": false,
+    "allow_update": false,
+    "allow_delete": false
+  }
+}

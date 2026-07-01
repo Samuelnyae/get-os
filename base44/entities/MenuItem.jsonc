@@ -2,6 +2,10 @@
   "name": "MenuItem",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this menu item belongs to"
+    },
     "name": {
       "type": "string",
       "description": "Name of the dish"

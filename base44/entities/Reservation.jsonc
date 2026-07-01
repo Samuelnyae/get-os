@@ -2,6 +2,14 @@
   "name": "Reservation",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this reservation belongs to"
+    },
+    "hotel_id": {
+      "type": "string",
+      "description": "ID of the hotel/branch this reservation belongs to"
+    },
     "customer_name": {
       "type": "string",
       "description": "Name of the person making the reservation"

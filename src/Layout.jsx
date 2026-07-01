@@ -20,6 +20,7 @@ export default function Layout({ children, currentPageName }) {
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -37,7 +38,8 @@ export default function Layout({ children, currentPageName }) {
     const checkAdmin = async () => {
       try {
         const user = await base44.auth.me();
-        setIsAdmin(user?.role === 'admin');
+        setIsAdmin(user?.role === 'admin' || user?.role === 'platform_admin');
+        setIsPlatformAdmin(user?.role === 'platform_admin');
       } catch {
         setIsAdmin(false);
       }
@@ -65,6 +67,7 @@ export default function Layout({ children, currentPageName }) {
     { name: t('about'), page: 'About' },
     { name: t('contact'), page: 'Contact' },
     ...(isAdmin ? [{ name: t('dashboard'), page: 'Admin' }] : []),
+    ...(isPlatformAdmin ? [{ name: 'Super Admin', page: 'SuperAdmin' }] : []),
   ];
 
   const servicesLinks = [

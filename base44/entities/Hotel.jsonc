@@ -2,13 +2,29 @@
   "name": "Hotel",
   "type": "object",
   "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this branch belongs to"
+    },
+    "organization_name": {
+      "type": "string",
+      "description": "Denormalized org name for display"
+    },
     "name": {
       "type": "string",
-      "description": "Hotel/branch name"
+      "description": "Branch name e.g. 'Nairobi Branch'"
     },
     "slug": {
       "type": "string",
       "description": "URL-friendly identifier e.g. 'nairobi-west'"
+    },
+    "branch_type": {
+      "type": "string",
+      "enum": [
+        "main",
+        "branch"
+      ],
+      "default": "main"
     },
     "location": {
       "type": "string",
@@ -58,27 +74,23 @@
       "type": "number"
     },
     "social_instagram": {
-      "type": "string",
-      "description": "Instagram profile URL"
+      "type": "string"
     },
     "social_facebook": {
-      "type": "string",
-      "description": "Facebook page URL"
+      "type": "string"
     },
     "social_twitter": {
-      "type": "string",
-      "description": "Twitter/X profile URL"
+      "type": "string"
     },
     "social_tiktok": {
-      "type": "string",
-      "description": "TikTok profile URL"
+      "type": "string"
     },
     "social_youtube": {
-      "type": "string",
-      "description": "YouTube channel URL"
+      "type": "string"
     }
   },
   "required": [
+    "organization_id",
     "name",
     "slug",
     "location"

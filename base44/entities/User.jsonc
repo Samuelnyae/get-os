@@ -1,0 +1,43 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "platform_admin",
+        "owner",
+        "manager",
+        "receptionist",
+        "cashier",
+        "waiter",
+        "chef",
+        "store_keeper",
+        "housekeeping",
+        "hr",
+        "accountant",
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "organization_id": {
+      "type": "string",
+      "description": "The tenant (Organization) this user belongs to. Null for platform_admin."
+    },
+    "branch_id": {
+      "type": "string",
+      "description": "Specific branch this user is assigned to. Null means all branches in the org (e.g. owner/manager)."
+    },
+    "phone": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
