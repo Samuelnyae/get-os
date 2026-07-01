@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, Store, Rocket, Check, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const PLANS = [
 
 export default function TenantOnboarding() {
   const navigate = useNavigate();
+  const { checkAppState } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -79,6 +81,8 @@ export default function TenantOnboarding() {
           organization_id: response.data.organization.id,
           branch_id: response.data.hotel.id
         });
+        // Re-evaluate AuthContext so needsOnboarding becomes false in-memory
+        await checkAppState();
         setStep(4);
       } else {
         setError(response.data?.error || 'Something went wrong');
@@ -297,7 +301,7 @@ export default function TenantOnboarding() {
                 </motion.div>
                 <h1 className="font-playfair text-3xl gold-gradient mb-2">You're Live!</h1>
                 <p className="font-inter text-sm text-white/50 mb-8">Your workspace is ready. Your 14-day trial starts now.</p>
-                <button onClick={() => window.location.href = '/Admin'} className="bg-[#c9a962] text-[#0a0a0a] font-inter font-medium px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-[#e4d5a7] transition-colors">
+                <button onClick={() => navigate('/Admin')} className="bg-[#c9a962] text-[#0a0a0a] font-inter font-medium px-8 py-3 rounded-lg inline-flex items-center gap-2 hover:bg-[#e4d5a7] transition-colors">
                   Go to Dashboard <ArrowRight className="w-4 h-4" />
                 </button>
               </motion.div>
