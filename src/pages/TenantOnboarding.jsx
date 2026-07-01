@@ -102,6 +102,8 @@ export default function TenantOnboarding() {
         });
         await checkAppState();
         setLoading(false);
+        // Auto-redirect to dashboard after showing success screen
+        setTimeout(() => navigate('/Admin'), 2500);
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);
@@ -192,7 +194,7 @@ export default function TenantOnboarding() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
-            {renderStep()}
+            <div key={step}>{renderStep()}</div>
           </AnimatePresence>
         </div>
       </div>
