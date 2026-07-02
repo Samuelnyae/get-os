@@ -43,6 +43,29 @@ const EventBookingsAdmin = React.lazy(() => import('@/components/admin/EventBook
 const AmenityBookingsAdmin = React.lazy(() => import('@/components/admin/AmenityBookingsAdmin'));
 const VendorPerformanceDashboard = React.lazy(() => import('@/components/admin/VendorPerformanceDashboard'));
 
+// HR sub-components
+const AttendanceTracker = React.lazy(() => import('@/components/hr/AttendanceTracker'));
+const ShiftCalendar = React.lazy(() => import('@/components/hr/ShiftCalendar'));
+const PerformanceReviews = React.lazy(() => import('@/components/hr/PerformanceReviews'));
+const TrainingTracker = React.lazy(() => import('@/components/hr/TrainingTracker'));
+const NoticeBoard = React.lazy(() => import('@/components/hr/NoticeBoard'));
+
+// Hotel sub-components
+const RoomStatusBoard = React.lazy(() => import('@/components/hotel-mgmt/RoomStatusBoard'));
+const BookingCalendar = React.lazy(() => import('@/components/hotel-mgmt/BookingCalendar'));
+const CheckInOut = React.lazy(() => import('@/components/hotel-mgmt/CheckInOut'));
+const HousekeepingBoard = React.lazy(() => import('@/components/hotel-mgmt/HousekeepingBoard'));
+const GuestCRM = React.lazy(() => import('@/components/hotel-mgmt/GuestCRM'));
+const RoomServiceOrders = React.lazy(() => import('@/components/hotel-mgmt/RoomServiceOrders'));
+
+// Standalone pages
+const SupplierMarketplacePage = React.lazy(() => import('./SupplierMarketplace'));
+const QRCodeAdminPage = React.lazy(() => import('./QRCode'));
+
+// AI Agent
+const BookingAssistantChat = React.lazy(() => import('@/components/agent/BookingAssistantChat'));
+const BookingAssistantFAB = React.lazy(() => import('@/components/agent/BookingAssistantFAB'));
+
 const LazyFallback = () => (
   <div className="flex justify-center py-12">
     <div className="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
@@ -234,10 +257,29 @@ export default function Admin() {
                 {activeTab === 'feedback-insights' && <FeedbackInsights />}
                 {activeTab === 'notifications' && <DNDSettings />}
                 {activeTab === 'export' && <DataExport />}
+                {activeTab === 'ai-concierge' && <BookingAssistantChat />}
+                {activeTab === 'ai-forecasting' && <AIRevenueForecast />}
+                {activeTab === 'room-bookings' && <BookingCalendar />}
+                {activeTab === 'room-status' && <RoomStatusBoard />}
+                {activeTab === 'guest-profiles' && <GuestCRM />}
+                {activeTab === 'hotel-bookings' && <CheckInOut />}
+                {activeTab === 'service-requests' && <RoomServiceOrders />}
+                {activeTab === 'concierge-intel' && <HousekeepingBoard />}
+                {activeTab === 'attendance' && <AttendanceTracker />}
+                {(activeTab === 'leave-shifts' || activeTab === 'scheduling') && <ShiftCalendar />}
+                {activeTab === 'performance' && <PerformanceReviews />}
+                {activeTab === 'training' && <TrainingTracker />}
+                {activeTab === 'notice-board' && <NoticeBoard />}
+                {activeTab === 'supplier-marketplace' && <SupplierMarketplacePage />}
+                {activeTab === 'qr-code' && <QRCodeAdminPage />}
+                {activeTab === 'setup-checklist' && <SetupChecklist />}
               </React.Suspense>
             </motion.div>
           </div>
       </div>
+      <React.Suspense fallback={null}>
+        <BookingAssistantFAB />
+      </React.Suspense>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Chatbot from '@/components/chatbot/Chatbot';
+// Chatbot removed — replaced by Booking Assistant AI Agent in Admin dashboard
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import MarketingNav from '@/components/landing/MarketingNav';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -361,8 +361,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </footer>
 
-      {/* AI Chatbot */}
-      <Chatbot />
+      {/* Chatbot removed — replaced by Booking Assistant AI Agent in Admin dashboard */}
       </div>
       );
       }

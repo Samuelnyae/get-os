@@ -8,60 +8,79 @@ import {
   TrendingUp, Flame, DollarSign, Heart, Target, Leaf, BarChart3,
   Brain, PackageCheck, Megaphone, MessageSquare, Bot, Boxes,
   RefreshCw, Clock, Briefcase, HeartHandshake, MessageCircle,
-  Lightbulb, Mail, Link
+  Lightbulb, Mail, Link,
+  CalendarDays, BedDouble, DoorOpen, Contact, Wrench, Compass,
+  Fingerprint, Award, GraduationCap, LineChart, Store, QrCode,
+  CalendarClock, ListChecks
 } from 'lucide-react';
 
 const MODULE_ITEMS = [
-  // Core
+  // Row 1
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'orders', label: 'Order Queue', icon: ListOrdered },
-  { id: 'reservations', label: 'Reservations', icon: CalendarCheck },
-  { id: 'event-bookings', label: 'Event Bookings', icon: PartyPopper },
-  { id: 'amenity-bookings', label: 'Spa & Amenities', icon: Sparkles },
-  { id: 'hotel', label: 'Hotel Management', icon: Hotel },
-  { id: 'staff', label: 'Staff', icon: Users },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'export', label: 'Data Export', icon: Download },
-  // Restaurant & POS
-  { id: 'menu', label: 'Menu Items', icon: UtensilsCrossed },
-  { id: 'kds', label: 'Kitchen Display', icon: ChefHat },
-  { id: 'custom', label: 'Custom Requests', icon: ClipboardList },
-  { id: 'tables', label: 'Table Management', icon: LayoutGrid },
-  { id: 'reconciliation', label: 'Reconciliation', icon: Receipt },
-  // Inventory & Supply Chain
-  { id: 'inventory-tracking', label: 'Inventory Tracking', icon: Package },
-  { id: 'stock', label: 'Stock Alerts', icon: AlertTriangle },
-  { id: 'supply-chain', label: 'Supply Chain', icon: Truck },
-  { id: 'vendor-performance', label: 'Vendor Performance', icon: Star },
-  { id: 'driver', label: 'Driver Mode', icon: Car },
-  // Business Intelligence
+  { id: 'room-bookings', label: 'Room Bookings', icon: CalendarDays },
+  { id: 'ai-concierge', label: 'AI Concierge', icon: Bot },
+  { id: 'hotel-bookings', label: 'Hotel Bookings', icon: DoorOpen },
+  { id: 'room-status', label: 'Room Status', icon: BedDouble },
+  { id: 'guest-profiles', label: 'Guest Profiles', icon: Contact },
+  // Row 2
+  { id: 'service-requests', label: 'Service Requests', icon: Wrench },
+  { id: 'concierge-intel', label: 'Concierge Intel', icon: Compass },
   { id: 'revenue-forecast', label: 'Revenue Forecast', icon: TrendingUp },
   { id: 'demand-heatmap', label: 'Demand Heatmap', icon: Flame },
-  { id: 'menu-profitability', label: 'Menu Profitability', icon: DollarSign },
+  { id: 'menu-profitability', label: 'Menu Profit', icon: DollarSign },
+  // Row 3
   { id: 'clv', label: 'Customer CLV', icon: Heart },
   { id: 'competitor', label: 'Competitors', icon: Target },
   { id: 'sustainability', label: 'Sustainability', icon: Leaf },
+  { id: 'attendance', label: 'Attendance', icon: Fingerprint },
+  { id: 'leave-shifts', label: 'Leave & Shifts', icon: CalendarDays },
+  { id: 'performance', label: 'Performance', icon: Award },
+  // Row 4
+  { id: 'training', label: 'Training', icon: GraduationCap },
+  { id: 'notice-board', label: 'Notice Board', icon: Megaphone },
+  { id: 'ai-forecasting', label: 'AI Forecasting', icon: LineChart },
   { id: 'analytics', label: 'Advanced Analytics', icon: BarChart3 },
-  // AI Automation
   { id: 'insights', label: 'AI Insights', icon: Brain },
   { id: 'fulfillment', label: 'AI Fulfillment', icon: PackageCheck },
-  { id: 'marketing', label: 'AI Marketing', icon: Megaphone },
-  { id: 'feedbackai', label: 'AI Feedback', icon: MessageSquare },
-  { id: 'ai-order-agent', label: 'AI Order Agent', icon: Bot },
-  { id: 'tables-ai', label: 'AI Table Mgmt', icon: LayoutGrid },
+  // Row 5
   { id: 'inventory', label: 'AI Inventory', icon: Boxes },
-  { id: 'reorder-agent', label: 'Reorder Agent', icon: RefreshCw },
-  { id: 'shift-manager', label: 'AI Shift Manager', icon: Clock },
-  // Workforce
-  { id: 'hr', label: 'HR & Workforce', icon: Briefcase },
-  // Customer Experience
-  { id: 'guest-exp', label: 'Guest Experience', icon: HeartHandshake },
+  { id: 'feedbackai', label: 'AI Feedback', icon: MessageSquare },
+  { id: 'tables-ai', label: 'AI Table Mgmt', icon: LayoutGrid },
+  { id: 'marketing', label: 'AI Marketing', icon: Megaphone },
+  { id: 'supply-chain', label: 'Supply Chain', icon: Truck },
+  { id: 'supplier-marketplace', label: 'Supplier Marketplace', icon: Store },
+  // Row 6
+  { id: 'driver', label: 'Driver Mode', icon: Car },
+  { id: 'orders', label: 'Order Queue', icon: ListOrdered },
+  { id: 'reservations', label: 'Reservations', icon: CalendarCheck },
+  { id: 'staff', label: 'Staff', icon: Users },
+  { id: 'scheduling', label: 'Scheduling', icon: CalendarClock },
+  { id: 'stock', label: 'Stock Alerts', icon: AlertTriangle },
+  { id: 'menu', label: 'Menu Items', icon: UtensilsCrossed },
+  // Row 7
+  { id: 'custom', label: 'Custom Requests', icon: ClipboardList },
   { id: 'feedback', label: 'Feedback', icon: MessageCircle },
   { id: 'feedback-insights', label: 'Feedback Insights', icon: Lightbulb },
-  // Sales & Marketing
+  { id: 'qr-code', label: 'QR Code', icon: QrCode },
+  { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'setup-checklist', label: 'Setup Checklist', icon: ListChecks },
+  // Additional modules
+  { id: 'event-bookings', label: 'Event Bookings', icon: PartyPopper },
+  { id: 'amenity-bookings', label: 'Spa & Amenities', icon: Sparkles },
+  { id: 'hotel', label: 'Hotel Management', icon: Hotel },
+  { id: 'kds', label: 'Kitchen Display', icon: ChefHat },
+  { id: 'tables', label: 'Table Management', icon: LayoutGrid },
+  { id: 'reconciliation', label: 'Reconciliation', icon: Receipt },
+  { id: 'inventory-tracking', label: 'Inventory Tracking', icon: Package },
+  { id: 'vendor-performance', label: 'Vendor Performance', icon: Star },
+  { id: 'ai-order-agent', label: 'AI Order Agent', icon: Bot },
+  { id: 'reorder-agent', label: 'Reorder Agent', icon: RefreshCw },
+  { id: 'shift-manager', label: 'AI Shift Manager', icon: Clock },
+  { id: 'hr', label: 'HR & Workforce', icon: Briefcase },
+  { id: 'guest-exp', label: 'Guest Experience', icon: HeartHandshake },
   { id: 'marketing-crm', label: 'Marketing & CRM', icon: Mail },
-  // Integrations
   { id: 'integrations', label: 'Integrations', icon: Link },
+  { id: 'export', label: 'Data Export', icon: Download },
 ];
 
 export default function AdminSidebar({ activeTab, setActiveTab, enabledModules = [], aiModules = [], showAll = false }) {
