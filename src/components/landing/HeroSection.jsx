@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, TrendingUp, Calendar, BedDouble, Package, Sparkles } from 'lucide-react';
+import { ArrowRight, Play, Sparkles } from 'lucide-react';
 
 export default function HeroSection() {
   return (
@@ -65,76 +65,76 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right: Dashboard Mockup */}
+          {/* Right: Product Showcase with Zoom Animation */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative rounded-2xl luxury-border bg-[#111] p-6 shadow-[0_0_60px_rgba(201,169,98,0.1)]">
-              {/* Mock header */}
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <p className="font-inter text-xs text-white/40">Good Morning</p>
-                  <p className="font-playfair text-lg text-white">Dashboard Overview</p>
+            <div className="relative grid grid-cols-2 gap-4">
+              {/* Phone ordering — large, spans two rows */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="row-span-2 relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_60px_rgba(201,169,98,0.15)] group"
+              >
+                <motion.img
+                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/100f487b4_generated_image.png"
+                  alt="Phone ordering at restaurant"
+                  className="w-full h-full object-cover"
+                  animate={{ scale: [1, 1.08, 1] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-4">
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">QR Ordering</p>
+                  <p className="font-playfair text-sm text-white">Guests order from their phone</p>
                 </div>
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-400" />
-                  <div className="w-2 h-2 rounded-full bg-[#c9a962]" />
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                </div>
-              </div>
+              </motion.div>
 
-              {/* Stat cards */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="rounded-xl bg-[#1a1a1a] p-4 luxury-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <TrendingUp className="w-4 h-4 text-[#c9a962]" />
-                    <span className="font-inter text-xs text-green-400">+12.5%</span>
-                  </div>
-                  <p className="font-playfair text-xl text-white font-bold">KES 847K</p>
-                  <p className="font-inter text-xs text-white/40">Today's Revenue</p>
+              {/* POS Dashboard */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_40px_rgba(201,169,98,0.1)] group"
+              >
+                <motion.img
+                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/ac2040fa0_generated_image.png"
+                  alt="POS system dashboard"
+                  className="w-full h-full object-cover"
+                  animate={{ scale: [1, 1.12, 1] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-3">
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-0.5">POS Dashboard</p>
+                  <p className="font-playfair text-xs text-white">Real-time operations</p>
                 </div>
-                <div className="rounded-xl bg-[#1a1a1a] p-4 luxury-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <Calendar className="w-4 h-4 text-[#c9a962]" />
-                    <span className="font-inter text-xs text-green-400">+8</span>
-                  </div>
-                  <p className="font-playfair text-xl text-white font-bold">142</p>
-                  <p className="font-inter text-xs text-white/40">Reservations</p>
-                </div>
-                <div className="rounded-xl bg-[#1a1a1a] p-4 luxury-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <BedDouble className="w-4 h-4 text-[#c9a962]" />
-                    <span className="font-inter text-xs text-green-400">87%</span>
-                  </div>
-                  <p className="font-playfair text-xl text-white font-bold">26/30</p>
-                  <p className="font-inter text-xs text-white/40">Rooms Occupied</p>
-                </div>
-                <div className="rounded-xl bg-[#1a1a1a] p-4 luxury-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <Package className="w-4 h-4 text-[#c9a962]" />
-                    <span className="font-inter text-xs text-red-400">3 Low</span>
-                  </div>
-                  <p className="font-playfair text-xl text-white font-bold">248</p>
-                  <p className="font-inter text-xs text-white/40">Inventory Items</p>
-                </div>
-              </div>
+              </motion.div>
 
-              {/* AI insight bar */}
-              <div className="rounded-xl bg-gradient-to-r from-[#c9a962]/10 to-transparent p-4 luxury-border flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#c9a962]/20 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 text-[#c9a962]" />
+              {/* AI Forecast & Automations */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_40px_rgba(201,169,98,0.1)] group"
+              >
+                <motion.img
+                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/8b634f29e_generated_image.png"
+                  alt="AI automations and revenue forecast"
+                  className="w-full h-full object-cover"
+                  animate={{ scale: [1, 1.12, 1] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-3">
+                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-0.5">AI & Automations</p>
+                  <p className="font-playfair text-xs text-white">Revenue forecasting</p>
                 </div>
-                <div>
-                  <p className="font-inter text-xs text-[#c9a962] font-medium">AI Insight</p>
-                  <p className="font-inter text-xs text-white/60">Restock tomatoes by Thursday — demand spike predicted</p>
-                </div>
-              </div>
+              </motion.div>
             </div>
 
-            {/* Floating accent */}
+            {/* Floating accents */}
             <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[#c9a962]/10 blur-2xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-[#c9a962]/5 blur-3xl" />
           </motion.div>
