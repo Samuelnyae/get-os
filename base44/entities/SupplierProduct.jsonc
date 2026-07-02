@@ -72,11 +72,17 @@
         "out_of_stock",
         "discontinued"
       ],
-      "default": "pending_review"
+      "default": "active"
     },
     "featured": {
       "type": "boolean",
       "default": false
+    },
+    "sku": {
+      "type": "string"
+    },
+    "brand": {
+      "type": "string"
     }
   },
   "required": [
@@ -89,14 +95,33 @@
     "create": true,
     "read": true,
     "update": {
-      "user_condition": {
-        "role": "platform_admin"
-      }
+      "$or": [
+        {
+          "data.supplier_id": "{{user.data.supplier_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "platform_admin"
-      }
+      "$or": [
+        {
+          "data.supplier_id": "{{user.data.supplier_id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
     }
   }
 }
