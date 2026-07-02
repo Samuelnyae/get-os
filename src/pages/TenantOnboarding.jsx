@@ -93,39 +93,10 @@ const [step, setStep] = useState(1);
         team_invites: data.team_invites.filter(i => i.email.trim()),
       });
       if (response.data?.success) {
-        const orgId = response.data.organization.id;
-        const branchId = response.data.branches[0].id;
-
-        // Persist organization_id on the auth user profile so me() returns it after reload
-        let verified = false;
-        try {
-          await base44.auth.updateMe({ organization_id: orgId, branch_id: branchId });
-          // Verify the data actually persisted before redirecting
-          const freshMe = await base44.auth.me();
-          verified = !!(freshMe?.data?.organization_id || freshMe?.organization_id);
-        } catch (updateErr) {
-          console.error('updateMe failed:', updateErr);
-        }
-
-        if (!verified) {
-          // Retry once — the backend already updated the User entity, but the auth token may need a refresh
-          try {
-            await base44.auth.updateMe({ organization_id: orgId, branch_id: branchId });
-            const retryMe = await base44.auth.me();
-            verified = !!(retryMe?.data?.organization_id || retryMe?.organization_id);
-          } catch (retryErr) {
-            console.error('updateMe retry failed:', retryErr);
-          }
-        }
-
+        // Backend already updated the User entity with organization_id + branch_id.
+        // Just show success and redirect — me() will fetch fresh data on reload.
         setLoading(false);
-
-        if (verified) {
-          // Hard redirect so the app fully reinitializes with fresh user data
-          setTimeout(() => { window.location.href = '/Admin'; }, 2500);
-        } else {
-          setError('Your workspace was created, but we could not verify your session. Please refresh the page or log in again.');
-        }
+        setTimeout(() => { window.location.href = '/Admin'; }, 2500);
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);
