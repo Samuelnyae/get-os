@@ -53,7 +53,6 @@ const lazyPage = (importFn) => React.lazy(importFn);
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [org, setOrg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -120,72 +119,41 @@ export default function Admin() {
 
   const handleSelect = (id) => {
     setActiveTab(id);
-    setSidebarOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-6 sm:py-8 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6 gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            {org?.logo_url ? (
-              <img src={org.logo_url} alt={org.name} className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl object-cover" />
-            ) : (
-              <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
-                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#c9a962]" />
-              </div>
-            )}
-            <div className="min-w-0">
-              <h1 className="font-playfair text-xl sm:text-2xl lg:text-3xl text-white truncate">{org?.name || 'Get OS'}</h1>
-              <p className="font-inter text-xs sm:text-sm text-white/50 capitalize">
-                {org ? `${org.industry?.replace(/_/g, ' ')} · ${org.plan} Plan` : 'Management Dashboard'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden flex-shrink-0 px-3 sm:px-4 py-2 rounded-lg bg-[#1a1a1a] border border-[#c9a962]/20 text-white/70 font-inter text-xs sm:text-sm"
-          >
-            Modules
-          </button>
-        </div>
-
-        <div className="flex gap-4 lg:gap-6">
-          {/* Sidebar — desktop */}
-          <aside className="hidden lg:block w-60 xl:w-64 flex-shrink-0">
-            <div className="sticky top-24 bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-3 max-h-[calc(100vh-7rem)] overflow-y-auto">
-              <AdminSidebar
-                activeTab={activeTab}
-                setActiveTab={handleSelect}
-                enabledModules={org?.enabled_modules || []}
-                aiModules={org?.ai_modules || []}
-                showAll={user?.role === 'platform_admin'}
-              />
-            </div>
-          </aside>
-
-          {/* Sidebar — mobile overlay */}
-          {sidebarOpen && (
-            <div className="lg:hidden fixed inset-0 z-50 bg-black/60" onClick={() => setSidebarOpen(false)}>
-              <div className="absolute left-0 top-0 bottom-0 w-72 max-w-[80vw] bg-[#1a1a1a] border-r border-[#c9a962]/20 p-4 overflow-y-auto" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-playfair text-lg text-[#c9a962]">Modules</span>
-                  <button onClick={() => setSidebarOpen(false)} className="text-white/50 text-xl">✕</button>
-                </div>
-                <AdminSidebar
-                  activeTab={activeTab}
-                  setActiveTab={handleSelect}
-                  enabledModules={org?.enabled_modules || []}
-                  aiModules={org?.ai_modules || []}
-                  showAll={user?.role === 'platform_admin'}
-                />
-              </div>
+        <div className="flex items-center gap-3 mb-6 min-w-0">
+          {org?.logo_url ? (
+            <img src={org.logo_url} alt={org.name} className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl object-cover" />
+          ) : (
+            <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
+              <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#c9a962]" />
             </div>
           )}
+          <div className="min-w-0">
+            <h1 className="font-playfair text-xl sm:text-2xl lg:text-3xl text-white truncate">{org?.name || 'Get OS'}</h1>
+            <p className="font-inter text-xs sm:text-sm text-white/50 capitalize">
+              {org ? `${org.industry?.replace(/_/g, ' ')} · ${org.plan} Plan` : 'Management Dashboard'}
+            </p>
+          </div>
+        </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
+        {/* Navigation Grid */}
+        <div className="mb-6">
+          <AdminSidebar
+            activeTab={activeTab}
+            setActiveTab={handleSelect}
+            enabledModules={org?.enabled_modules || []}
+            aiModules={org?.ai_modules || []}
+            showAll={user?.role === 'platform_admin'}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="min-w-0">
             <motion.div
               key={activeTab}
               initial={{ opacity: 0, y: 20 }}
@@ -269,7 +237,6 @@ export default function Admin() {
               </React.Suspense>
             </motion.div>
           </div>
-        </div>
       </div>
     </div>
   );
