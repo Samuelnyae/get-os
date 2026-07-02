@@ -3,96 +3,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BedDouble, Users, Star, CheckCircle, X, Wifi, Tv, Coffee, Sparkles, Search, Filter } from 'lucide-react';
+import { BedDouble, CheckCircle, X, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const TYPE_ORDER = ['standard', 'deluxe', 'suite', 'family', 'penthouse'];
-
-const TYPE_LABELS = {
-  standard: 'Standard', deluxe: 'Deluxe', suite: 'Suite', family: 'Family', penthouse: 'Penthouse'
-};
-
-const AMENITY_ICONS = { WiFi: Wifi, TV: Tv, Minibar: Coffee };
+import RoomCard from '@/components/rooms/RoomCard';
 
 function generateCode() {
   return 'BK' + Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-function RoomCard({ room, onBook }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-      className="bg-[#1a1a1a] rounded-2xl border border-white/10 overflow-hidden hover:border-[#c9a962]/30 transition-all group"
-    >
-      {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-[#1a1a1a] to-[#111] overflow-hidden">
-        {room.image_url ? (
-          <img src={room.image_url} alt={room.room_number} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <BedDouble className="w-16 h-16 text-[#c9a962]/20" />
-          </div>
-        )}
-        <div className="absolute top-3 left-3">
-          <span className="bg-[#c9a962] text-black text-xs font-bold px-2 py-1 rounded-full capitalize">
-            {TYPE_LABELS[room.room_type] || room.room_type}
-          </span>
-        </div>
-        <div className="absolute top-3 right-3">
-          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-            room.status === 'available' ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white'
-          }`}>
-            {room.status === 'available' ? 'Available' : 'Unavailable'}
-          </span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-5">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="text-white font-semibold text-lg">Room #{room.room_number}</h3>
-            <div className="flex items-center gap-1 text-white/40 text-sm mt-0.5">
-              <Users className="w-3.5 h-3.5" />
-              <span>Up to {room.capacity} guests</span>
-              {room.floor && <span>· Floor {room.floor}</span>}
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-[#c9a962] font-bold text-xl">KES {(room.price_per_night || 0).toLocaleString()}</div>
-            <div className="text-white/30 text-xs">per night</div>
-          </div>
-        </div>
-
-        {room.description && (
-          <p className="text-white/50 text-sm mb-3 line-clamp-2">{room.description}</p>
-        )}
-
-        {/* Amenities */}
-        {room.amenities?.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {room.amenities.slice(0, 5).map(a => (
-              <span key={a} className="text-xs bg-white/5 text-white/50 px-2 py-1 rounded-full">{a}</span>
-            ))}
-            {room.amenities.length > 5 && (
-              <span className="text-xs text-white/30">+{room.amenities.length - 5} more</span>
-            )}
-          </div>
-        )}
-
-        <Button
-          onClick={() => onBook(room)}
-          disabled={room.status !== 'available'}
-          className={`w-full ${room.status === 'available' ? 'bg-[#c9a962] hover:bg-[#b8944f] text-black' : 'bg-white/5 text-white/30 cursor-not-allowed'}`}
-        >
-          {room.status === 'available' ? 'Book This Room' : 'Not Available'}
-        </Button>
-      </div>
-    </motion.div>
-  );
-}
-
-function BookingModal({ room, onClose, rooms }) {
+function BookingModal({ room, onClose }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
     guest_name: '', guest_email: '', guest_phone: '',
@@ -228,8 +147,8 @@ function BookingModal({ room, onClose, rooms }) {
 
 export default function Rooms() {
   const [filterType, setFilterType] = useState('all');
-  const [filterGuests, setFilterGuests] = useState('');
-  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [sortPrice, setSortPrice] = useState('low');
   const [bookingRoom, setBookingRoom] = useState(null);
 
   const { data: rooms = [], isLoading } = useQuery({
@@ -238,64 +157,78 @@ export default function Rooms() {
   });
 
   const filtered = rooms.filter(r => {
-    if (r.status === 'maintenance') return false;
     if (filterType !== 'all' && r.room_type !== filterType) return false;
-    if (filterGuests && r.capacity < Number(filterGuests)) return false;
-    if (search && !`${r.room_number} ${r.room_type} ${r.description || ''}`.toLowerCase().includes(search.toLowerCase())) return false;
+    if (filterStatus !== 'all' && r.status !== filterStatus) return false;
     return true;
-  }).sort((a, b) => TYPE_ORDER.indexOf(a.room_type) - TYPE_ORDER.indexOf(b.room_type));
+  }).sort((a, b) => {
+    if (sortPrice === 'low') return (a.price_per_night || 0) - (b.price_per_night || 0);
+    return (b.price_per_night || 0) - (a.price_per_night || 0);
+  });
 
   const available = rooms.filter(r => r.status === 'available').length;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] pt-8 pb-20">
+    <div className="min-h-screen bg-[#0d0d0d]">
       {/* Hero */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <p className="text-[#c9a962] text-sm tracking-[0.3em] uppercase font-inter mb-3">Luxury Accommodations</p>
-          <h1 className="font-playfair text-4xl sm:text-5xl text-white mb-4">Our Rooms & Suites</h1>
-          <p className="text-white/50 font-inter max-w-xl mx-auto">
-            Experience unparalleled comfort in our thoughtfully designed rooms. {available} room{available !== 1 ? 's' : ''} available tonight.
-          </p>
-        </motion.div>
+      <div className="relative h-[280px] sm:h-[340px] overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#0d0d0d]" />
+        </div>
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
+          <p className="text-[#c9a962] text-xs sm:text-sm tracking-[0.3em] uppercase font-inter mb-3">GET OS — HOSPITALITY</p>
+          <h1 className="font-playfair text-4xl sm:text-5xl text-white mb-2">Our Rooms</h1>
+          <p className="text-white/50 font-inter text-sm">{available} rooms available for booking</p>
+        </div>
+      </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search rooms..."
-              className="w-full pl-10 pr-4 py-2.5 bg-[#1a1a1a] border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-[#c9a962]/40" />
-          </div>
-          <select value={filterGuests} onChange={e => setFilterGuests(e.target.value)}
-            className="bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2.5 text-white/70 text-sm">
-            <option value="">Any guests</option>
-            <option value="1">1+ guests</option>
-            <option value="2">2+ guests</option>
-            <option value="4">4+ guests</option>
+      {/* Filter Toolbar */}
+      <div className="sticky top-20 z-30 bg-[#0d0d0d]/95 backdrop-blur-md border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 flex-wrap">
+          <Filter className="w-4 h-4 text-[#c9a962] flex-shrink-0" />
+
+          <select value={filterType} onChange={e => setFilterType(e.target.value)}
+            className="bg-[#1a1a1a] border border-white/10 rounded-lg px-3 py-2 text-white/70 text-sm focus:outline-none focus:border-[#c9a962]/30 cursor-pointer">
+            <option value="all">All Types</option>
+            <option value="standard">Standard</option>
+            <option value="deluxe">Deluxe</option>
+            <option value="suite">Suite</option>
+            <option value="family">Family</option>
+            <option value="penthouse">Penthouse</option>
           </select>
-        </div>
 
-        {/* Type Filter */}
-        <div className="flex gap-2 flex-wrap mb-8">
-          {['all', ...TYPE_ORDER].map(t => (
-            <button key={t} onClick={() => setFilterType(t)}
-              className={`px-4 py-2 rounded-full border text-sm capitalize transition-all ${
-                filterType === t
-                  ? 'bg-[#c9a962]/20 border-[#c9a962]/50 text-[#c9a962]'
-                  : 'border-white/10 text-white/50 hover:text-white hover:border-white/20'
-              }`}>
-              {t === 'all' ? 'All Rooms' : TYPE_LABELS[t]}
-            </button>
-          ))}
-        </div>
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
+            className="bg-[#1a1a1a] border border-white/10 rounded-lg px-3 py-2 text-white/70 text-sm focus:outline-none focus:border-[#c9a962]/30 cursor-pointer">
+            <option value="all">All Status</option>
+            <option value="available">Available</option>
+            <option value="occupied">Occupied</option>
+            <option value="reserved">Reserved</option>
+            <option value="cleaning">Housekeeping</option>
+            <option value="maintenance">Maintenance</option>
+          </select>
 
-        {/* Grid */}
+          <select value={sortPrice} onChange={e => setSortPrice(e.target.value)}
+            className="bg-[#1a1a1a] border border-white/10 rounded-lg px-3 py-2 text-white/70 text-sm focus:outline-none focus:border-[#c9a962]/30 cursor-pointer">
+            <option value="low">Price: Low → High</option>
+            <option value="high">Price: High → Low</option>
+          </select>
+
+          <span className="ml-auto text-white/40 text-sm font-inter">{filtered.length} rooms</span>
+        </div>
+      </div>
+
+      {/* Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-2 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             <AnimatePresence>
               {filtered.map(room => (
                 <RoomCard key={room.id} room={room} onBook={setBookingRoom} />
@@ -311,9 +244,8 @@ export default function Rooms() {
         )}
       </div>
 
-      {/* Booking Modal */}
       {bookingRoom && (
-        <BookingModal room={bookingRoom} onClose={() => setBookingRoom(null)} rooms={rooms} />
+        <BookingModal room={bookingRoom} onClose={() => setBookingRoom(null)} />
       )}
     </div>
   );

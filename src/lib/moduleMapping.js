@@ -4,7 +4,7 @@
 
 export const MODULE_TO_TABS = {
   pos: ['orders', 'menu', 'kds', 'custom', 'tables', 'reconciliation'],
-  hotel_management: ['hotel', 'event-bookings', 'amenity-bookings', 'room-bookings', 'room-status', 'guest-profiles', 'hotel-bookings', 'service-requests', 'concierge-intel'],
+  hotel_management: ['hotel', 'rooms', 'event-bookings', 'amenity-bookings', 'room-bookings', 'room-status', 'guest-profiles', 'hotel-bookings', 'service-requests', 'concierge-intel'],
   reservations: ['reservations'],
   inventory: ['inventory-tracking', 'stock', 'supply-chain', 'vendor-performance', 'driver', 'supplier-marketplace'],
   kitchen_display: ['kds'],

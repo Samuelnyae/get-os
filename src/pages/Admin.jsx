@@ -270,6 +270,11 @@ export default function Admin() {
                 {activeTab === 'performance' && <PerformanceReviews />}
                 {activeTab === 'training' && <TrainingTracker />}
                 {activeTab === 'notice-board' && <NoticeBoard />}
+                {activeTab === 'rooms' && (
+                  <React.Suspense fallback={<LazyFallback />}>
+                    {React.createElement(lazyPage(() => import('./Rooms')))}
+                  </React.Suspense>
+                )}
                 {activeTab === 'supplier-marketplace' && <SupplierMarketplacePage />}
                 {activeTab === 'qr-code' && <QRCodeAdminPage />}
                 {activeTab === 'setup-checklist' && <SetupChecklist />}

@@ -11,7 +11,8 @@ import {
   Lightbulb, Mail, Link,
   CalendarDays, BedDouble, DoorOpen, Contact, Wrench, Compass,
   Fingerprint, Award, GraduationCap, LineChart, Store, QrCode,
-  CalendarClock, ListChecks
+  CalendarClock, ListChecks,
+  Home
 } from 'lucide-react';
 
 const MODULE_ITEMS = [
@@ -67,6 +68,7 @@ const MODULE_ITEMS = [
   // Additional modules
   { id: 'event-bookings', label: 'Event Bookings', icon: PartyPopper },
   { id: 'amenity-bookings', label: 'Spa & Amenities', icon: Sparkles },
+  { id: 'rooms', label: 'Rooms', icon: Home },
   { id: 'hotel', label: 'Hotel Management', icon: Hotel },
   { id: 'kds', label: 'Kitchen Display', icon: ChefHat },
   { id: 'tables', label: 'Table Management', icon: LayoutGrid },
