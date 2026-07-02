@@ -45,7 +45,6 @@ export default function MarketingNav() {
             </div>
             <div className="hidden sm:block">
               <h1 className="font-playfair text-xl font-semibold gold-gradient">Get OS</h1>
-              <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Hospitality Platform</p>
             </div>
           </button>
 

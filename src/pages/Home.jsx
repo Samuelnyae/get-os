@@ -16,29 +16,45 @@ import FinalCTASection from '@/components/landing/FinalCTASection';
 
 export default function Home() {
   return (
-    <div className="bg-[#0a0a0a]" id="home">
-      <HeroSection />
-      <TrustedBySection />
-      <div id="features">
-        <WhyChooseSection />
-        <ModulesGridSection />
+    <div className="bg-[#0a0a0a] relative" id="home">
+      {/* Background video — fixed across entire landing page */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
+        >
+          <source src="https://media.base44.com/videos/public/6a3bb63c5d638ed13971e566/e89a4a134_generated_video.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/70 via-[#0a0a0a]/80 to-[#0a0a0a]/90" />
       </div>
-      <div id="solutions">
-        <DashboardShowcaseSection />
-        <HospitalityAISection />
-        <HowItWorksSection />
+
+      <div className="relative z-10">
+        <HeroSection />
+        <TrustedBySection />
+        <div id="features">
+          <WhyChooseSection />
+          <ModulesGridSection />
+        </div>
+        <div id="solutions">
+          <DashboardShowcaseSection />
+          <HospitalityAISection />
+          <HowItWorksSection />
+        </div>
+        <div id="industries">
+          <IndustriesSection />
+        </div>
+        <AnalyticsSection />
+        <IntegrationsSection />
+        <TestimonialsSection />
+        <div id="pricing">
+          <PricingSection />
+        </div>
+        <FAQSection />
+        <FinalCTASection />
       </div>
-      <div id="industries">
-        <IndustriesSection />
-      </div>
-      <AnalyticsSection />
-      <IntegrationsSection />
-      <TestimonialsSection />
-      <div id="pricing">
-        <PricingSection />
-      </div>
-      <FAQSection />
-      <FinalCTASection />
     </div>
   );
 }
