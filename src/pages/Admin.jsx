@@ -70,7 +70,16 @@ export default function Admin() {
             const orgData = await base44.entities.Organization.get(orgId);
             setOrg(orgData);
           } catch (e) {
-            console.error('Failed to fetch organization:', e);
+            // Retry once after 1.5s — auth session may still be syncing post-onboarding
+            console.error('Org fetch failed, retrying...', e);
+            setTimeout(async () => {
+              try {
+                const retryOrg = await base44.entities.Organization.get(orgId);
+                setOrg(retryOrg);
+              } catch (e2) {
+                console.error('Org fetch retry also failed:', e2);
+              }
+            }, 1500);
           }
         }
       } catch (error) {

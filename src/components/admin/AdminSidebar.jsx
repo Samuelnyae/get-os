@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { getAllowedTabs } from '@/lib/moduleMapping';
@@ -127,7 +127,15 @@ export default function AdminSidebar({ activeTab, setActiveTab, enabledModules =
   const initialExpanded = visibleModules.find(m => m.items.some(i => (i.id === 'tables-ai' ? 'tables' : i.id) === activeTab))?.id || visibleModules[0]?.id || 'core';
   const [expanded, setExpanded] = useState(initialExpanded);
 
-  const toggle = (id) => setExpanded(expanded === id ? null : id);
+  // Sync expanded state when visibleModules changes (e.g. after org data loads)
+  useEffect(() => {
+    if (!visibleModules.find(m => m.id === expanded)) {
+      const fallback = visibleModules.find(m => m.items.some(i => (i.id === 'tables-ai' ? 'tables' : i.id) === activeTab))?.id || visibleModules[0]?.id;
+      if (fallback) setExpanded(fallback);
+    }
+  }, [visibleModules, expanded, activeTab]);
+
+  const toggle = (id) => setExpanded(prev => prev === id ? null : id);
 
   const handleSelect = (itemId) => {
     // "AI Table Mgmt" maps to the same 'tables' component
