@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import MenuCard from '@/components/menu/MenuCard';
-import { notifyAllStaff } from '@/components/admin/WhatsAppNotifier';
 
 export default function TableDining() {
   const [view, setView] = useState('start'); // start, join, menu, cart, split, ordered
@@ -41,11 +40,6 @@ export default function TableDining() {
     queryKey: ['menu-items'],
     queryFn: () => base44.entities.MenuItem.list(),
     enabled: view === 'menu',
-  });
-
-  const { data: allStaff = [] } = useQuery({
-    queryKey: ['staff-list'],
-    queryFn: () => base44.entities.Staff.list(),
   });
 
   const { data: tableOrder } = useQuery({
@@ -215,7 +209,6 @@ export default function TableDining() {
     },
     onSuccess: (order) => {
       toast.success(`Order placed! Reference: ${order.order_reference}`);
-      notifyAllStaff(allStaff, order);
       setView('ordered');
       setPlacedOrder(order);
     },

@@ -17,8 +17,13 @@
         "chef",
         "kitchen_assistant",
         "delivery",
-        "manager"
-      ]
+        "manager",
+        "waiter",
+        "bartender",
+        "host",
+        "cleaner"
+      ],
+      "default": "waiter"
     },
     "status": {
       "type": "string",
@@ -30,6 +35,9 @@
       "default": "available"
     },
     "phone": {
+      "type": "string"
+    },
+    "email": {
       "type": "string"
     },
     "current_orders": {
