@@ -1,5 +1,5 @@
-import React from 'react';
-import { CheckCircle, XCircle, AlertCircle, Clock, Zap, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckCircle, XCircle, AlertCircle, Clock, Zap, ExternalLink, Loader2 } from 'lucide-react';
 
 const STATUS_CONFIG = {
   active: { color: 'text-green-400 bg-green-400/10 border-green-400/20', icon: CheckCircle, label: 'Active' },
@@ -24,9 +24,33 @@ const ALL_INTEGRATIONS = [
 const CATEGORIES = [...new Set(ALL_INTEGRATIONS.map(i => i.category))];
 
 export default function IntegrationHub({ integrations = [], onConfigure }) {
+  const [testingProvider, setTestingProvider] = useState(null);
+
   const getStatus = (provider) => {
     const found = integrations.find(i => i.provider === provider);
     return found?.status || 'inactive';
+  };
+
+  const handleQuickTest = async (provider) => {
+    setTestingProvider(provider);
+    try {
+      const record = integrations.find(i => i.provider === provider);
+      if (!record) return;
+      const { base44 } = await import('@/api/base44Client');
+      const response = await base44.functions.invoke('testIntegration', {
+        provider,
+        api_key: record.api_key,
+        api_secret: record.api_secret,
+        webhook_url: record.webhook_url,
+      });
+      const res = response.data || response;
+      const newStatus = res.success ? 'active' : 'error';
+      await base44.entities.Integration.update(record.id, { status: newStatus, last_sync: new Date().toISOString() });
+    } catch (e) {
+      console.error('Quick test failed:', e);
+    } finally {
+      setTestingProvider(null);
+    }
   };
 
   const byCategory = CATEGORIES.map(cat => ({
@@ -77,15 +101,29 @@ export default function IntegrationHub({ integrations = [], onConfigure }) {
                   {record?.last_sync && (
                     <p className="text-white/25 font-inter text-xs mb-3">Last sync: {new Date(record.last_sync).toLocaleString()}</p>
                   )}
-                  <button onClick={() => onConfigure(integ.provider)}
-                    className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg font-inter text-xs font-semibold transition-all ${
-                      status === 'active'
-                        ? 'bg-green-400/10 text-green-400 border border-green-400/20 hover:bg-green-400/20'
-                        : 'bg-[#c9a962]/10 text-[#c9a962] border border-[#c9a962]/20 hover:bg-[#c9a962]/20'
-                    }`}>
-                    <Zap className="w-3 h-3" />
-                    {status === 'active' ? 'Manage' : 'Configure'}
-                  </button>
+                  <div className="flex gap-2">
+                    {status !== 'inactive' && (
+                      <button
+                        onClick={() => handleQuickTest(integ.provider)}
+                        disabled={testingProvider === integ.provider}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg font-inter text-xs font-semibold bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 disabled:opacity-50"
+                      >
+                        {testingProvider === integ.provider
+                          ? <Loader2 className="w-3 h-3 animate-spin" />
+                          : <Zap className="w-3 h-3" />}
+                        Test
+                      </button>
+                    )}
+                    <button onClick={() => onConfigure(integ.provider)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-inter text-xs font-semibold transition-all ${
+                        status === 'active'
+                          ? 'bg-green-400/10 text-green-400 border border-green-400/20 hover:bg-green-400/20'
+                          : 'bg-[#c9a962]/10 text-[#c9a962] border border-[#c9a962]/20 hover:bg-[#c9a962]/20'
+                      }`}>
+                      <Zap className="w-3 h-3" />
+                      {status === 'active' ? 'Manage' : 'Configure'}
+                    </button>
+                  </div>
                 </div>
               );
             })}

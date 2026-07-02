@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, X, Eye, EyeOff, Shield, Key, Webhook, RotateCcw, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Plus, X, Eye, EyeOff, Shield, Key, Webhook, RotateCcw, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
 
 const PROVIDER_CONFIGS = {
   whatsapp: { name: 'WhatsApp Business API', emoji: '💬', fields: [{ key: 'api_key', label: 'Access Token', secret: true }, { key: 'api_secret', label: 'Phone Number ID' }, { key: 'webhook_url', label: 'Webhook Verify Token' }], docs: 'https://developers.facebook.com/docs/whatsapp' },
@@ -25,23 +25,80 @@ export default function APIKeyManager() {
   const [configuring, setConfiguring] = useState(null);
   const [formData, setFormData] = useState({});
   const [showSecrets, setShowSecrets] = useState({});
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null);
   const qc = useQueryClient();
 
   const { data: integrations = [] } = useQuery({ queryKey: ['integrations'], queryFn: () => base44.entities.Integration.list() });
 
   const save = useMutation({
-    mutationFn: (data) => {
+    mutationFn: async (data) => {
+      // Test the connection first
+      setTesting(true);
+      setTestResult(null);
+      let testRes = { success: false, message: 'Test failed' };
+      try {
+        const response = await base44.functions.invoke('testIntegration', {
+          provider: configuring,
+          api_key: data.api_key,
+          api_secret: data.api_secret,
+          webhook_url: data.webhook_url,
+        });
+        testRes = response.data || response;
+      } catch (e) {
+        testRes = { success: false, message: e.message || 'Connection test failed' };
+      }
+      setTesting(false);
+      setTestResult(testRes);
+
+      // If test failed, don't save as active
+      if (!testRes.success) {
+        throw new Error(testRes.message);
+      }
+
+      // Save with verified status
       const existing = integrations.find(i => i.provider === configuring);
-      if (existing) return base44.entities.Integration.update(existing.id, { ...data, status: 'active', last_sync: new Date().toISOString() });
+      const payload = { ...data, status: 'active', last_sync: new Date().toISOString() };
+      if (existing) return base44.entities.Integration.update(existing.id, payload);
       return base44.entities.Integration.create({ ...data, provider: configuring, integration_name: PROVIDER_CONFIGS[configuring]?.name, status: 'active' });
     },
-    onSuccess: () => { qc.invalidateQueries(['integrations']); setConfiguring(null); setFormData({}); }
+    onSuccess: () => { qc.invalidateQueries(['integrations']); setConfiguring(null); setFormData({}); setTestResult(null); },
+    onError: () => { /* error is shown via testResult state */ },
   });
 
   const openConfig = (provider) => {
     const existing = integrations.find(i => i.provider === provider);
     setFormData(existing ? { api_key: existing.api_key || '', api_secret: existing.api_secret || '', webhook_url: existing.webhook_url || '' } : {});
+    setTestResult(null);
     setConfiguring(provider);
+  };
+
+  // Quick test from the card (for already-saved integrations)
+  const quickTest = async (provider) => {
+    const existing = integrations.find(i => i.provider === provider);
+    if (!existing) return;
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const response = await base44.functions.invoke('testIntegration', {
+        provider,
+        api_key: existing.api_key,
+        api_secret: existing.api_secret,
+        webhook_url: existing.webhook_url,
+      });
+      const res = response.data || response;
+      if (res.success) {
+        await base44.entities.Integration.update(existing.id, { status: 'active', last_sync: new Date().toISOString() });
+      } else {
+        await base44.entities.Integration.update(existing.id, { status: 'error' });
+      }
+      setTestResult(res);
+      qc.invalidateQueries(['integrations']);
+    } catch (e) {
+      setTestResult({ success: false, message: e.message });
+    } finally {
+      setTesting(false);
+    }
   };
 
   const toggleSecret = (key) => setShowSecrets(p => ({ ...p, [key]: !p[key] }));
@@ -102,6 +159,14 @@ export default function APIKeyManager() {
                         <span className="font-mono text-xs text-white/50">••••••••{(existing[f.key] || '').slice(-4)}</span>
                       </div>
                     ))}
+                    <button
+                      onClick={() => quickTest(provider)}
+                      disabled={testing}
+                      className="flex items-center gap-1 text-[#c9a962] text-xs hover:opacity-80 mt-1 disabled:opacity-50"
+                    >
+                      {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
+                      Test Connection
+                    </button>
                   </div>
                 )}
               </div>
@@ -165,12 +230,26 @@ export default function APIKeyManager() {
               <div className="p-3 bg-yellow-400/5 border border-yellow-400/20 rounded-lg">
                 <p className="font-inter text-xs text-yellow-400">⚠️ Credentials are stored securely. Review <a href={PROVIDER_CONFIGS[configuring]?.docs} target="_blank" rel="noreferrer" className="underline">documentation</a> for setup guide.</p>
               </div>
+
+              {/* Test result */}
+              {testResult && (
+                <div className={`p-3 rounded-lg border flex items-start gap-2 ${
+                  testResult.success
+                    ? 'bg-green-400/10 border-green-400/20'
+                    : 'bg-red-400/10 border-red-400/20'
+                }`}>
+                  {testResult.success
+                    ? <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                    : <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />}
+                  <p className={`font-inter text-xs ${testResult.success ? 'text-green-400' : 'text-red-400'}`}>{testResult.message}</p>
+                </div>
+              )}
             </div>
             <div className="flex gap-3">
               <button onClick={() => setConfiguring(null)} className="flex-1 py-2 border border-[#c9a962]/20 text-white/60 rounded-lg font-inter text-sm">Cancel</button>
-              <button onClick={() => save.mutate(formData)} disabled={save.isPending}
-                className="flex-1 py-2 bg-[#c9a962] text-[#0a0a0a] rounded-lg font-inter text-sm font-semibold disabled:opacity-50">
-                {save.isPending ? 'Saving...' : '🔐 Save Credentials'}
+              <button onClick={() => save.mutate(formData)} disabled={save.isPending || testing}
+                className="flex-1 py-2 bg-[#c9a962] text-[#0a0a0a] rounded-lg font-inter text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2">
+                {testing ? <><Loader2 className="w-4 h-4 animate-spin" /> Testing...</> : save.isPending ? 'Saving...' : '🔐 Save & Test'}
               </button>
             </div>
           </div>
