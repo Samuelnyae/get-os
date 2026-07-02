@@ -2,26 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Building2 } from 'lucide-react';
 
-const INDUSTRY_ICONS = {
-  hotel: '🏨',
-  restaurant: '🍽️',
-  cafe: '☕',
-  bar: '🍸',
-  resort: '🏖️',
-  lodge: '🏞️',
-  guest_house: '🏠',
-  hostel: '🛏️',
-  conference_center: '🏢',
-  catering: '🍴',
-  fast_food: '🍔',
-  bakery: '🥖',
-  night_club: '🎵',
-  food_court: '🍱',
-  coffee_shop: '☕',
-  event_venue: '🎉',
-  other: '🏨',
-};
-
 export default function TrustedBySection() {
   const [orgs, setOrgs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +64,9 @@ export default function TrustedBySection() {
               {org.logo_url ? (
                 <img src={org.logo_url} alt={org.name} className="w-8 h-8 rounded-full object-cover" />
               ) : (
-                <span className="text-2xl">{INDUSTRY_ICONS[org.industry] || '🏨'}</span>
+                <div className="w-8 h-8 rounded-full bg-[#c9a962]/10 border border-[#c9a962]/20 flex items-center justify-center">
+                  <Building2 className="w-4 h-4 text-[#c9a962]/70" />
+                </div>
               )}
               <span className="font-playfair text-lg text-white/40 hover:text-[#c9a962]/60 transition-colors whitespace-nowrap">
                 {org.name}
