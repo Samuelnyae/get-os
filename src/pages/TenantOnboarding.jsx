@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -19,6 +20,7 @@ import FinishStep from '@/components/onboarding/FinishStep';
 
 export default function TenantOnboarding() {
   const navigate = useNavigate();
+  const { checkAppState } = useAuth();
 const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -93,10 +95,19 @@ const [step, setStep] = useState(1);
         team_invites: data.team_invites.filter(i => i.email.trim()),
       });
       if (response.data?.success) {
-        // Backend already updated the User entity with organization_id + branch_id.
-        // Just show success and redirect — me() will fetch fresh data on reload.
+        // Backend updated the User entity, but the auth session token still has stale data.
+        // Sync the auth session so me() returns the new organization_id immediately —
+        // otherwise AuthContext's needsOnboarding stays true and bounces us back here.
+        try {
+          await base44.auth.updateMe({
+            organization_id: response.data.organization.id,
+            branch_id: response.data.branches[0].id,
+          });
+        } catch (e) {
+          console.error('updateMe failed, will reload anyway:', e);
+        }
         setLoading(false);
-        setTimeout(() => { window.location.href = '/Admin'; }, 2500);
+        setTimeout(() => { window.location.href = '/Admin'; }, 2000);
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);
