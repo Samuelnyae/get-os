@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { useOfflineSync } from '../hooks/useOfflineSync';
+import { WifiOff, CloudOff } from 'lucide-react';
 
 const CATEGORIES = ['all', 'proteins', 'vegetables', 'grains', 'dairy', 'beverages', 'spices', 'other'];
 const UNITS = ['kg', 'g', 'L', 'ml', 'pieces', 'bottles', 'packs'];
@@ -21,6 +23,7 @@ function StockBadge({ current, threshold }) {
 
 export default function Inventory() {
   const qc = useQueryClient();
+  const { isOnline, pendingCount, isSyncing, enqueue } = useOfflineSync();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [showForm, setShowForm] = useState(false);
@@ -34,20 +37,42 @@ export default function Inventory() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['inventory'],
     queryFn: () => base44.entities.Inventory.list(),
+    enabled: isOnline,
   });
+
+  // Load cached inventory when offline
+  const [cachedItems, setCachedItems] = useState([]);
+  useEffect(() => {
+    if (!isOnline) {
+      setCachedItems(JSON.parse(localStorage.getItem('getos_inventory_cache') || '[]'));
+    }
+  }, [isOnline]);
+
+  const displayItems = isOnline ? items : cachedItems;
 
   const { data: menuItems = [] } = useQuery({
     queryKey: ['menu-items-for-inventory'],
     queryFn: () => base44.entities.MenuItem.list(),
+    enabled: isOnline,
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data) => editing
-      ? base44.entities.Inventory.update(editing.id, data)
-      : base44.entities.Inventory.create(data),
+    mutationFn: (data) => {
+      if (!isOnline) {
+        if (editing) {
+          enqueue({ type: 'update', entity: 'Inventory', id: editing.id, data });
+        } else {
+          enqueue({ type: 'create', entity: 'Inventory', data });
+        }
+        return Promise.resolve({ _offline: true });
+      }
+      return editing
+        ? base44.entities.Inventory.update(editing.id, data)
+        : base44.entities.Inventory.create(data);
+    },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success(editing ? 'Item updated' : 'Item added');
+      if (isOnline) qc.invalidateQueries({ queryKey: ['inventory'] });
+      toast.success(editing ? 'Item updated' : isOnline ? 'Item added' : 'Item saved offline — will sync when online');
       closeForm();
     },
   });
@@ -61,11 +86,16 @@ export default function Inventory() {
   });
 
   const restockMutation = useMutation({
-    mutationFn: ({ id, amount, current }) =>
-      base44.entities.Inventory.update(id, { current_stock: current + amount }),
+    mutationFn: ({ id, amount, current }) => {
+      if (!isOnline) {
+        enqueue({ type: 'update', entity: 'Inventory', id, data: { current_stock: current + amount } });
+        return Promise.resolve({ _offline: true });
+      }
+      return base44.entities.Inventory.update(id, { current_stock: current + amount });
+    },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['inventory'] });
-      toast.success('Stock updated');
+      if (isOnline) qc.invalidateQueries({ queryKey: ['inventory'] });
+      toast.success(isOnline ? 'Stock updated' : 'Stock change saved offline — will sync when online');
     },
   });
 
@@ -102,18 +132,32 @@ export default function Inventory() {
     }));
   };
 
-  const filtered = items.filter(i => {
+  const filtered = displayItems.filter(i => {
     const matchCat = category === 'all' || i.category === category;
     const matchSearch = i.name.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
-  const lowStockItems = items.filter(i => i.current_stock <= i.low_stock_threshold && i.current_stock > 0);
-  const outOfStock = items.filter(i => i.current_stock === 0);
+  const lowStockItems = displayItems.filter(i => i.current_stock <= i.low_stock_threshold && i.current_stock > 0);
+  const outOfStock = displayItems.filter(i => i.current_stock === 0);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white py-12 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Offline / sync banner */}
+        {!isOnline && (
+          <div className="mb-4 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2">
+            <WifiOff className="w-4 h-4 text-amber-400" />
+            <span className="font-inter text-sm text-amber-400">You're offline. Changes are saved locally and will sync automatically when you reconnect{pendingCount > 0 ? ` (${pendingCount} pending)` : ''}.</span>
+          </div>
+        )}
+        {isOnline && pendingCount > 0 && (
+          <div className="mb-4 bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 flex items-center gap-2">
+            <RefreshCw className={`w-4 h-4 text-blue-400 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span className="font-inter text-sm text-blue-400">{isSyncing ? 'Syncing pending changes...' : `${pendingCount} change(s) pending sync`}</span>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <div>
@@ -153,8 +197,8 @@ export default function Inventory() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Total Items', value: items.length, icon: Package, color: 'text-[#c9a962]' },
-            { label: 'In Stock', value: items.filter(i => i.current_stock > i.low_stock_threshold).length, icon: CheckCircle, color: 'text-green-400' },
+            { label: 'Total Items', value: displayItems.length, icon: Package, color: 'text-[#c9a962]' },
+            { label: 'In Stock', value: displayItems.filter(i => i.current_stock > i.low_stock_threshold).length, icon: CheckCircle, color: 'text-green-400' },
             { label: 'Low Stock', value: lowStockItems.length, icon: AlertTriangle, color: 'text-amber-400' },
             { label: 'Out of Stock', value: outOfStock.length, icon: AlertTriangle, color: 'text-red-400' },
           ].map((stat) => (
@@ -185,6 +229,11 @@ export default function Inventory() {
         {/* Table */}
         {isLoading ? (
           <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-[#c9a962]/20 border-t-[#c9a962] rounded-full animate-spin" /></div>
+        ) : !isOnline && cachedItems.length === 0 ? (
+          <div className="text-center py-20 text-white/40">
+            <CloudOff className="w-16 h-16 mx-auto mb-4 opacity-30" />
+            <p className="font-inter">No cached inventory data available offline</p>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-white/40">
             <Package className="w-16 h-16 mx-auto mb-4 opacity-30" />

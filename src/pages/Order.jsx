@@ -6,7 +6,8 @@ import { useMutation } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingCart, Trash2, Plus, Minus, ArrowRight,
-  CheckCircle, Mail, Phone, User, Clock, MapPin, Package, Utensils
+  CheckCircle, Mail, Phone, User, Clock, MapPin, Package, Utensils,
+  WifiOff, RefreshCw
 } from 'lucide-react';
 import WhatsAppNotifier from '../components/admin/WhatsAppNotifier';
 import { Input } from "@/components/ui/input";
@@ -18,9 +19,11 @@ import { sanitizeInput, sanitizeEmail, sanitizePhone, validateOrderData, orderRa
 import { toast } from 'sonner';
 import OrderReceipt from '../components/order/OrderReceipt';
 import { useLanguage } from '../lib/LanguageContext';
+import { useOfflineSync } from '../hooks/useOfflineSync';
 
 export default function Order() {
   const { t } = useLanguage();
+  const { isOnline, pendingCount, isSyncing, enqueue } = useOfflineSync();
   const [cart, setCart] = useState([]);
 
   const [step, setStep] = useState('cart'); // cart, checkout, confirmation
@@ -59,6 +62,15 @@ export default function Order() {
     const savedCart = JSON.parse(localStorage.getItem('hermanas_cart') || '[]');
     setCart(savedCart);
   }, []);
+
+  // Cache inventory for offline deduction
+  useEffect(() => {
+    if (isOnline) {
+      base44.entities.Inventory.list().then(items => {
+        localStorage.setItem('getos_inventory_cache', JSON.stringify(items));
+      }).catch(() => {});
+    }
+  }, [isOnline]);
 
   const updateCart = (newCart) => {
     setCart(newCart);
@@ -103,8 +115,34 @@ export default function Order() {
     }
   };
 
+  const deductInventoryOffline = (orderedItems) => {
+    // Queue inventory deductions for later sync
+    const freshInventory = JSON.parse(localStorage.getItem('getos_inventory_cache') || '[]');
+    const menuItemIds = orderedItems.map(i => i.menu_item_id).filter(Boolean);
+    const relevant = freshInventory.filter(inv =>
+      inv.linked_menu_item_ids?.some(id => menuItemIds.includes(id))
+    );
+    for (const cartItem of orderedItems) {
+      const linked = relevant.filter(inv =>
+        inv.linked_menu_item_ids?.includes(cartItem.menu_item_id)
+      );
+      for (const inv of linked) {
+        const deduction = (inv.deduct_per_order || 1) * cartItem.quantity;
+        const newStock = Math.max(0, (inv.current_stock || 0) - deduction);
+        enqueue({ type: 'update', entity: 'Inventory', id: inv.id, data: { current_stock: newStock } });
+      }
+    }
+  };
+
   const orderMutation = useMutation({
     mutationFn: async (orderData) => {
+      // Offline path — queue the order + inventory deductions
+      if (!isOnline) {
+        enqueue({ type: 'create', entity: 'Order', data: orderData });
+        deductInventoryOffline(cart);
+        return { order_reference: orderData.order_reference, _offline: true };
+      }
+
       try {
         // Create the order first
         const order = await base44.entities.Order.create(orderData);
@@ -136,8 +174,10 @@ Get OS - Seven Star Dining
       }
     },
     onSuccess: async (order) => {
-      // Deduct inventory for ordered items
-      await deductInventory(cart);
+      // Deduct inventory for ordered items (only if online — offline already queued)
+      if (!order._offline) {
+        await deductInventory(cart);
+      }
       setOrderReference(order.order_reference);
       setConfirmedCart([...cart]);
       setConfirmedTotal(total);
@@ -145,6 +185,9 @@ Get OS - Seven Star Dining
       localStorage.removeItem('hermanas_cart');
       setCart([]);
       window.dispatchEvent(new Event('cartUpdated'));
+      if (order._offline) {
+        toast.info('Order saved offline — it will sync automatically when you reconnect.');
+      }
     },
     onError: (error) => {
       console.error('Order mutation error:', error);
@@ -297,6 +340,19 @@ Get OS - Seven Star Dining
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+      {/* Offline status banner */}
+      {!isOnline && (
+        <div className="max-w-6xl mx-auto mb-4 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2">
+          <WifiOff className="w-4 h-4 text-amber-400" />
+          <span className="font-inter text-sm text-amber-400">You're offline. Orders will be saved and synced when you reconnect{pendingCount > 0 ? ` (${pendingCount} pending)` : ''}.</span>
+        </div>
+      )}
+      {isOnline && pendingCount > 0 && (
+        <div className="max-w-6xl mx-auto mb-4 bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 flex items-center gap-2">
+          <RefreshCw className={`w-4 h-4 text-blue-400 ${isSyncing ? 'animate-spin' : ''}`} />
+          <span className="font-inter text-sm text-blue-400">{isSyncing ? 'Syncing pending data...' : `${pendingCount} item(s) pending sync`}</span>
+        </div>
+      )}
       <SEOHead 
         title="Order Now - Online Food Ordering & Delivery"
         description="Order gourmet food online from Get OS. Easy checkout, secure payment, fast delivery. Enjoy seven-star luxury dining at home or dine-in."
