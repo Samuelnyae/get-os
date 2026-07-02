@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Play, Sparkles } from 'lucide-react';
 
+const HERO_IMAGES = [
+  {
+    src: 'https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/100f487b4_generated_image.png',
+    label: 'QR Ordering',
+    caption: 'Guests order from their phone',
+  },
+  {
+    src: 'https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/ac2040fa0_generated_image.png',
+    label: 'POS Dashboard',
+    caption: 'Real-time operations',
+  },
+  {
+    src: 'https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/8b634f29e_generated_image.png',
+    label: 'AI & Automations',
+    caption: 'Revenue forecasting',
+  },
+];
+
 export default function HeroSection() {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
       {/* Background gradient */}
@@ -65,73 +92,66 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right: Product Showcase with Zoom Animation */}
+          {/* Right: Zoom Animation Carousel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative grid grid-cols-2 gap-4">
-              {/* Phone ordering — large, spans two rows */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="row-span-2 relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_60px_rgba(201,169,98,0.15)] group"
-              >
-                <motion.img
-                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/100f487b4_generated_image.png"
-                  alt="Phone ordering at restaurant"
-                  className="w-full h-full object-cover"
-                  animate={{ scale: [1, 1.08, 1] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-4">
-                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">QR Ordering</p>
-                  <p className="font-playfair text-sm text-white">Guests order from their phone</p>
-                </div>
-              </motion.div>
+            <div className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_60px_rgba(201,169,98,0.15)] aspect-[4/5] sm:aspect-square">
+              <AnimatePresence mode="sync">
+                <motion.div
+                  key={activeIdx}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0"
+                >
+                  <motion.img
+                    src={HERO_IMAGES[activeIdx].src}
+                    alt={HERO_IMAGES[activeIdx].caption}
+                    className="w-full h-full object-cover"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.15 }}
+                    transition={{ duration: 4, ease: "easeOut" }}
+                  />
+                </motion.div>
+              </AnimatePresence>
 
-              {/* POS Dashboard */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_40px_rgba(201,169,98,0.1)] group"
-              >
-                <motion.img
-                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/ac2040fa0_generated_image.png"
-                  alt="POS system dashboard"
-                  className="w-full h-full object-cover"
-                  animate={{ scale: [1, 1.12, 1] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-3">
-                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-0.5">POS Dashboard</p>
-                  <p className="font-playfair text-xs text-white">Real-time operations</p>
-                </div>
-              </motion.div>
+              {/* Caption overlay */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent p-6 z-10">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeIdx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
+                      {HERO_IMAGES[activeIdx].label}
+                    </p>
+                    <p className="font-playfair text-lg text-white">
+                      {HERO_IMAGES[activeIdx].caption}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-              {/* AI Forecast & Automations */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_40px_rgba(201,169,98,0.1)] group"
-              >
-                <motion.img
-                  src="https://media.base44.com/images/public/6a3bb63c5d638ed13971e566/8b634f29e_generated_image.png"
-                  alt="AI automations and revenue forecast"
-                  className="w-full h-full object-cover"
-                  animate={{ scale: [1, 1.12, 1] }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent p-3">
-                  <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-0.5">AI & Automations</p>
-                  <p className="font-playfair text-xs text-white">Revenue forecasting</p>
-                </div>
-              </motion.div>
+              {/* Dots */}
+              <div className="absolute top-4 right-4 flex gap-2 z-10">
+                {HERO_IMAGES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIdx(i)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === activeIdx ? 'w-6 bg-[#c9a962]' : 'w-1.5 bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Floating accents */}
