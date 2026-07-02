@@ -10,8 +10,6 @@ const navLinks = [
   { label: 'Solutions', href: '#solutions' },
   { label: 'Industries', href: '#industries' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'About', page: 'About' },
-  { label: 'Contact', page: 'Contact' },
 ];
 
 export default function MarketingNav() {
@@ -47,7 +45,7 @@ export default function MarketingNav() {
             </div>
             <div className="hidden sm:block">
               <h1 className="font-playfair text-xl font-semibold gold-gradient">Get OS</h1>
-              <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Hospitality OS</p>
+              <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Hospitality Platform</p>
             </div>
           </button>
 

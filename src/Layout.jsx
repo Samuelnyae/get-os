@@ -66,6 +66,7 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   const isLandingPage = currentPageName === 'Home';
+  const showMarketingNav = isLandingPage || !isOnboarded;
 
   const mainNavLinks = [
     { name: t('home'), page: 'Home' },
@@ -141,7 +142,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Navigation */}
-      {isLandingPage ? <MarketingNav /> : (
+      {showMarketingNav ? <MarketingNav /> : (
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'glass-effect shadow-2xl' : 'bg-transparent'
       }`}>
@@ -354,7 +355,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-[#c9a962]/20 mt-12 pt-8 text-center">
             <p className="font-inter text-xs text-white/40">
-              © {new Date().getFullYear()} Get OS. Seven Star Luxury Dining Experience. {t('allRightsReserved')}
+              © {new Date().getFullYear()} Get OS. Hospitality Management Platform. {t('allRightsReserved')}
             </p>
           </div>
         </div>
