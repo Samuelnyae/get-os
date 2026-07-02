@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { getAllowedTabs } from '@/lib/moduleMapping';
 
 const MODULES = [
   {
@@ -109,9 +110,21 @@ const MODULES = [
   },
 ];
 
-export default function AdminSidebar({ activeTab, setActiveTab }) {
+export default function AdminSidebar({ activeTab, setActiveTab, enabledModules = [], aiModules = [], showAll = false }) {
+  // If showAll (platform_admin), don't filter
+  const allowedTabs = showAll ? null : getAllowedTabs(enabledModules, aiModules);
+
+  // Filter modules to only those that have at least one allowed item
+  const visibleModules = MODULES.map(mod => ({
+    ...mod,
+    items: mod.items.filter(item => {
+      const tabId = item.id === 'tables-ai' ? 'tables' : item.id;
+      return !allowedTabs || allowedTabs.has(tabId);
+    }),
+  })).filter(mod => mod.items.length > 0);
+
   // Expand the module that contains the active tab by default
-  const initialExpanded = MODULES.find(m => m.items.some(i => i.id === activeTab))?.id || 'core';
+  const initialExpanded = visibleModules.find(m => m.items.some(i => (i.id === 'tables-ai' ? 'tables' : i.id) === activeTab))?.id || visibleModules[0]?.id || 'core';
   const [expanded, setExpanded] = useState(initialExpanded);
 
   const toggle = (id) => setExpanded(expanded === id ? null : id);
@@ -123,7 +136,7 @@ export default function AdminSidebar({ activeTab, setActiveTab }) {
 
   return (
     <nav className="space-y-1">
-      {MODULES.map((mod) => {
+      {visibleModules.map((mod) => {
         const isOpen = expanded === mod.id;
         const hasActive = mod.items.some(i => (i.id === 'tables-ai' ? 'tables' : i.id) === activeTab);
         return (

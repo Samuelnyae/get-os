@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Shield, AlertCircle } from 'lucide-react';
+import { AlertCircle, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import LuxuryButton from '@/components/common/LuxuryButton';
@@ -55,6 +55,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [org, setOrg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -62,6 +63,16 @@ export default function Admin() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+        // Fetch the user's organization if they belong to one
+        const orgId = currentUser?.data?.organization_id || currentUser?.organization_id;
+        if (orgId) {
+          try {
+            const orgData = await base44.entities.Organization.get(orgId);
+            setOrg(orgData);
+          } catch (e) {
+            console.error('Failed to fetch organization:', e);
+          }
+        }
       } catch (error) {
         setUser(null);
       } finally {
@@ -109,12 +120,18 @@ export default function Admin() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6 gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-[#c9a962]" />
-            </div>
+            {org?.logo_url ? (
+              <img src={org.logo_url} alt={org.name} className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl object-cover" />
+            ) : (
+              <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
+                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#c9a962]" />
+              </div>
+            )}
             <div className="min-w-0">
-              <h1 className="font-playfair text-xl sm:text-2xl lg:text-3xl text-white truncate">Get OS</h1>
-              <p className="font-inter text-xs sm:text-sm text-white/50">Management Dashboard</p>
+              <h1 className="font-playfair text-xl sm:text-2xl lg:text-3xl text-white truncate">{org?.name || 'Get OS'}</h1>
+              <p className="font-inter text-xs sm:text-sm text-white/50 capitalize">
+                {org ? `${org.industry?.replace(/_/g, ' ')} · ${org.plan} Plan` : 'Management Dashboard'}
+              </p>
             </div>
           </div>
           <button
@@ -129,7 +146,13 @@ export default function Admin() {
           {/* Sidebar — desktop */}
           <aside className="hidden lg:block w-60 xl:w-64 flex-shrink-0">
             <div className="sticky top-24 bg-[#1a1a1a] border border-[#c9a962]/10 rounded-xl p-3 max-h-[calc(100vh-7rem)] overflow-y-auto">
-              <AdminSidebar activeTab={activeTab} setActiveTab={handleSelect} />
+              <AdminSidebar
+                activeTab={activeTab}
+                setActiveTab={handleSelect}
+                enabledModules={org?.enabled_modules || []}
+                aiModules={org?.ai_modules || []}
+                showAll={user?.role === 'platform_admin'}
+              />
             </div>
           </aside>
 
@@ -141,7 +164,13 @@ export default function Admin() {
                   <span className="font-playfair text-lg text-[#c9a962]">Modules</span>
                   <button onClick={() => setSidebarOpen(false)} className="text-white/50 text-xl">✕</button>
                 </div>
-                <AdminSidebar activeTab={activeTab} setActiveTab={handleSelect} />
+                <AdminSidebar
+                  activeTab={activeTab}
+                  setActiveTab={handleSelect}
+                  enabledModules={org?.enabled_modules || []}
+                  aiModules={org?.ai_modules || []}
+                  showAll={user?.role === 'platform_admin'}
+                />
               </div>
             </div>
           )}
