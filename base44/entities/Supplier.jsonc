@@ -17,6 +17,13 @@
     "address": {
       "type": "string"
     },
+    "city": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string",
+      "default": "Kenya"
+    },
     "tax_pin": {
       "type": "string"
     },
@@ -45,7 +52,7 @@
         "suspended",
         "archived"
       ],
-      "default": "active"
+      "default": "pending"
     },
     "rating": {
       "type": "number",
@@ -53,7 +60,7 @@
     },
     "commission_rate": {
       "type": "number",
-      "default": 0
+      "default": 10
     },
     "notes": {
       "type": "string"
@@ -68,7 +75,27 @@
         "admin",
         "marketplace"
       ],
-      "default": "admin"
+      "default": "marketplace"
+    },
+    "owner_user_id": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "delivery_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
@@ -81,14 +108,33 @@
     "create": true,
     "read": true,
     "update": {
-      "user_condition": {
-        "role": "platform_admin"
-      }
+      "$or": [
+        {
+          "data.owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "platform_admin"
-      }
+      "$or": [
+        {
+          "data.owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "platform_admin"
+          }
+        }
+      ]
     }
   }
 }
