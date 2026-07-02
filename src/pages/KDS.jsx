@@ -73,19 +73,19 @@ export default function KDS() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
+          <div className="w-10 h-10 flex-shrink-0 rounded-xl bg-[#c9a962]/20 flex items-center justify-center">
             <ChefHat className="w-5 h-5 text-[#c9a962]" />
           </div>
           <div>
-            <h1 className="font-playfair text-2xl" style={{ background: 'linear-gradient(135deg, #c9a962, #e4d5a7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Kitchen Display System
+            <h1 className="font-playfair text-xl sm:text-2xl" style={{ background: 'linear-gradient(135deg, #c9a962, #e4d5a7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              KDS
             </h1>
             <p className="text-xs text-white/40 font-inter">Live order queue — auto-refreshes every 10s</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-2 text-sm font-inter">
             <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
             <span className="text-white/60">New: {pending.length}</span>
@@ -111,7 +111,7 @@ export default function KDS() {
           <p className="font-inter text-sm">No active orders in the kitchen</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
           {/* QUEUE Column */}
           <div>
             <h2 className="font-inter text-xs uppercase tracking-widest text-yellow-400 mb-4 flex items-center gap-2">
@@ -157,7 +157,7 @@ function OrderCard({ order, onAction, actionLabel, actionColor }) {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      className={`rounded-2xl border p-5 ${STATUS_COLORS[order.status] || 'border-white/10 bg-white/5'}`}
+      className={`rounded-2xl border p-4 sm:p-5 ${STATUS_COLORS[order.status] || 'border-white/10 bg-white/5'}`}
     >
       <div className="flex items-start justify-between mb-3">
         <div>
