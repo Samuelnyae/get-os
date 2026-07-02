@@ -24,7 +24,7 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
         >
           <source src="https://media.base44.com/videos/public/6a3bb63c5d638ed13971e566/e89a4a134_generated_video.mp4" type="video/mp4" />
         </video>
