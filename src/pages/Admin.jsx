@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import LuxuryButton from '@/components/common/LuxuryButton';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import { useOrganization } from '@/lib/OrganizationContext';
 import SetupChecklist from '@/components/onboarding/SetupChecklist';
 
 // Lazy load heavy admin components
@@ -76,42 +76,7 @@ const lazyPage = (importFn) => React.lazy(importFn);
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [user, setUser] = useState(null);
-  const [org, setOrg] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-        // Fetch the user's organization if they belong to one
-        const orgId = currentUser?.data?.organization_id || currentUser?.organization_id;
-        if (orgId) {
-          try {
-            const orgData = await base44.entities.Organization.get(orgId);
-            setOrg(orgData);
-          } catch (e) {
-            // Retry once after 1.5s — auth session may still be syncing post-onboarding
-            console.error('Org fetch failed, retrying...', e);
-            setTimeout(async () => {
-              try {
-                const retryOrg = await base44.entities.Organization.get(orgId);
-                setOrg(retryOrg);
-              } catch (e2) {
-                console.error('Org fetch retry also failed:', e2);
-              }
-            }, 1500);
-          }
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkAdmin();
-  }, []);
+  const { org, user, isLoading } = useOrganization();
 
   if (isLoading) {
     return (

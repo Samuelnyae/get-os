@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { useEffect, Suspense, lazy } from 'react';
 import { LanguageProvider } from '@/lib/LanguageContext';
+import { OrganizationProvider } from '@/lib/OrganizationContext';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -120,8 +121,9 @@ function App() {
 
   return (
     <AuthProvider>
-      <LanguageProvider>
-      <QueryClientProvider client={queryClientInstance}>
+      <OrganizationProvider>
+        <LanguageProvider>
+        <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
           <NavigationTracker />
@@ -130,7 +132,8 @@ function App() {
         <Toaster />
       </QueryClientProvider>
       </LanguageProvider>
-    </AuthProvider>
+      </OrganizationProvider>
+      </AuthProvider>
   )
 }
 

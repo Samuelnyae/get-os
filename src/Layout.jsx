@@ -14,16 +14,18 @@ import {
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import MarketingNav from '@/components/landing/MarketingNav';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useOrganization, getIndustryTagline } from '@/lib/OrganizationContext';
 
 export default function Layout({ children, currentPageName }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(false);
   const { t } = useLanguage();
+  const { org, user: orgUser } = useOrganization();
+  const isAdmin = orgUser?.role === 'admin' || orgUser?.role === 'owner' || orgUser?.role === 'platform_admin';
+  const isPlatformAdmin = orgUser?.role === 'platform_admin';
+  const isOnboarded = !!(orgUser?.data?.organization_id || orgUser?.organization_id);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -34,22 +36,6 @@ export default function Layout({ children, currentPageName }) {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const user = await base44.auth.me();
-        setIsAdmin(user?.role === 'admin' || user?.role === 'owner' || user?.role === 'platform_admin');
-        setIsPlatformAdmin(user?.role === 'platform_admin');
-        const hasOrg = user?.data?.organization_id || user?.organization_id;
-        setIsOnboarded(!!hasOrg);
-      } catch {
-        setIsAdmin(false);
-        setIsOnboarded(false);
-      }
-    };
-    checkAdmin();
   }, []);
 
   useEffect(() => {
@@ -154,8 +140,8 @@ export default function Layout({ children, currentPageName }) {
                 <span className="font-playfair text-xl text-[#0a0a0a] font-bold">GO</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="font-playfair text-xl font-semibold gold-gradient">Get OS</h1>
-                <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">Seven Star Dining</p>
+                <h1 className="font-playfair text-xl font-semibold gold-gradient">{org?.name || 'Get OS'}</h1>
+                <p className="text-[10px] tracking-[0.3em] text-[#c9a962]/70 font-inter uppercase">{org ? getIndustryTagline(org.industry) : 'Seven Star Dining'}</p>
               </div>
             </Link>
 
@@ -327,7 +313,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-start">
             {/* Brand */}
             <div className="md:col-span-2">
-              <h2 className="font-playfair text-3xl gold-gradient mb-4">Get OS</h2>
+              <h2 className="font-playfair text-3xl gold-gradient mb-4">{org?.name || 'Get OS'}</h2>
               <p className="font-cormorant text-lg text-white/60 leading-relaxed max-w-md">
                 {t('footerTagline')}
               </p>
@@ -355,7 +341,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-[#c9a962]/20 mt-12 pt-8 text-center">
             <p className="font-inter text-xs text-white/40">
-              © {new Date().getFullYear()} Get OS. Hospitality Management Platform. {t('allRightsReserved')}
+              © {new Date().getFullYear()} {org?.name || 'Get OS'}. Hospitality Management Platform. {t('allRightsReserved')}
             </p>
           </div>
         </div>

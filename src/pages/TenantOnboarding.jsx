@@ -95,19 +95,46 @@ const [step, setStep] = useState(1);
         team_invites: data.team_invites.filter(i => i.email.trim()),
       });
       if (response.data?.success) {
-        // Backend updated the User entity, but the auth session token still has stale data.
-        // Sync the auth session so me() returns the new organization_id immediately —
-        // otherwise AuthContext's needsOnboarding stays true and bounces us back here.
+        // Backend updated the User entity, but the auth session token may still have stale data.
+        // Attempt to sync the session, then poll auth.me() until organization_id is present
+        // before redirecting — a fixed timeout can race if the session is slow to propagate.
+        let updateMeError = null;
         try {
           await base44.auth.updateMe({
             organization_id: response.data.organization.id,
             branch_id: response.data.branches[0].id,
           });
         } catch (e) {
-          console.error('updateMe failed, will reload anyway:', e);
+          updateMeError = e.message || 'Failed to sync your session';
+          console.error('updateMe failed:', e);
         }
+
+        // Poll auth.me() until organization_id appears (replaces fixed 2s timeout)
+        let orgReady = false;
+        for (let i = 0; i < 12; i++) {
+          await new Promise(r => setTimeout(r, 500));
+          try {
+            const me = await base44.auth.me();
+            if (me?.data?.organization_id || me?.organization_id) {
+              orgReady = true;
+              break;
+            }
+          } catch (e) {
+            // keep polling
+          }
+        }
+
         setLoading(false);
-        setTimeout(() => { window.location.href = '/Admin'; }, 2000);
+
+        if (orgReady) {
+          window.location.href = '/Admin';
+        } else {
+          setError(
+            updateMeError
+              ? `Your workspace was created, but we couldn't sync your session (${updateMeError}). Please refresh the page to access your dashboard.`
+              : 'Your workspace was created, but your session is still syncing. Please refresh the page to access your dashboard.'
+          );
+        }
       } else {
         setError(response.data?.error || 'Something went wrong');
         setLoading(false);
