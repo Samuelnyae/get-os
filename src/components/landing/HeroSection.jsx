@@ -33,131 +33,117 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#0a0a0a]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(201,169,98,0.08),transparent_50%)]" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Copy */}
+      {/* Full-bleed zoom carousel background */}
+      <div className="absolute inset-0">
+        <AnimatePresence mode="sync">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
+            key={activeIdx}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full luxury-border bg-[#c9a962]/5 mb-6">
-              <Sparkles className="w-3.5 h-3.5 text-[#c9a962]" />
-              <span className="font-inter text-xs tracking-wider text-[#c9a962] uppercase">AI-Powered Hospitality Platform</span>
+            <motion.img
+              src={HERO_IMAGES[activeIdx].src}
+              alt={HERO_IMAGES[activeIdx].caption}
+              className="w-full h-full object-cover"
+              initial={{ scale: 1 }}
+              animate={{ scale: 1.15 }}
+              transition={{ duration: 4, ease: "easeOut" }}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Dark gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a]/95 via-[#0a0a0a]/80 to-[#0a0a0a]/50" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/40" />
+
+      {/* Content */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full z-10">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="max-w-2xl"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full luxury-border bg-[#c9a962]/5 mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-[#c9a962]" />
+            <span className="font-inter text-xs tracking-wider text-[#c9a962] uppercase">AI-Powered Hospitality Platform</span>
+          </div>
+
+          <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            The All-in-One <br />
+            <span className="gold-gradient">Hospitality Operating System</span>
+          </h1>
+
+          <p className="font-inter text-lg text-white/70 leading-relaxed mb-8 max-w-xl">
+            Manage your hotel, restaurant, lodge, café, or resort from a single cloud platform.
+            Streamline operations, automate workflows with AI, and grow your business with real-time insights.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-[#c9a962] to-[#e4d5a7] text-[#0a0a0a] font-inter font-semibold rounded-full hover:shadow-[0_0_30px_rgba(201,169,98,0.4)] transition-all duration-300"
+            >
+              Start Free Trial
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <button className="inline-flex items-center gap-2 px-7 py-3.5 luxury-border text-white font-inter font-medium rounded-full hover:bg-[#c9a962]/10 transition-all duration-300">
+              <Play className="w-4 h-4 text-[#c9a962]" />
+              Book a Demo
+            </button>
+          </div>
+
+          <div className="flex items-center gap-6 mt-8 pt-8 border-t border-white/10">
+            <div>
+              <p className="font-playfair text-2xl gold-gradient font-bold">14+</p>
+              <p className="font-inter text-xs text-white/50">Integrated Modules</p>
             </div>
+            <div className="w-px h-10 bg-white/10" />
+            <div>
+              <p className="font-playfair text-2xl gold-gradient font-bold">8+</p>
+              <p className="font-inter text-xs text-white/50">Industries Served</p>
+            </div>
+            <div className="w-px h-10 bg-white/10" />
+            <div>
+              <p className="font-playfair text-2xl gold-gradient font-bold">AI</p>
+              <p className="font-inter text-xs text-white/50">Built-in Automation</p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
 
-            <h1 className="font-playfair text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              The All-in-One <br />
-              <span className="gold-gradient">Hospitality Operating System</span>
-            </h1>
-
-            <p className="font-inter text-lg text-white/60 leading-relaxed mb-8 max-w-xl">
-              Manage your hotel, restaurant, lodge, café, or resort from a single cloud platform.
-              Streamline operations, automate workflows with AI, and grow your business with real-time insights.
+      {/* Caption + dots — bottom right */}
+      <div className="absolute bottom-8 right-4 sm:right-8 z-10 text-right">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIdx}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4 }}
+          >
+            <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
+              {HERO_IMAGES[activeIdx].label}
             </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-[#c9a962] to-[#e4d5a7] text-[#0a0a0a] font-inter font-semibold rounded-full hover:shadow-[0_0_30px_rgba(201,169,98,0.4)] transition-all duration-300"
-              >
-                Start Free Trial
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <button className="inline-flex items-center gap-2 px-7 py-3.5 luxury-border text-white font-inter font-medium rounded-full hover:bg-[#c9a962]/10 transition-all duration-300">
-                <Play className="w-4 h-4 text-[#c9a962]" />
-                Book a Demo
-              </button>
-            </div>
-
-            <div className="flex items-center gap-6 mt-8 pt-8 border-t border-white/5">
-              <div>
-                <p className="font-playfair text-2xl gold-gradient font-bold">14+</p>
-                <p className="font-inter text-xs text-white/40">Integrated Modules</p>
-              </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div>
-                <p className="font-playfair text-2xl gold-gradient font-bold">8+</p>
-                <p className="font-inter text-xs text-white/40">Industries Served</p>
-              </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div>
-                <p className="font-playfair text-2xl gold-gradient font-bold">AI</p>
-                <p className="font-inter text-xs text-white/40">Built-in Automation</p>
-              </div>
-            </div>
+            <p className="font-playfair text-lg text-white">
+              {HERO_IMAGES[activeIdx].caption}
+            </p>
           </motion.div>
-
-          {/* Right: Zoom Animation Carousel */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="relative rounded-2xl overflow-hidden luxury-border shadow-[0_0_60px_rgba(201,169,98,0.15)] aspect-[4/5] sm:aspect-square">
-              <AnimatePresence mode="sync">
-                <motion.div
-                  key={activeIdx}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="absolute inset-0"
-                >
-                  <motion.img
-                    src={HERO_IMAGES[activeIdx].src}
-                    alt={HERO_IMAGES[activeIdx].caption}
-                    className="w-full h-full object-cover"
-                    initial={{ scale: 1 }}
-                    animate={{ scale: 1.15 }}
-                    transition={{ duration: 4, ease: "easeOut" }}
-                  />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Caption overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent p-6 z-10">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeIdx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <p className="font-inter text-xs text-[#c9a962] uppercase tracking-wider mb-1">
-                      {HERO_IMAGES[activeIdx].label}
-                    </p>
-                    <p className="font-playfair text-lg text-white">
-                      {HERO_IMAGES[activeIdx].caption}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Dots */}
-              <div className="absolute top-4 right-4 flex gap-2 z-10">
-                {HERO_IMAGES.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveIdx(i)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      i === activeIdx ? 'w-6 bg-[#c9a962]' : 'w-1.5 bg-white/30'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Floating accents */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[#c9a962]/10 blur-2xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-[#c9a962]/5 blur-3xl" />
-          </motion.div>
+        </AnimatePresence>
+        <div className="flex gap-2 justify-end mt-3">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === activeIdx ? 'w-6 bg-[#c9a962]' : 'w-1.5 bg-white/30'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
