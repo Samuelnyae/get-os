@@ -186,6 +186,15 @@ export default function Admin() {
               <React.Suspense fallback={<LazyFallback />}>
                 {activeTab === 'dashboard' && (
                   <>
+                    {org && (
+                      <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#c9a962]/15 via-[#1a1a1a] to-[#1a1a1a] border border-[#c9a962]/20 p-6 sm:p-8">
+                        <p className="font-inter text-sm text-[#c9a962] tracking-wide mb-1">Welcome back</p>
+                        <h2 className="font-playfair text-2xl sm:text-3xl text-white mb-2">{org.name}</h2>
+                        <p className="font-inter text-sm text-white/50">
+                          Your dashboard is ready. {(org.enabled_modules?.length || 0)} module{(org.enabled_modules?.length || 0) !== 1 ? 's' : ''} active — select a feature below to get started.
+                        </p>
+                      </div>
+                    )}
                     <SetupChecklist />
                     <DashboardStats />
                   </>

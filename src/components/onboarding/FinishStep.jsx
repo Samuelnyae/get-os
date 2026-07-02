@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Check, ArrowRight, Rocket, Loader2, AlertTriangle, PartyPopper } from 'lucide-react';
 
-export default function FinishStep({ loading, error, onComplete }) {
+export default function FinishStep({ loading, error, orgName, onComplete }) {
   const navigate = useNavigate();
 
   return (
@@ -34,7 +34,9 @@ export default function FinishStep({ loading, error, onComplete }) {
             className="w-20 h-20 rounded-full bg-[#c9a962]/15 flex items-center justify-center mx-auto mb-6">
             <PartyPopper className="w-10 h-10 text-[#c9a962]" />
           </motion.div>
-          <h1 className="font-playfair text-4xl gold-gradient mb-2">Welcome!</h1>
+          <h1 className="font-playfair text-4xl gold-gradient mb-2">
+            {orgName ? `Welcome, ${orgName}!` : 'Welcome!'}
+          </h1>
           <p className="font-inter text-white/50 text-lg mb-8">Your workspace is ready. Let's get your business running.</p>
 
           <div className="space-y-2 mb-8 text-left max-w-sm mx-auto">

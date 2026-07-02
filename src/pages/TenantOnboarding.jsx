@@ -140,7 +140,7 @@ const [step, setStep] = useState(1);
       case 7: return <ModulesStep data={data} update={update} onNext={next} onBack={back} />;
       case 8: return <ImportStep data={data} update={update} onNext={next} onBack={back} />;
       case 9: return <AISetupStep data={data} update={update} onNext={() => { setStep(10); handleSubmit(); }} onBack={back} />;
-      case 10: return <FinishStep loading={loading} error={error} onComplete={() => { setError(''); setStep(9); }} />;
+      case 10: return <FinishStep loading={loading} error={error} orgName={data.org_name} onComplete={() => { setError(''); setStep(9); }} />;
       default: return null;
     }
   };
