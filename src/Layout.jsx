@@ -51,7 +51,7 @@ export default function Layout({ children, currentPageName }) {
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
 
-  const isLandingPage = currentPageName === 'Home';
+  const isLandingPage = currentPageName === 'Home' && !isOnboarded;
   const showMarketingNav = isLandingPage || !isOnboarded;
 
   const mainNavLinks = [

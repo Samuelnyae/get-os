@@ -11,9 +11,11 @@ import SectionHeader from '../components/common/SectionHeader';
 import LuxuryButton from '../components/common/LuxuryButton';
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useBusinessInfo } from '@/hooks/useBusinessInfo';
 
 export default function Contact() {
   const { t } = useLanguage();
+  const business = useBusinessInfo();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,17 +38,17 @@ export default function Contact() {
       // Send confirmation email to customer
       await base44.integrations.Core.SendEmail({
         to: formData.email,
-        subject: `Get OS - We Received Your Message`,
+        subject: `${business.name} - We Received Your Message`,
         body: `
 Dear ${formData.name},
 
-Thank you for contacting Get OS! We have received your message and will get back to you within 24 hours.
+Thank you for contacting ${business.name}! We have received your message and will get back to you within 24 hours.
 
 Your Message:
 ${formData.message}
 
 Best regards,
-Get OS - Seven Star Dining
+${business.name} - ${business.tagline}
         `
       });
 
@@ -64,18 +66,19 @@ Get OS - Seven Star Dining
   };
 
   const contactInfo = [
-    { icon: MapPin, label: t('address'), value: 'Voi, Taita Taveta' },
-    { icon: Phone, label: t('phone'), value: '+254748358976' },
-    { icon: Mail, label: t('email'), value: 'menuhotel@gmail.com' },
-    { icon: Clock, label: t('hours'), value: 'Mon-Sun: 11:00 AM - 11:00 PM' },
+    { icon: MapPin, label: t('address'), value: business.address || 'Address not available' },
+    { icon: Phone, label: t('phone'), value: business.phone || 'Phone not available' },
+    { icon: Mail, label: t('email'), value: business.email || 'Email not available' },
+    { icon: Clock, label: t('hours'), value: business.openingHours || 'Hours not available' },
   ];
 
+  const socials = business.socialLinks || {};
   const socialLinks = [
-    { icon: Instagram, label: 'Instagram', href: '#' },
-    { icon: Facebook, label: 'Facebook', href: '#' },
-    { icon: Twitter, label: 'Twitter', href: '#' },
-    { icon: MessageCircle, label: 'WhatsApp', href: '#' },
-  ];
+    { icon: Instagram, label: 'Instagram', href: socials.instagram },
+    { icon: Facebook, label: 'Facebook', href: socials.facebook },
+    { icon: Twitter, label: 'Twitter', href: socials.twitter },
+    { icon: MessageCircle, label: 'WhatsApp', href: business.whatsapp ? `https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}` : null },
+  ].filter(s => s.href);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
@@ -222,8 +225,8 @@ Get OS - Seven Star Dining
               <div className="absolute inset-0 flex items-center justify-center bg-[#0a0a0a]/50">
                 <div className="text-center">
                   <MapPin className="w-10 h-10 text-[#c9a962] mx-auto mb-2" />
-                  <p className="font-playfair text-xl text-white">Voi</p>
-                  <p className="font-inter text-sm text-white/60">Taita Taveta</p>
+                  <p className="font-playfair text-xl text-white">{business.location || business.name}</p>
+                  <p className="font-inter text-sm text-white/60">{business.address || ''}</p>
                 </div>
               </div>
             </div>

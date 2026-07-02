@@ -13,8 +13,16 @@ import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FinalCTASection from '@/components/landing/FinalCTASection';
+import { useOrganization } from '@/lib/OrganizationContext';
+import BusinessHome from './BusinessHome';
 
 export default function Home() {
+  const { org } = useOrganization();
+
+  if (org) {
+    return <BusinessHome />;
+  }
+
   return (
     <div className="bg-[#0a0a0a] relative" id="home">
       {/* Background video — fixed across entire landing page */}
