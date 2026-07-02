@@ -17,6 +17,7 @@
         "hr",
         "accountant",
         "admin",
+        "supplier",
         "user"
       ],
       "default": "user"
@@ -25,6 +26,9 @@
       "type": "string"
     },
     "branch_id": {
+      "type": "string"
+    },
+    "supplier_id": {
       "type": "string"
     },
     "phone": {
