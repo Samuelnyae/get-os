@@ -104,11 +104,11 @@ export default function DashboardStats({ hotelId } = {}) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10"
+            className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 border border-[#c9a962]/10"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl bg-[#c9a962]/10 flex items-center justify-center`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#c9a962]/10 flex items-center justify-center`}>
+                <stat.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`} />
               </div>
               {stat.change && (
                 <span className="flex items-center gap-1 text-xs font-inter text-green-400">
@@ -120,14 +120,14 @@ export default function DashboardStats({ hotelId } = {}) {
             <p className="font-inter text-xs text-white/50 uppercase tracking-wider mb-1">
               {stat.label}
             </p>
-            <p className="font-playfair text-3xl text-white">{stat.value}</p>
+            <p className="font-playfair text-2xl sm:text-3xl text-white">{stat.value}</p>
           </motion.div>
         ))}
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10">
-        <h3 className="font-playfair text-xl text-white mb-6 flex items-center gap-2">
+      <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 border border-[#c9a962]/10">
+        <h3 className="font-playfair text-lg sm:text-xl text-white mb-4 sm:mb-6 flex items-center gap-2">
           <ShoppingCart className="w-5 h-5 text-[#c9a962]" />
           Recent Orders
         </h3>
@@ -138,14 +138,14 @@ export default function DashboardStats({ hotelId } = {}) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="flex items-center justify-between p-4 rounded-xl bg-[#0a0a0a] border border-[#c9a962]/10"
+              className="flex items-center justify-between p-3 sm:p-4 rounded-xl bg-[#0a0a0a] border border-[#c9a962]/10"
             >
               <div className="flex-1">
                 <p className="font-inter text-sm text-white font-medium">{order.customer_name}</p>
                 <p className="font-inter text-xs text-white/50">{order.order_reference}</p>
               </div>
-              <div className="flex items-center gap-4">
-                <span className={`px-3 py-1 rounded-full text-xs font-inter ${
+              <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-inter ${
                   order.status === 'confirmed' ? 'bg-green-900/30 text-green-400' :
                   order.status === 'preparing' ? 'bg-yellow-900/30 text-yellow-400' :
                   order.status === 'ready' ? 'bg-blue-900/30 text-blue-400' :
@@ -154,7 +154,7 @@ export default function DashboardStats({ hotelId } = {}) {
                 }`}>
                   {order.status}
                 </span>
-                <p className="font-playfair text-lg text-[#c9a962]">
+                <p className="font-playfair text-sm sm:text-lg text-[#c9a962]">
                   KES {order.total_amount?.toLocaleString()}
                 </p>
               </div>
@@ -164,8 +164,8 @@ export default function DashboardStats({ hotelId } = {}) {
       </div>
 
       {/* Popular Items */}
-      <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#c9a962]/10">
-        <h3 className="font-playfair text-xl text-white mb-6 flex items-center gap-2">
+      <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 border border-[#c9a962]/10">
+        <h3 className="font-playfair text-lg sm:text-xl text-white mb-4 sm:mb-6 flex items-center gap-2">
           <Star className="w-5 h-5 text-[#c9a962]" />
           Most Liked Items
         </h3>
