@@ -97,22 +97,6 @@ export default function HeroSection() {
             </button>
           </div>
 
-          <div className="flex items-center gap-6 mt-8 pt-8 border-t border-white/10">
-            <div>
-              <p className="font-playfair text-2xl gold-gradient font-bold">14+</p>
-              <p className="font-inter text-xs text-white/50">Integrated Modules</p>
-            </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div>
-              <p className="font-playfair text-2xl gold-gradient font-bold">8+</p>
-              <p className="font-inter text-xs text-white/50">Industries Served</p>
-            </div>
-            <div className="w-px h-10 bg-white/10" />
-            <div>
-              <p className="font-playfair text-2xl gold-gradient font-bold">AI</p>
-              <p className="font-inter text-xs text-white/50">Built-in Automation</p>
-            </div>
-          </div>
         </motion.div>
       </div>
 
