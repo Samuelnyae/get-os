@@ -1,4 +1,13 @@
 export const CATEGORIES = ['food', 'beverage', 'cleaning', 'furniture', 'linen', 'maintenance', 'other'];
+export const CAT_LABELS = {
+  food: 'Food & Produce',
+  beverage: 'Beverages',
+  cleaning: 'Cleaning',
+  furniture: 'Furniture',
+  linen: 'Linen & Laundry',
+  maintenance: 'Maintenance',
+  other: 'Other',
+};
 export const CAT_EMOJI = { food: '🥩', beverage: '🍷', cleaning: '🧼', furniture: '🪑', linen: '🧺', maintenance: '🔧', other: '📦' };
 export const PLATFORM_COMMISSION_RATE = 10;
 export const CART_KEY = 'marketplace_cart';
