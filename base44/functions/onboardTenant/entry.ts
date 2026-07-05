@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Business name and at least one branch are required' }, { status: 400 });
     }
 
-    if (user.data?.organization_id) {
+    if (user.data?.organization_id || user.organization_id) {
       return Response.json({ error: 'You already belong to an organization' }, { status: 409 });
     }
 

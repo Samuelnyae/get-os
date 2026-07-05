@@ -20,7 +20,7 @@ import FinishStep from '@/components/onboarding/FinishStep';
 
 export default function TenantOnboarding() {
   const navigate = useNavigate();
-  const { checkAppState } = useAuth();
+  const { refreshUser } = useAuth();
 const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -127,7 +127,17 @@ const [step, setStep] = useState(1);
         setLoading(false);
 
         if (orgReady) {
-          window.location.href = '/Admin';
+          // Stay in the SPA — refresh the auth context (which also triggers
+          // OrganizationContext to fetch the new org via its user useEffect),
+          // then navigate. A full page reload (window.location.href) risks
+          // auth.me() returning stale session data that lacks organization_id,
+          // bouncing the user back to onboarding or loading the wrong workspace.
+          try {
+            await refreshUser();
+          } catch (e) {
+            console.error('refreshUser after onboarding failed:', e);
+          }
+          navigate('/Admin');
         } else {
           setError(
             updateMeError
