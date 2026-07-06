@@ -33,6 +33,17 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/base44/")) return;
 
+  // Never cache Vite dev/ HMR paths — they change on every rebuild and
+  // stale copies cause React hook errors (null React) in development.
+  if (
+    url.pathname.startsWith("/src/") ||
+    url.pathname.startsWith("/node_modules/.vite/") ||
+    url.pathname.startsWith("/@vite") ||
+    url.pathname.startsWith("/@react-refresh")
+  ) {
+    return;
+  }
+
   // Navigation requests — try network, fall back to cached index.html for offline SPA
   if (request.mode === "navigate") {
     event.respondWith(
