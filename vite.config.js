@@ -5,6 +5,14 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   logLevel: 'error', // Suppress warnings, only show errors
+  resolve: {
+    // Force a single copy of React — without this, React can resolve from
+    // both the platform's shared Vite deps cache (@fs/var/cache/base44-vite-deps)
+    // and the app's local cache (node_modules/.vite/deps), causing
+    // "Cannot read properties of null (reading 'useState')" when the two
+    // copies are mixed in the same render tree.
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime']
+  },
   plugins: [
     base44({
       // Support for legacy code that imports the base44 SDK with @/integrations, @/entities, etc.

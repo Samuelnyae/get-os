@@ -1,4 +1,4 @@
-const CACHE_NAME = "getos-v1";
+const CACHE_NAME = "getos-v2";
 const PRECACHE_URLS = ["/", "/index.html", "/manifest.json"];
 
 // Install — precache the app shell
@@ -9,16 +9,21 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate — clean up old caches
+// Activate — clear ALL old caches (including previous versions) so stale
+// JS chunks from a prior build don't get served alongside new ones, which
+// causes "Cannot read properties of null (reading 'useState')" from
+// mismatched React copies.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
-      )
-    )
+      Promise.all(keys.map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
+  // Tell all open pages to reload so they pick up fresh JS from the network
+  // instead of whatever the old SW already injected.
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => client.navigate(client.url));
+  });
 });
 
 // Fetch — cache-first for static assets, network-first with offline fallback for navigation
