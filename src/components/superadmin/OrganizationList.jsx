@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Building2, ChevronRight } from 'lucide-react';
+import { Search, Building2, ChevronRight, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const STATUS_BADGE = {
@@ -56,6 +56,10 @@ export default function OrganizationList({ orgs, onSelect, selectedId }) {
             </div>
             <span className={`font-inter text-[10px] px-2 py-0.5 rounded-full ${PLAN_BADGE[o.plan]}`}>{o.plan}</span>
             <span className={`font-inter text-[10px] px-2 py-0.5 rounded-full ${STATUS_BADGE[o.status]?.cls}`}>{STATUS_BADGE[o.status]?.label}</span>
+            <a href={`${window.location.origin}/?org=${o.slug}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+              className="flex items-center gap-1 px-2 py-1 rounded-md bg-[#c9a962]/10 text-[#c9a962] hover:bg-[#c9a962]/20 transition-all">
+              <ExternalLink className="w-3 h-3" /> Open
+            </a>
             <ChevronRight className="w-4 h-4 text-white/30" />
           </motion.button>
         ))}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Building2, Users, Ban, CheckCircle2, Settings, X, Save } from 'lucide-react';
+import { Building2, Users, Ban, CheckCircle2, Settings, X, Save, ExternalLink, Mail, Phone } from 'lucide-react';
 
 const PLAN_FEATURES = ['pos', 'hotel', 'crm', 'inventory', 'ai', 'spa', 'driver', 'reservations', 'staff', 'kds', 'hr', 'multibranch', 'api', 'white_label'];
 const PLANS = ['starter', 'professional', 'enterprise'];
@@ -67,6 +67,26 @@ export default function OrganizationDetail({ org, onClose }) {
             <p className="font-inter text-sm text-white mt-0.5 capitalize">{s.value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Open links */}
+      <div className="flex flex-wrap gap-2">
+        <a href={`${window.location.origin}/?org=${org.slug}`} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-inter text-sm font-semibold bg-[#c9a962] text-[#0a0a0a]">
+          <ExternalLink className="w-4 h-4" /> Open Portal
+        </a>
+        {org.owner_email && (
+          <a href={`mailto:${org.owner_email}`} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-inter text-sm bg-white/5 text-white/70 border border-white/10">
+            <Mail className="w-4 h-4" /> Email Owner
+          </a>
+        )}
+        {org.contact_phone && (
+          <a href={`tel:${org.contact_phone}`}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-inter text-sm bg-white/5 text-white/70 border border-white/10">
+            <Phone className="w-4 h-4" /> Call
+          </a>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
